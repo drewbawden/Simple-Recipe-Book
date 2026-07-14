@@ -1,0 +1,524 @@
+import { wordsToNumbers } from "words-to-numbers";
+import { StandardUnit, NormalUnit } from "../app/generated/prisma/client";
+
+const UNIT_MAP: Record<string, StandardUnit> = {
+  dl: StandardUnit.DECILITRE,
+  dls: StandardUnit.DECILITRE,
+  decilitre: StandardUnit.DECILITRE,
+  decilitres: StandardUnit.DECILITRE,
+  deciliter: StandardUnit.DECILITRE,
+  deciliters: StandardUnit.DECILITRE,
+
+  ml: StandardUnit.MILLILITRE,
+  mls: StandardUnit.MILLILITRE,
+  millilitre: StandardUnit.MILLILITRE,
+  millilitres: StandardUnit.MILLILITRE,
+  milliliter: StandardUnit.MILLILITRE,
+  milliliters: StandardUnit.MILLILITRE,
+
+  cl: StandardUnit.CENTILITRE,
+  cls: StandardUnit.CENTILITRE,
+  centilitre: StandardUnit.CENTILITRE,
+  centilitres: StandardUnit.CENTILITRE,
+  centiliter: StandardUnit.CENTILITRE,
+  centiliters: StandardUnit.CENTILITRE,
+
+  l: StandardUnit.LITRE,
+  ls: StandardUnit.LITRE,
+  litre: StandardUnit.LITRE,
+  litres: StandardUnit.LITRE,
+  liter: StandardUnit.LITRE,
+  liters: StandardUnit.LITRE,
+
+  tsp: StandardUnit.TEASPOON,
+  tsps: StandardUnit.TEASPOON,
+  ts: StandardUnit.TEASPOON,
+  teaspoon: StandardUnit.TEASPOON,
+  teaspoons: StandardUnit.TEASPOON,
+
+  tbsp: StandardUnit.TABLESPOON,
+  tbsps: StandardUnit.TABLESPOON,
+  tb: StandardUnit.TABLESPOON,
+  tbs: StandardUnit.TABLESPOON,
+  tblsp: StandardUnit.TABLESPOON,
+  tblsps: StandardUnit.TABLESPOON,
+  tablespoon: StandardUnit.TABLESPOON,
+  tablespoons: StandardUnit.TABLESPOON,
+
+  c: StandardUnit.CUP,
+  cs: StandardUnit.CUP,
+  cup: StandardUnit.CUP,
+  cups: StandardUnit.CUP,
+
+  fl_oz: StandardUnit.FLUID_OUNCE,
+  floz: StandardUnit.FLUID_OUNCE,
+  'fluid ounce': StandardUnit.FLUID_OUNCE,
+  'fluid ounces': StandardUnit.FLUID_OUNCE,
+  'fl ounce': StandardUnit.FLUID_OUNCE,
+  'fl ounces': StandardUnit.FLUID_OUNCE,
+  'fl oz': StandardUnit.FLUID_OUNCE,
+
+  pt: StandardUnit.PINT,
+  pts: StandardUnit.PINT,
+  pint: StandardUnit.PINT,
+  pints: StandardUnit.PINT,
+
+  qt: StandardUnit.QUART,
+  qts: StandardUnit.QUART,
+  quart: StandardUnit.QUART,
+  quarts: StandardUnit.QUART,
+
+  gal: StandardUnit.GALLON,
+  gals: StandardUnit.GALLON,
+  gallon: StandardUnit.GALLON,
+  gallons: StandardUnit.GALLON,
+
+  g: StandardUnit.GRAM,
+  gs: StandardUnit.GRAM,
+  gm: StandardUnit.GRAM,
+  gms: StandardUnit.GRAM,
+  gram: StandardUnit.GRAM,
+  grams: StandardUnit.GRAM,
+
+  kg: StandardUnit.KILOGRAM,
+  kgs: StandardUnit.KILOGRAM,
+  kilo: StandardUnit.KILOGRAM,
+  kilos: StandardUnit.KILOGRAM,
+  kilogram: StandardUnit.KILOGRAM,
+  kilograms: StandardUnit.KILOGRAM,
+
+  oz: StandardUnit.OUNCE,
+  ozs: StandardUnit.OUNCE,
+  ounce: StandardUnit.OUNCE,
+  ounces: StandardUnit.OUNCE,
+
+  lb: StandardUnit.POUND,
+  lbs: StandardUnit.POUND,
+  pound: StandardUnit.POUND,
+  pounds: StandardUnit.POUND,
+
+  smidge: StandardUnit.INDIVIDUAL,
+  smidges: StandardUnit.INDIVIDUAL,
+  smidgen: StandardUnit.INDIVIDUAL,
+  smidgens: StandardUnit.INDIVIDUAL,
+  smidgin: StandardUnit.INDIVIDUAL,
+  smidgins: StandardUnit.INDIVIDUAL,
+  pinch: StandardUnit.INDIVIDUAL,
+  pinches: StandardUnit.INDIVIDUAL,
+  dash: StandardUnit.INDIVIDUAL,
+  dashes: StandardUnit.INDIVIDUAL,
+  tad: StandardUnit.INDIVIDUAL,
+  tads: StandardUnit.INDIVIDUAL,
+  handful: StandardUnit.INDIVIDUAL,
+  handfuls: StandardUnit.INDIVIDUAL,
+  handsful: StandardUnit.INDIVIDUAL,
+  fistful: StandardUnit.INDIVIDUAL,
+  fistfuls: StandardUnit.INDIVIDUAL,
+  scoop: StandardUnit.INDIVIDUAL,
+  scoops: StandardUnit.INDIVIDUAL,
+  splash: StandardUnit.INDIVIDUAL,
+  splashes: StandardUnit.INDIVIDUAL,
+  drizzle: StandardUnit.INDIVIDUAL,
+  drizzles: StandardUnit.INDIVIDUAL,
+  glug: StandardUnit.INDIVIDUAL,
+  glugs: StandardUnit.INDIVIDUAL,
+  pour: StandardUnit.INDIVIDUAL,
+  pours: StandardUnit.INDIVIDUAL,
+  clove: StandardUnit.INDIVIDUAL,
+  cloves: StandardUnit.INDIVIDUAL,
+  bulb: StandardUnit.INDIVIDUAL,
+  bulbs: StandardUnit.INDIVIDUAL,
+  head: StandardUnit.INDIVIDUAL,
+  heads: StandardUnit.INDIVIDUAL,
+  sprig: StandardUnit.INDIVIDUAL,
+  sprigs: StandardUnit.INDIVIDUAL,
+  stalk: StandardUnit.INDIVIDUAL,
+  stalks: StandardUnit.INDIVIDUAL,
+  rib: StandardUnit.INDIVIDUAL,
+  ribs: StandardUnit.INDIVIDUAL,
+  bunch: StandardUnit.INDIVIDUAL,
+  bunches: StandardUnit.INDIVIDUAL,
+  knob: StandardUnit.INDIVIDUAL,
+  knobs: StandardUnit.INDIVIDUAL,
+  piece: StandardUnit.INDIVIDUAL,
+  pieces: StandardUnit.INDIVIDUAL,
+  slice: StandardUnit.INDIVIDUAL,
+  slices: StandardUnit.INDIVIDUAL,
+  ear: StandardUnit.INDIVIDUAL,
+  ears: StandardUnit.INDIVIDUAL,
+  root: StandardUnit.INDIVIDUAL,
+  roots: StandardUnit.INDIVIDUAL,
+  pat: StandardUnit.INDIVIDUAL,
+  pats: StandardUnit.INDIVIDUAL,
+  stick: StandardUnit.INDIVIDUAL,
+  sticks: StandardUnit.INDIVIDUAL,
+  block: StandardUnit.INDIVIDUAL,
+  blocks: StandardUnit.INDIVIDUAL,
+  cube: StandardUnit.INDIVIDUAL,
+  cubes: StandardUnit.INDIVIDUAL,
+  jigger: StandardUnit.INDIVIDUAL,
+  jiggers: StandardUnit.INDIVIDUAL,
+  pony: StandardUnit.INDIVIDUAL,
+  ponies: StandardUnit.INDIVIDUAL,
+  shot: StandardUnit.INDIVIDUAL,
+  shots: StandardUnit.INDIVIDUAL,
+  glass: StandardUnit.INDIVIDUAL,
+  glasses: StandardUnit.INDIVIDUAL,
+  cupful: StandardUnit.INDIVIDUAL,
+  cupfuls: StandardUnit.INDIVIDUAL,
+  bowl: StandardUnit.INDIVIDUAL,
+  bowls: StandardUnit.INDIVIDUAL,
+  can: StandardUnit.INDIVIDUAL,
+  cans: StandardUnit.INDIVIDUAL,
+  tin: StandardUnit.INDIVIDUAL,
+  tins: StandardUnit.INDIVIDUAL,
+  jar: StandardUnit.INDIVIDUAL,
+  jars: StandardUnit.INDIVIDUAL,
+  bottle: StandardUnit.INDIVIDUAL,
+  bottles: StandardUnit.INDIVIDUAL,
+  package: StandardUnit.INDIVIDUAL,
+  packages: StandardUnit.INDIVIDUAL,
+  pack: StandardUnit.INDIVIDUAL,
+  packs: StandardUnit.INDIVIDUAL,
+  packet: StandardUnit.INDIVIDUAL,
+  packets: StandardUnit.INDIVIDUAL,
+  bag: StandardUnit.INDIVIDUAL,
+  bags: StandardUnit.INDIVIDUAL,
+  pouch: StandardUnit.INDIVIDUAL,
+  pouches: StandardUnit.INDIVIDUAL,
+  tub: StandardUnit.INDIVIDUAL,
+  tubs: StandardUnit.INDIVIDUAL,
+  carton: StandardUnit.INDIVIDUAL,
+  cartons: StandardUnit.INDIVIDUAL,
+  box: StandardUnit.INDIVIDUAL,
+  boxes: StandardUnit.INDIVIDUAL,
+  case: StandardUnit.INDIVIDUAL,
+  cases: StandardUnit.INDIVIDUAL,
+  container: StandardUnit.INDIVIDUAL,
+  containers: StandardUnit.INDIVIDUAL,
+  gill: StandardUnit.INDIVIDUAL,
+  gills: StandardUnit.INDIVIDUAL,
+  dessertspoon: StandardUnit.INDIVIDUAL,
+  dessertspoons: StandardUnit.INDIVIDUAL,
+  saltspoon: StandardUnit.INDIVIDUAL,
+  saltspoons: StandardUnit.INDIVIDUAL,
+  sprinkle: StandardUnit.INDIVIDUAL,
+  sprinkles: StandardUnit.INDIVIDUAL,
+  drop: StandardUnit.INDIVIDUAL,
+  drops: StandardUnit.INDIVIDUAL,
+  ring: StandardUnit.INDIVIDUAL,
+  rings: StandardUnit.INDIVIDUAL,
+  wedge: StandardUnit.INDIVIDUAL,
+  wedges: StandardUnit.INDIVIDUAL,
+  fillet: StandardUnit.INDIVIDUAL,
+  fillets: StandardUnit.INDIVIDUAL,
+  filet: StandardUnit.INDIVIDUAL,
+  filets: StandardUnit.INDIVIDUAL,
+  leaf: StandardUnit.INDIVIDUAL,
+  leaves: StandardUnit.INDIVIDUAL,
+  sheet: StandardUnit.INDIVIDUAL,
+  sheets: StandardUnit.INDIVIDUAL,
+  strip: StandardUnit.INDIVIDUAL,
+  strips: StandardUnit.INDIVIDUAL,
+  segment: StandardUnit.INDIVIDUAL,
+  segments: StandardUnit.INDIVIDUAL,
+  round: StandardUnit.INDIVIDUAL,
+  rounds: StandardUnit.INDIVIDUAL,
+  rasher: StandardUnit.INDIVIDUAL,
+  rashers: StandardUnit.INDIVIDUAL,
+  link: StandardUnit.INDIVIDUAL,
+  links: StandardUnit.INDIVIDUAL,
+  loin: StandardUnit.INDIVIDUAL,
+  loins: StandardUnit.INDIVIDUAL,
+  cob: StandardUnit.INDIVIDUAL,
+  cobs: StandardUnit.INDIVIDUAL,
+  roll: StandardUnit.INDIVIDUAL,
+  rolls: StandardUnit.INDIVIDUAL,
+  log: StandardUnit.INDIVIDUAL,
+  logs: StandardUnit.INDIVIDUAL,
+  disk: StandardUnit.INDIVIDUAL,
+  disks: StandardUnit.INDIVIDUAL,
+  disc: StandardUnit.INDIVIDUAL,
+  discs: StandardUnit.INDIVIDUAL,
+  spray: StandardUnit.INDIVIDUAL,
+  sprays: StandardUnit.INDIVIDUAL,
+  grind: StandardUnit.INDIVIDUAL,
+  grinds: StandardUnit.INDIVIDUAL,
+  twist: StandardUnit.INDIVIDUAL,
+  twists: StandardUnit.INDIVIDUAL,
+  envelope: StandardUnit.INDIVIDUAL,
+  envelopes: StandardUnit.INDIVIDUAL,
+  sachet: StandardUnit.INDIVIDUAL,
+  sachets: StandardUnit.INDIVIDUAL,
+  tube: StandardUnit.INDIVIDUAL,
+  tubes: StandardUnit.INDIVIDUAL,
+};
+
+const UNIT_MULTIPLIERS: Record<StandardUnit, number> = {
+
+  // millilitre
+  [StandardUnit.DECILITRE]: 100,
+  [StandardUnit.MILLILITRE]: 1,
+  [StandardUnit.CENTILITRE]: 10,
+  [StandardUnit.LITRE]: 1000,
+  [StandardUnit.TEASPOON]: 4.92892,
+  [StandardUnit.TABLESPOON]: 14.7868,
+  [StandardUnit.CUP]: 236.588,
+  [StandardUnit.FLUID_OUNCE]: 29.5735,
+  [StandardUnit.PINT]: 473.176,
+  [StandardUnit.QUART]: 946.353,
+  [StandardUnit.GALLON]: 3785.41,
+
+  // gram
+  [StandardUnit.GRAM]: 1,
+  [StandardUnit.KILOGRAM]: 1000,
+  [StandardUnit.OUNCE]: 28.3495,
+  [StandardUnit.POUND]: 453.592,
+
+  // individual
+  [StandardUnit.INDIVIDUAL]: 1
+};
+
+const NORMAL_UNIT_MAP: Record<StandardUnit, NormalUnit> = {
+  [StandardUnit.DECILITRE]: NormalUnit.MILLILITRE,
+  [StandardUnit.MILLILITRE]: NormalUnit.MILLILITRE,
+  [StandardUnit.CENTILITRE]: NormalUnit.MILLILITRE,
+  [StandardUnit.LITRE]: NormalUnit.MILLILITRE,
+  [StandardUnit.TEASPOON]: NormalUnit.MILLILITRE,
+  [StandardUnit.TABLESPOON]: NormalUnit.MILLILITRE,
+  [StandardUnit.CUP]: NormalUnit.MILLILITRE,
+  [StandardUnit.FLUID_OUNCE]: NormalUnit.MILLILITRE,
+  [StandardUnit.PINT]: NormalUnit.MILLILITRE,
+  [StandardUnit.QUART]: NormalUnit.MILLILITRE,
+  [StandardUnit.GALLON]: NormalUnit.MILLILITRE,
+
+  [StandardUnit.GRAM]: NormalUnit.GRAM,
+  [StandardUnit.KILOGRAM]: NormalUnit.GRAM,
+  [StandardUnit.OUNCE]: NormalUnit.GRAM,
+  [StandardUnit.POUND]: NormalUnit.GRAM,
+
+  [StandardUnit.INDIVIDUAL]: NormalUnit.INDIVIDUAL,
+};
+
+
+const UNICODE_FRACTIONS: Record<string, string> = {
+  "½": "1/2",
+  "⅓": "1/3",
+  "⅔": "2/3",
+  "¼": "1/4",
+  "¾": "3/4",
+  "⅕": "1/5",
+  "⅖": "2/5",
+  "⅗": "3/5",
+  "⅘": "4/5",
+  "⅙": "1/6",
+  "⅚": "5/6",
+  "⅛": "1/8",
+  "⅜": "3/8",
+  "⅝": "5/8",
+  "⅞": "7/8",
+};
+
+const FRACTION_WORDS: Record<string, number> = {
+  half: 1 / 2,
+  halves: 1 / 2,
+
+  third: 1 / 3,
+  thirds: 1 / 3,
+
+  quarter: 1 / 4,
+  quarters: 1 / 4,
+
+  fourth: 1 / 4,
+  fourths: 1 / 4,
+
+  fifth: 1 / 5,
+  fifths: 1 / 5,
+
+  sixth: 1 / 6,
+  sixths: 1 / 6,
+
+  seventh: 1 / 7,
+  sevenths: 1 / 7,
+
+  eighth: 1 / 8,
+  eighths: 1 / 8,
+
+  ninth: 1 / 9,
+  ninths: 1 / 9,
+
+  tenth: 1 / 10,
+  tenths: 1 / 10,
+};
+
+function replaceUnicodeFractions(value: string): string {
+  return value.replace(
+    /[½⅓⅔¼¾⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞]/g,
+    (match) => ` ${UNICODE_FRACTIONS[match]} `
+  );
+}
+
+function parseSimpleFraction(value: string): number | null {
+  const match = value.match(/^(\d+)\/(\d+)$/);
+
+  if (!match) {
+    return null;
+  }
+
+  const numerator = Number(match[1]);
+  const denominator = Number(match[2]);
+
+  if (denominator === 0) {
+    return null;
+  }
+
+  return numerator / denominator;
+}
+
+function parseMixedFraction(value: string): number | null {
+  const match = value.match(/^(\d+)\s+(\d+\/\d+)$/);
+
+  if (!match) {
+    return null;
+  }
+
+  const whole = Number(match[1]);
+  const fraction = parseSimpleFraction(match[2]);
+
+  if (fraction === null) {
+    return null;
+  }
+
+  return whole + fraction;
+}
+
+function parseNumberWords(value: string): number | null {
+  const result = wordsToNumbers(value);
+
+  if (typeof result === "number") {
+    return result;
+  }
+
+  if (typeof result === "string") {
+    const number = Number(result);
+
+    return Number.isNaN(number) ? null : number;
+  }
+
+  return null;
+}
+
+export function tryNormaliseQuantity(input: string | number): number | null {
+  if (typeof input === "number") {
+    return input;
+  }
+
+  let value = input.toLowerCase().trim();
+
+  if (!value) {
+    return null;
+  }
+
+  // treat "a" or "an" as the quantity 1
+  if (value === "a" || value === "an") {
+    return 1;
+  }
+
+  // convert unicode fractions
+  value = replaceUnicodeFractions(value);
+
+  // normalise punctuation
+  value = value
+    .replace(/-/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  // "1½" becomes "1 1/2"ut
+  value = value.replace(
+    /^(\d+)\s+(1\/\d+)$/,
+    "$1 $2"
+  );
+
+  // "a half" to "half"
+  value = value.replace(/^a\s+/, "");
+
+  // "1 1/2"
+  const mixedFraction = parseMixedFraction(value);
+  if (mixedFraction !== null) {
+    return mixedFraction;
+  }
+
+  // "1/2"
+  const fraction = parseSimpleFraction(value);
+  if (fraction !== null) {
+    return fraction;
+  }
+
+  // "quarter", "half", etc.
+  if (FRACTION_WORDS[value]) {
+    return FRACTION_WORDS[value];
+  }
+
+  // "three quarters"
+  const fractionWordsMatch = value.match(
+    /^(.+)\s+(half|halves|third|quarter|fourth|fifth|sixth|seventh|eighth|ninth|tenth)s?$/
+  );
+  if (fractionWordsMatch) {
+    const numerator = parseNumberWords(fractionWordsMatch[1]);
+    const denominator = FRACTION_WORDS[
+      fractionWordsMatch[2].replace(/s$/, "")
+    ];
+
+    if (numerator !== null && denominator) {
+      return numerator * denominator;
+    }
+  }
+
+  // "one and a half"
+  const andMatch = value.match(/^(.+)\s+and\s+(.+)$/);
+  if (andMatch) {
+    const whole = tryNormaliseQuantity(andMatch[1]);
+    const fractionPart = tryNormaliseQuantity(andMatch[2]);
+
+    if (whole !== null && fractionPart !== null) {
+      return whole + fractionPart;
+    }
+  }
+
+  // "one", "twenty one", etc.
+  const words = parseNumberWords(value);
+  if (words !== null) {
+    return words;
+  }
+
+  // "1.4", "2"
+  const numeric = Number(value);
+  if (!Number.isNaN(numeric)) {
+    return numeric;
+  }
+
+  return null;
+}
+
+export function tryStandardiseUnit(input: string) {
+  const standardisedUnit = UNIT_MAP[input.toLowerCase().replace('.', '')]
+
+  if (!standardisedUnit) {
+    return null;
+  }
+
+  return standardisedUnit;
+}
+
+export function normaliseUnit(quantity: number, unit: StandardUnit,): { normalisedQuantity: number; normalisedUnit: NormalUnit; } {
+  const multiplier = UNIT_MULTIPLIERS[unit];
+  const normalisedUnit = NORMAL_UNIT_MAP[unit];
+
+  const rawQuantity = quantity * multiplier;
+  const normalisedQuantity = Math.round(rawQuantity * 10000) / 10000;
+
+  return {
+    normalisedQuantity,
+    normalisedUnit,
+  };
+}

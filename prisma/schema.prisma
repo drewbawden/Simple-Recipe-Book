@@ -1,0 +1,198 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// such as "Bega peanut butter", "Kleenex toilet paper"
+model StoreProduct {
+  id       Int         @id @default(autoincrement())
+  name     String
+  barcode  String?     @unique
+  brand    String?
+  imageUrl String?
+  stock    Inventory[]
+
+  nutrition Nutrition?
+
+  category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId Int?
+
+  item   Item? @relation(fields: [itemId], references: [id])
+  itemId Int?
+
+  packageSize Decimal?    @db.Decimal(12, 4)
+  packageUnit NormalUnit?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([brand, name])
+}
+
+// such as "spreads", "sauces"
+model Category {
+  id       Int            @id @default(autoincrement())
+  name     String         @unique
+  products StoreProduct[]
+}
+
+// such as "Peanut butter", "Toilet paper"
+model Item {
+  id                Int                @id @default(autoincrement())
+  name              String             @unique
+  type              ItemType
+  products          StoreProduct[]
+  ingredients       RecipeIngredient[]
+  shoppingListItems ShoppingListItem[]
+}
+
+// such as "Bega peanut butter, 500g, expires 10/10/2005"
+model Inventory {
+  id         Int          @id @default(autoincrement())
+  product    StoreProduct @relation(fields: [productId], references: [id])
+  productId  Int
+  quantity   Decimal      @default(0) @db.Decimal(12, 4)
+  unit       NormalUnit   @default(INDIVIDUAL)
+  location   Locations?
+  expiryDate DateTime?
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+}
+
+model Nutrition {
+  id        Int          @id @default(autoincrement())
+  product   StoreProduct @relation(fields: [productId], references: [id])
+  productId Int          @unique
+
+  servingSize        String?
+  energy             Int?
+  calories           Int?
+  totalFat           Decimal?
+  saturatedFat       Decimal?
+  cholesterol        Decimal?
+  sodium             Decimal?
+  potassium          Decimal?
+  totalCarbohydrates Decimal?
+  dietaryFiber       Decimal?
+  sugar              Decimal?
+  protein            Decimal?
+  vitaminA           Int?
+  vitaminC           Int?
+  calcium            Int?
+  iron               Int?
+}
+
+model Recipes {
+  id                      Int                      @id @default(autoincrement())
+  name                    String
+  type                    RecipeTypes?
+  notes                   String?
+  url                     String?
+  ingredients             RecipeIngredient[]
+  shoppingListItemSources ShoppingListItemSource[]
+}
+
+model RecipeIngredient {
+  id       Int     @id @default(autoincrement())
+  recipe   Recipes @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipeId Int
+  item     Item    @relation(fields: [itemId], references: [id])
+  itemId   Int
+
+  quantity       String
+  unit           String?
+  normalQuantity Decimal?    @db.Decimal(12, 4)
+  normalUnit     NormalUnit?
+}
+
+model ShoppingList {
+  id        Int                @id @default(autoincrement())
+  name      String
+  items     ShoppingListItem[]
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+}
+
+model ShoppingListItem {
+  id Int @id @default(autoincrement())
+
+  shoppingList   ShoppingList @relation(fields: [shoppingListId], references: [id])
+  shoppingListId Int
+
+  item   Item? @relation(fields: [itemId], references: [id])
+  itemId Int?
+
+  customName     String? // temp name for "some random thing in the house", stuff that shouldn't really be stored
+  quantity       String? // quantity not required because of things like "batteries", "salt to taste"
+  unit           String?
+  normalQuantity Decimal?    @db.Decimal(12, 4)
+  normalUnit     NormalUnit?
+
+  completed               Boolean                  @default(false)
+  createdAt               DateTime                 @default(now())
+  shoppingListItemSources ShoppingListItemSource[]
+}
+
+model ShoppingListItemSource {
+  id Int @id @default(autoincrement())
+
+  shoppingListItem   ShoppingListItem @relation(fields: [shoppingListItemId], references: [id])
+  shoppingListItemId Int
+
+  recipe   Recipes @relation(fields: [recipeId], references: [id])
+  recipeId Int
+
+  dateAdded DateTime @default(now())
+}
+
+enum Locations {
+  FRIDGE
+  FREEZER
+  PANTRY
+}
+
+enum StandardUnit {
+  // volume
+  DECILITRE
+  MILLILITRE
+  CENTILITRE
+  LITRE
+  TEASPOON
+  TABLESPOON
+  CUP
+  FLUID_OUNCE
+  PINT
+  QUART
+  GALLON
+
+  // mass
+  GRAM
+  KILOGRAM
+  OUNCE
+  POUND
+
+  INDIVIDUAL
+}
+
+enum NormalUnit {
+  MILLILITRE
+  GRAM
+  INDIVIDUAL
+}
+
+enum RecipeTypes {
+  BREAKFAST
+  LUNCH
+  DINNER
+  SNACK
+  DESSERT
+}
+
+enum ItemType {
+  FOOD
+  HOUSEHOLD
+}
