@@ -10,6 +10,7 @@ import { EnumDropdown } from './dropdowns';
 import { Modal } from '@/components/modal';
 import { NormalUnit } from "../app/generated/prisma/enums";
 import { AddToShoppingListPopup } from "./shoppingList"
+import { isValidQuantity } from '@/lib/quantity';
 
 export const RecipeTable = () => {
   const [recipes, setRecipes] = useState([]);
@@ -315,8 +316,17 @@ const AddIngredientsPopup = ({ ingredientsList, setIngredientsList }) => {
               value={quantity}
               name="quantity"
               placeholder="e.g. 200g, 2 tbsps"
-              onChange={(e) => setQuantity(e.target.value)}
               className="w-full px-3 py-2 border border-gray-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-base"
+              onChange={(e) => {
+                const value = e.target.value;
+                setQuantity(value);
+                const parsed = isValidQuantity(value);
+
+                e.target.setCustomValidity(
+                  !parsed ? "Please enter a valid quantity."
+                    : ""
+                );
+              }}
             />
           </div>
 
