@@ -35,6 +35,11 @@ export const RecipeTable = () => {
     fetchRecipes();
   }, []);
 
+  const refreshRecipes = async () => {
+    const data = await getRecipes();
+    setRecipes(data);
+  }
+
   if (loading) {
     return <p>Loading Recipes...</p>
   }
@@ -153,7 +158,7 @@ export const RecipeTable = () => {
         )}
       </Modal>
       <Modal isOpen={isAddRecipeOpen} onClose={() => setIsAddRecipeOpen(false)}>
-        <AddRecipePopup closePopup={() => setIsAddRecipeOpen(false)} />
+        <AddRecipePopup closePopup={() => setIsAddRecipeOpen(false)} refreshRecipes={refreshRecipes} />
       </Modal>
       <Modal isOpen={isAddShoppingListOpen} onClose={() => setIsAddShoppingListOpen(false)}>
         <AddToShoppingListPopup closePopup={() => setIsAddShoppingListOpen(false)} />
@@ -163,7 +168,7 @@ export const RecipeTable = () => {
 }
 
 
-const AddRecipePopup = ({ closePopup }) => {
+const AddRecipePopup = ({ closePopup, refreshRecipes }) => {
   const [isIngredientsOpen, setIsIngredientsOpen] = useState(false);
   const [ingredientsList, setIngredientsList] = useState([]);
 
@@ -173,6 +178,7 @@ const AddRecipePopup = ({ closePopup }) => {
       <hr className='h-0.5 bg-black' />
       <Form action={async (formData) => {
         await insertNewRecipe(formData);
+        await refreshRecipes();
         closePopup();
       }} className="flex-1 overflow-y-auto pr-1 space-y-5 text-gray-900">
 
