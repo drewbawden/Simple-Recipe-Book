@@ -92,7 +92,10 @@ model Recipes {
   types                   RecipeType[]
   notes                   String?
   url                     String?
+  totalTimeMins           Int?
+  servingSize             Int?
   ingredients             RecipeIngredient[]
+  imagePath               String?
   shoppingListItemSources ShoppingListItemSource[]
 }
 
