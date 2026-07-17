@@ -1267,7 +1267,7 @@ export type NutritionScalarFieldEnum = (typeof NutritionScalarFieldEnum)[keyof t
 export const RecipesScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  type: 'type',
+  types: 'types',
   notes: 'notes',
   url: 'url'
 } as const
@@ -1453,16 +1453,16 @@ export type ListEnumLocationsFieldRefInput<$PrismaModel> = FieldRefInputType<$Pr
 
 
 /**
- * Reference to a field of type 'RecipeTypes'
+ * Reference to a field of type 'RecipeType[]'
  */
-export type EnumRecipeTypesFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RecipeTypes'>
+export type ListEnumRecipeTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RecipeType[]'>
     
 
 
 /**
- * Reference to a field of type 'RecipeTypes[]'
+ * Reference to a field of type 'RecipeType'
  */
-export type ListEnumRecipeTypesFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RecipeTypes[]'>
+export type EnumRecipeTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RecipeType'>
     
 
 

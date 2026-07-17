@@ -89,7 +89,7 @@ model Nutrition {
 model Recipes {
   id                      Int                      @id @default(autoincrement())
   name                    String
-  type                    RecipeTypes?
+  types                   RecipeType[]
   notes                   String?
   url                     String?
   ingredients             RecipeIngredient[]
@@ -184,7 +184,7 @@ enum NormalUnit {
   INDIVIDUAL
 }
 
-enum RecipeTypes {
+enum RecipeType {
   BREAKFAST
   LUNCH
   DINNER

@@ -1,6 +1,6 @@
 "use server"
 
-import { RecipeTypes, Locations, NormalUnit, StandardUnit } from "../app/generated/prisma/enums"
+import { RecipeType, Locations, NormalUnit, StandardUnit } from "../app/generated/prisma/enums"
 
 
 function formatEnum(enumObj: Record<string, string>) {
@@ -13,11 +13,11 @@ function formatEnum(enumObj: Record<string, string>) {
 const enumMaps = {
   normalUnits: formatEnum(NormalUnit),
   standardUnits: formatEnum(StandardUnit),
-  recipeTypes: formatEnum(RecipeTypes),
+  recipeType: formatEnum(RecipeType),
   locations: formatEnum(Locations),
 };
 
-export type enumType = 'normalUnits' | 'standardUnits' | 'recipeTypes' | 'locations';
+export type enumType = 'normalUnits' | 'standardUnits' | 'recipeType' | 'locations';
 
 export async function getEnums(type: enumType, query = '') {
 

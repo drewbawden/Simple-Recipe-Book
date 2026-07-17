@@ -311,23 +311,6 @@ export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedDateTimeNullableFilter<$PrismaModel>
 }
 
-export type EnumRecipeTypesNullableFilter<$PrismaModel = never> = {
-  equals?: $Enums.RecipeTypes | Prisma.EnumRecipeTypesFieldRefInput<$PrismaModel> | null
-  in?: $Enums.RecipeTypes[] | Prisma.ListEnumRecipeTypesFieldRefInput<$PrismaModel> | null
-  notIn?: $Enums.RecipeTypes[] | Prisma.ListEnumRecipeTypesFieldRefInput<$PrismaModel> | null
-  not?: Prisma.NestedEnumRecipeTypesNullableFilter<$PrismaModel> | $Enums.RecipeTypes | null
-}
-
-export type EnumRecipeTypesNullableWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.RecipeTypes | Prisma.EnumRecipeTypesFieldRefInput<$PrismaModel> | null
-  in?: $Enums.RecipeTypes[] | Prisma.ListEnumRecipeTypesFieldRefInput<$PrismaModel> | null
-  notIn?: $Enums.RecipeTypes[] | Prisma.ListEnumRecipeTypesFieldRefInput<$PrismaModel> | null
-  not?: Prisma.NestedEnumRecipeTypesNullableWithAggregatesFilter<$PrismaModel> | $Enums.RecipeTypes | null
-  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumRecipeTypesNullableFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumRecipeTypesNullableFilter<$PrismaModel>
-}
-
 export type BoolFilter<$PrismaModel = never> = {
   equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
   not?: Prisma.NestedBoolFilter<$PrismaModel> | boolean
@@ -649,23 +632,6 @@ export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedDateTimeNullableFilter<$PrismaModel>
   _max?: Prisma.NestedDateTimeNullableFilter<$PrismaModel>
-}
-
-export type NestedEnumRecipeTypesNullableFilter<$PrismaModel = never> = {
-  equals?: $Enums.RecipeTypes | Prisma.EnumRecipeTypesFieldRefInput<$PrismaModel> | null
-  in?: $Enums.RecipeTypes[] | Prisma.ListEnumRecipeTypesFieldRefInput<$PrismaModel> | null
-  notIn?: $Enums.RecipeTypes[] | Prisma.ListEnumRecipeTypesFieldRefInput<$PrismaModel> | null
-  not?: Prisma.NestedEnumRecipeTypesNullableFilter<$PrismaModel> | $Enums.RecipeTypes | null
-}
-
-export type NestedEnumRecipeTypesNullableWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.RecipeTypes | Prisma.EnumRecipeTypesFieldRefInput<$PrismaModel> | null
-  in?: $Enums.RecipeTypes[] | Prisma.ListEnumRecipeTypesFieldRefInput<$PrismaModel> | null
-  notIn?: $Enums.RecipeTypes[] | Prisma.ListEnumRecipeTypesFieldRefInput<$PrismaModel> | null
-  not?: Prisma.NestedEnumRecipeTypesNullableWithAggregatesFilter<$PrismaModel> | $Enums.RecipeTypes | null
-  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumRecipeTypesNullableFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumRecipeTypesNullableFilter<$PrismaModel>
 }
 
 export type NestedBoolFilter<$PrismaModel = never> = {

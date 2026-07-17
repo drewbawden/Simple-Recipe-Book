@@ -3,7 +3,7 @@
 import { PrismaClient, Prisma } from "../app/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import "dotenv/config";
-import { NormalUnit, RecipeTypes, Locations, StandardUnit } from "../app/generated/prisma/enums"
+import { NormalUnit, RecipeType, Locations, StandardUnit } from "../app/generated/prisma/enums"
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
@@ -23,14 +23,14 @@ const formatEnum = (enumObj: Record<string, string>) =>
 const enumMaps = {
   normalUnits: formatEnum(NormalUnit),
   standardUnits: formatEnum(StandardUnit),
-  recipeTypes: formatEnum(RecipeTypes),
+  recipeType: formatEnum(RecipeType),
   locations: formatEnum(Locations),
 };
 
 const autocompleteMap: Record<string, (query: string) => Promise<{ id: string | number; name: string }[]>> = {
   normalUnits: async (q) => enumMaps.normalUnits.filter((u) => u.name.includes(q.toLowerCase())),
   standardUnits: async (q) => enumMaps.standardUnits.filter((u) => u.name.includes(q.toLowerCase())),
-  recipeTypes: async (q) => enumMaps.recipeTypes.filter((rt) => rt.name.includes(q.toLowerCase())),
+  recipeType: async (q) => enumMaps.recipeType.filter((rt) => rt.name.includes(q.toLowerCase())),
   locations: async (q) => enumMaps.locations.filter((l) => l.name.includes(q.toLowerCase())),
 
   recipes: async (q) => prisma.recipes.findMany({
@@ -55,7 +55,7 @@ const autocompleteMap: Record<string, (query: string) => Promise<{ id: string | 
   }),
 };
 
-export type AutocompleteType = 'normalUnits' | 'standardUnits' | 'locations' | 'recipeTypes' | 'recipes' | 'items' | 'storeProducts' | 'categories';
+export type AutocompleteType = 'normalUnits' | 'standardUnits' | 'locations' | 'recipeType' | 'recipes' | 'items' | 'storeProducts' | 'categories';
 
 export async function getAutocompleteSuggestions(type: AutocompleteType, query: string) {
   const searcher = autocompleteMap[type];

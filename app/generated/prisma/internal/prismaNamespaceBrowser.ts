@@ -154,7 +154,7 @@ export type NutritionScalarFieldEnum = (typeof NutritionScalarFieldEnum)[keyof t
 export const RecipesScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  type: 'type',
+  types: 'types',
   notes: 'notes',
   url: 'url'
 } as const

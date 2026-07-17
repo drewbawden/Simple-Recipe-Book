@@ -1,6 +1,6 @@
 "use server"
 
-import { PrismaClient, RecipeTypes, ItemType } from "../app/generated/prisma/client";
+import { PrismaClient, RecipeType, ItemType } from "../app/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import "dotenv/config";
 import { parseQuantity } from "@/lib/quantity";
@@ -44,22 +44,18 @@ export async function getRecipes() {
 
 export async function insertNewRecipe(formData: FormData) {
   const name = formData.get("name") as string;
-  const recipeType = formData.get("recipeType") as RecipeTypes;
+  const recipeTypes = formData.getAll("recipeType") as RecipeType[];
   const notes = formData.get("notes") as string;
   const url = formData.get("url") as string;
   const ingredients = JSON.parse(
     formData.get("ingredients") as string
   )
 
-  if (!Object.values(RecipeTypes).includes(recipeType)) {
-    throw new Error("Invalid recipe type");
-  }
-
   await prisma.$transaction(async (tx) => {
     const recipe = await tx.recipes.create({
       data: {
         name,
-        type: recipeType as RecipeTypes,
+        types: recipeTypes as RecipeType[],
         url,
         notes,
 

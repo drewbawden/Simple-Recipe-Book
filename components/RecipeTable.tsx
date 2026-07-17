@@ -6,11 +6,11 @@ import Link from 'next/link';
 
 import { getRecipes, insertNewRecipe } from '@/actions/recipes';
 import AutocompleteInput from './autocomplete';
-import { EnumDropdown } from './dropdowns';
 import { Modal } from '@/components/modal';
 import { NormalUnit } from "../app/generated/prisma/enums";
 import { AddToShoppingListPopup } from "./shoppingList"
 import { isValidQuantity } from '@/lib/quantity';
+import { EnumOptions } from './enums';
 
 export const RecipeTable = () => {
   const [recipes, setRecipes] = useState([]);
@@ -62,7 +62,7 @@ export const RecipeTable = () => {
               <Link href={recipe.url || "#"} className={`text-lg ${recipe.url ? "underline font-bold" : ""}`}>
                 {recipe.name}
               </Link>
-              <span className="text-sm bg-gray-100 px-2 py-1 rounded">{recipe.type || "---"}</span>
+              <span className="text-sm bg-gray-100 px-2 py-1 rounded">{recipe.types || "---"}</span>
             </div>
 
             <div className="flex justify-between items-center pt-2 border-t">
@@ -110,7 +110,7 @@ export const RecipeTable = () => {
                 <td className={`text-center align-middle p-4 border-b border-blue-gray-50 ${recipe.url ? "underline font-bold" : ""}`}>
                   <Link href={recipe.url || "#"}>{recipe.name}</Link>
                 </td>
-                <td className="text-center align-middle p-4 border-b border-blue-gray-50">{recipe.type || "---"}</td>
+                <td className="text-center align-middle p-4 border-b border-blue-gray-50">{recipe.types.join(', ') || "---"}</td>
                 <td className="text-center align-middle p-4 border-b border-blue-gray-50">
                   {recipe.ingredients.length > 0 ? (
                     <button
@@ -172,6 +172,17 @@ const AddRecipePopup = ({ closePopup, refreshRecipes }) => {
   const [isIngredientsOpen, setIsIngredientsOpen] = useState(false);
   const [ingredientsList, setIngredientsList] = useState([]);
 
+  const handleSubmit = (e) => {
+    const checked = e.currentTarget.querySelectorAll(
+      'input[name="recipeType"]:checked'
+    );
+
+    if (checked.length === 0) {
+      e.preventDefault();
+      alert("Please select at least one recipe type.");
+    }
+  };
+
   return (
     <div className="flex flex-col max-h-[80vh] w-full text-gray-900">
       <h2 className="text-2xl text-gray-900 font-bold mb-2">Add Recipe</h2>
@@ -180,7 +191,9 @@ const AddRecipePopup = ({ closePopup, refreshRecipes }) => {
         await insertNewRecipe(formData);
         await refreshRecipes();
         closePopup();
-      }} className="flex-1 overflow-y-auto pr-1 space-y-5 text-gray-900">
+      }}
+        onSubmit={handleSubmit}
+        className="flex-1 overflow-y-auto pr-1 space-y-5 text-gray-900">
 
         <div className="flex flex-col space-y-1.5 pt-2">
           <label htmlFor="name" className="text-sm font-semibold text-gray-700 flex items-center">
@@ -200,8 +213,7 @@ const AddRecipePopup = ({ closePopup, refreshRecipes }) => {
             Recipe type <span className="text-red-500 ml-1">*</span>
           </label>
           <div className="w-full">
-            {/* Note: Ensure EnumDropdown style matches the other inputs inside its own component if possible */}
-            <EnumDropdown id="recipeType" name="recipeType" enumType='recipeTypes' required />
+            <EnumOptions id="recipeType" name="recipeType" enumType='recipeType' />
           </div>
         </div>
 

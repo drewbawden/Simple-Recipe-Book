@@ -49,7 +49,7 @@ export const NormalUnit = {
 export type NormalUnit = (typeof NormalUnit)[keyof typeof NormalUnit]
 
 
-export const RecipeTypes = {
+export const RecipeType = {
   BREAKFAST: 'BREAKFAST',
   LUNCH: 'LUNCH',
   DINNER: 'DINNER',
@@ -57,7 +57,7 @@ export const RecipeTypes = {
   DESSERT: 'DESSERT'
 } as const
 
-export type RecipeTypes = (typeof RecipeTypes)[keyof typeof RecipeTypes]
+export type RecipeType = (typeof RecipeType)[keyof typeof RecipeType]
 
 
 export const ItemType = {
