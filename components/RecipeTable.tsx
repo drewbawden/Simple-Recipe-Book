@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Form from 'next/form';
 import Link from 'next/link';
+import Image from 'next/image';
 
 import { getRecipes, insertNewRecipe } from '@/actions/recipes';
 import AutocompleteInput from './autocomplete';
@@ -11,6 +12,7 @@ import { NormalUnit } from "../app/generated/prisma/enums";
 import { AddToShoppingListPopup } from "./shoppingList"
 import { isValidQuantity } from '@/lib/quantity';
 import { EnumOptions } from './enums';
+import imageCompression from 'browser-image-compression';
 
 export const RecipeTable = () => {
   const [recipes, setRecipes] = useState([]);
@@ -57,19 +59,38 @@ export const RecipeTable = () => {
       {/* mobile layout */}
       <div className="block md:hidden space-y-4 px-4">
         {recipes.map((recipe) => (
+
+
           <div key={recipe.id} className="text-gray-900 p-4 border rounded-lg shadow-sm bg-white space-y-2">
-            <div className="flex justify-between items-center">
+            {recipe.imagePath ? (
+              <div className="relative aspect-[16/9] bg-gray-100 overflow-hidden rounded-lg">
+                <Image
+                  src={recipe.imagePath}
+                  alt={recipe.name}
+                  className="object-cover"
+                  fill
+                />
+              </div>) : (null)}
+            <div className="flex justify-between items-start">
               <Link href={recipe.url || "#"} className={`text-lg ${recipe.url ? "underline font-bold" : ""}`}>
                 {recipe.name}
               </Link>
-              <span className="text-sm bg-gray-100 px-2 py-1 rounded">{recipe.types || "---"}</span>
+              <span className="text-sm bg-gray-100 px-2 py-1 rounded ml-2">{recipe.types.join(', ') || "---"}</span>
+            </div>
+            <div className="flex gap-4 text-sm text-gray-600">
+              {recipe.servingSize ? (<span>{recipe.servingSize} servings</span>) :
+                (null)
+              }
+              {recipe.totalTimeMins ? (<span>{recipe.totalTimeMins} mins</span>) :
+                (null)
+              }
             </div>
 
             <div className="flex justify-between items-center pt-2 border-t">
               <div>
                 <p className="text-xs text-gray-500">Ingredients</p>
                 {recipe.ingredients.length > 0 ? (
-                  <button onClick={() => setSelectedIngredients(recipe)} className="text-blue-500 font-bold">
+                  <button onClick={() => setSelectedIngredients(recipe)} className="text-blue-500 underline font-bold">
                     {recipe.ingredients.length} Items
                   </button>
                 ) : "0"}
@@ -78,7 +99,7 @@ export const RecipeTable = () => {
               <div>
                 <p className="text-xs text-gray-500">Notes</p>
                 {recipe.notes ? (
-                  <button onClick={() => setSelectedNotes(recipe)} className="text-blue-500 underline truncate max-w-32">
+                  <button onClick={() => setSelectedNotes(recipe)} className="text-blue-500 underline font-bold truncate max-w-32">
                     View Notes
                   </button>
                 ) : "---"}
@@ -94,11 +115,13 @@ export const RecipeTable = () => {
 
       {/* desktop layout */}
       <div className="hidden md:block w-full overflow-x-auto">
-        <table className="w-full text-left table-auto min-w-max">
+        <table className="w-full text-center table-fixed">
           <thead>
             <tr>
               <th className="text-center align-middle p-4 border-b border-blue-gray-100 bg-blue-gray-50">Name</th>
               <th className="text-center align-middle p-4 border-b border-blue-gray-100 bg-blue-gray-50">Type</th>
+              <th className="text-center align-middle p-4 border-b border-blue-gray-100 bg-blue-gray-50">Serving Size</th>
+              <th className="text-center align-middle p-4 border-b border-blue-gray-100 bg-blue-gray-50">Time to make (mins)</th>
               <th className="text-center align-middle p-4 border-b border-blue-gray-100 bg-blue-gray-50">Ingredients</th>
               <th className="text-center align-middle p-4 border-b border-blue-gray-100 bg-blue-gray-50">Notes</th>
               <th className="text-center align-middle p-4 border-b border-blue-gray-100 bg-blue-gray-50">Add to shopping list</th>
@@ -107,36 +130,81 @@ export const RecipeTable = () => {
           <tbody>
             {recipes.map((recipe) => (
               <tr key={recipe.id} value={recipe.id}>
-                <td className={`text-center align-middle p-4 border-b border-blue-gray-50 ${recipe.url ? "underline font-bold" : ""}`}>
-                  <Link href={recipe.url || "#"}>{recipe.name}</Link>
+                <td
+                  className={`text-center align-middle p-4 border-b border-blue-gray-50 ${recipe.url ? "underline font-bold" : ""
+                    }`}
+                >
+                  {recipe.imagePath ? (
+                    <div className="relative w-48 h-32 mx-auto">
+                      <Image
+                        src={recipe.imagePath}
+                        alt="Recipe Image"
+                        fill
+                        className="object-cover rounded"
+                      />
+                      <p className="absolute inset-0 flex items-center justify-center z-10 text-white font-bold text-lg bg-black/30">
+                        <Link href={recipe.url || "#"}>{recipe.name}</Link>
+                      </p>
+                    </div>
+                  ) : (
+                    <p title="Recipe name">
+                      <Link href={recipe.url || "#"}>{recipe.name}</Link>
+                    </p>
+                  )}
                 </td>
-                <td className="text-center align-middle p-4 border-b border-blue-gray-50">{recipe.types.join(', ') || "---"}</td>
+                <td className="text-center align-middle p-4 border-b border-blue-gray-50">
+                  <p title='Recipe Type(s)'>
+                    {recipe.types.join(', ') || "---"}
+                  </p>
+                </td>
+                <td className="text-centerName align-middle p-4 border-b border-blue-gray-50">
+                  <p title='Serving Size'>
+                    {recipe.servingSize ?
+                      (recipe.servingSize + " serves") :
+                      ('---')
+                    }
+                  </p>
+                </td>
+                <td className="text-center align-middle p-4 border-b border-blue-gray-50">
+                  <p title='Time to make (mins)'>
+                    {recipe.totalTimeMins ?
+                      (recipe.totalTimeMins + " mins") :
+                      ('---')
+                    }
+                  </p>
+                </td>
                 <td className="text-center align-middle p-4 border-b border-blue-gray-50">
                   {recipe.ingredients.length > 0 ? (
                     <button
                       onClick={() => setSelectedIngredients(recipe)}
                       className="border-1 hover:bg-gray-900 active:bg-gray-800 text-white font-bold py-2 px-4 rounded"
+                      title='View ingredients'
                     >
                       {recipe.ingredients.length} Items
                     </button>
                   ) : (
-                    0
+                    <p title='Ingredients'>
+                      0
+                    </p>
                   )}
                 </td>
-                <td className="text-center align-middle p-4 border-b border-blue-gray-50 truncate max-w-40 max-h-8">
+                <td className="text-center align-middle p-4 border-b border-blue-gray-50 max-w-40 max-h-8">
                   {recipe.notes ? (
                     <button
                       onClick={() => setSelectedNotes(recipe)}
-                      className="truncate max-w-80 border-1 hover:bg-gray-900 active:bg-gray-800 text-white font-bold py-2 px-4 rounded"
+                      className="max-w-80 border-1 hover:bg-gray-900 active:bg-gray-800 text-white font-bold py-2 px-4 rounded"
+                      title='View notes'
                     >
                       View Notes
                     </button>
                   ) : (
-                    "---"
+                    <p title='Notes'>
+                      ---
+                    </p>
                   )}
                 </td>
                 <td className="text-center align-middle p-4 border-b border-blue-gray-50">
-                  <button className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded"
+                  <button title='Add to shopping list' className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded"
                     onClick={() => setIsAddShoppingListOpen(true)}
                     type="button">
                     Add
@@ -171,6 +239,38 @@ export const RecipeTable = () => {
 const AddRecipePopup = ({ closePopup, refreshRecipes }) => {
   const [isIngredientsOpen, setIsIngredientsOpen] = useState(false);
   const [ingredientsList, setIngredientsList] = useState([]);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState(
+    "/recipe-pictures/placeholder.png"
+  );
+
+
+  const handleImageChange = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (imagePreview.startsWith("blob:")) {
+      URL.revokeObjectURL(imagePreview);
+    }
+
+    const compressed = await imageCompression(file, {
+      maxSizeMB: 2,
+      maxWidthOrHeight: 1200,
+      useWebWorker: true,
+    });
+
+    setImageFile(compressed);
+    setImagePreview(URL.createObjectURL(compressed));
+  };
+  useEffect(() => {
+    return () => {
+      if (imagePreview.startsWith("blob:")) {
+        URL.revokeObjectURL(imagePreview);
+      }
+    };
+  }, [imagePreview]);
 
   const handleSubmit = (e) => {
     const checked = e.currentTarget.querySelectorAll(
@@ -185,15 +285,40 @@ const AddRecipePopup = ({ closePopup, refreshRecipes }) => {
 
   return (
     <div className="flex flex-col max-h-[80vh] w-full text-gray-900">
-      <h2 className="text-2xl text-gray-900 font-bold mb-2">Add Recipe</h2>
-      <hr className='h-0.5 bg-black' />
       <Form action={async (formData) => {
+        if (imageFile) {
+          formData.set("recipeImage", imageFile);
+        }
         await insertNewRecipe(formData);
         await refreshRecipes();
         closePopup();
       }}
         onSubmit={handleSubmit}
         className="flex-1 overflow-y-auto pr-1 space-y-5 text-gray-900">
+        <div className="relative h-64 w-full mt-6 mb-2 group overflow-hidden rounded-lg">
+          <Image
+            src={imagePreview}
+            alt="Recipe"
+            fill
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-black/40 group-hover:bg-black/55" />
+          <label
+            htmlFor="recipeImage"
+            className="absolute inset-0 z-10 flex cursor-pointer items-center justify-center text-3xl font-semibold text-white"
+          >
+            {imageFile ? "Change Image" : "+ Add Image"}
+          </label>
+          <input
+            id="recipeImage"
+            name="recipeImage"
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleImageChange}
+          />
+        </div>
+        <hr className='h-0.5 bg-black' />
 
         <div className="flex flex-col space-y-1.5 pt-2">
           <label htmlFor="name" className="text-sm font-semibold text-gray-700 flex items-center">
@@ -215,6 +340,32 @@ const AddRecipePopup = ({ closePopup, refreshRecipes }) => {
           <div className="w-full">
             <EnumOptions id="recipeType" name="recipeType" enumType='recipeType' />
           </div>
+        </div>
+
+        <div className="flex flex-col space-y-1.5">
+          <label htmlFor="servingSize" className="text-sm font-semibold text-gray-700">
+            Serving Size
+          </label>
+          <input
+            type="number"
+            id="servingSize"
+            name="servingSize"
+            placeholder="e.g. 4"
+            className="w-full px-3 py-2 border border-gray-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-base"
+          />
+        </div>
+
+        <div className="flex flex-col space-y-1.5">
+          <label htmlFor="totalTime" className="text-sm font-semibold text-gray-700">
+            Time to make (minutes)
+          </label>
+          <input
+            type="number"
+            id="totalTime"
+            name="totalTime"
+            placeholder="e.g. 45"
+            className="w-full px-3 py-2 border border-gray-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-base"
+          />
         </div>
 
         <div className="flex flex-col space-y-1.5">
@@ -279,7 +430,7 @@ const AddRecipePopup = ({ closePopup, refreshRecipes }) => {
         />
       </Modal>
 
-    </div>
+    </div >
   );
 }
 

@@ -32,3 +32,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# recipe images
+/public/recipe-pictures/*
+!/public/recipe-pictures/
+!/public/recipe-pictures/placeholder.png

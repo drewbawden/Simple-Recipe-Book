@@ -1,6 +1,13 @@
 import type { NextConfig } from "next";
 
+
+
 const nextConfig: NextConfig = {
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "5mb",
+    },
+  },
   images: {
     remotePatterns: [
       {
@@ -9,7 +16,7 @@ const nextConfig: NextConfig = {
       },
     ]
   },
-  allowedDevOrigins: ["johnston-ratings-gave-sorted.trycloudflare.com"]
+  allowedDevOrigins: [""]
 };
 
 export default nextConfig;

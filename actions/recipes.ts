@@ -4,6 +4,9 @@ import { PrismaClient, RecipeType, ItemType } from "../app/generated/prisma/clie
 import { PrismaPg } from "@prisma/adapter-pg";
 import "dotenv/config";
 import { parseQuantity } from "@/lib/quantity";
+import { writeFile } from "fs/promises";
+import path from "path";
+import { randomUUID } from "crypto";
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
@@ -47,9 +50,30 @@ export async function insertNewRecipe(formData: FormData) {
   const recipeTypes = formData.getAll("recipeType") as RecipeType[];
   const notes = formData.get("notes") as string;
   const url = formData.get("url") as string;
-  const ingredients = JSON.parse(
-    formData.get("ingredients") as string
-  )
+  const servingSizeValue = formData.get("servingSize");
+  const totalTimeMinsValue = formData.get("totalTime");
+  const ingredients = JSON.parse(formData.get("ingredients") as string)
+  const image = formData.get("recipeImage") as File;
+
+  const servingSize =
+    servingSizeValue === null ? null : Number(servingSizeValue);
+  const totalTimeMins =
+    totalTimeMinsValue === null ? null : Number(totalTimeMinsValue);
+
+  let imagePath = null;
+  if (image && image.size > 0) {
+    const bytes = await image.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    const extension = image.name.split(".").pop();
+    const filename = `${randomUUID()}.${extension}`;
+    const uploadDir = path.join(process.cwd(), "public", "recipe-pictures");
+
+    await writeFile(
+      path.join(uploadDir, filename),
+      buffer
+    );
+    imagePath = `/recipe-pictures/${filename}`;
+  }
 
   await prisma.$transaction(async (tx) => {
     const recipe = await tx.recipes.create({
@@ -58,6 +82,9 @@ export async function insertNewRecipe(formData: FormData) {
         types: recipeTypes as RecipeType[],
         url,
         notes,
+        servingSize,
+        totalTimeMins,
+        imagePath,
 
         ingredients: {
           create: await Promise.all(
