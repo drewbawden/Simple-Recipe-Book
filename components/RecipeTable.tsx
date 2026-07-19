@@ -12,6 +12,7 @@ import { NormalUnit } from "../app/generated/prisma/enums";
 import { AddToShoppingListPopup } from "./shoppingList"
 import { isValidQuantity } from '@/lib/quantity';
 import { EnumOptions } from './enums';
+import imageCompression from 'browser-image-compression';
 
 export const RecipeTable = () => {
   const [recipes, setRecipes] = useState([]);
@@ -172,6 +173,38 @@ export const RecipeTable = () => {
 const AddRecipePopup = ({ closePopup, refreshRecipes }) => {
   const [isIngredientsOpen, setIsIngredientsOpen] = useState(false);
   const [ingredientsList, setIngredientsList] = useState([]);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState(
+    "/recipe-pictures/placeholder.png"
+  );
+
+
+  const handleImageChange = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (imagePreview.startsWith("blob:")) {
+      URL.revokeObjectURL(imagePreview);
+    }
+
+    const compressed = await imageCompression(file, {
+      maxSizeMB: 2,
+      maxWidthOrHeight: 1200,
+      useWebWorker: true,
+    });
+
+    setImageFile(compressed);
+    setImagePreview(URL.createObjectURL(compressed));
+  };
+  useEffect(() => {
+    return () => {
+      if (imagePreview.startsWith("blob:")) {
+        URL.revokeObjectURL(imagePreview);
+      }
+    };
+  }, [imagePreview]);
 
   const handleSubmit = (e) => {
     const checked = e.currentTarget.querySelectorAll(
@@ -186,28 +219,40 @@ const AddRecipePopup = ({ closePopup, refreshRecipes }) => {
 
   return (
     <div className="flex flex-col max-h-[80vh] w-full text-gray-900">
-      <div className="relative h-64 w-full mt-6 mb-2 group cursor-pointer overflow-hidden rounded-lg">
-        <Image
-          src="/recipe-pictures/placeholder.png"
-          alt="Placeholder"
-          fill
-          className="object-cover transition-transform duration-300 group-hover:scale-105"
-        />
-        <div className="absolute inset-0 bg-black/40 transition-colors duration-300 group-hover:bg-black/55" />
-        <button
-          className="absolute inset-0 z-10 flex items-center justify-center text-3xl font-semibold text-gray-900"
-        >
-          + Add Image
-        </button>
-      </div>
-      <hr className='h-0.5 bg-black' />
       <Form action={async (formData) => {
+        if (imageFile) {
+          formData.set("recipeImage", imageFile);
+        }
         await insertNewRecipe(formData);
         await refreshRecipes();
         closePopup();
       }}
         onSubmit={handleSubmit}
         className="flex-1 overflow-y-auto pr-1 space-y-5 text-gray-900">
+        <div className="relative h-64 w-full mt-6 mb-2 group overflow-hidden rounded-lg">
+          <Image
+            src={imagePreview}
+            alt="Recipe"
+            fill
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-black/40 group-hover:bg-black/55" />
+          <label
+            htmlFor="recipeImage"
+            className="absolute inset-0 z-10 flex cursor-pointer items-center justify-center text-3xl font-semibold text-white"
+          >
+            {imageFile ? "Change Image" : "+ Add Image"}
+          </label>
+          <input
+            id="recipeImage"
+            name="recipeImage"
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleImageChange}
+          />
+        </div>
+        <hr className='h-0.5 bg-black' />
 
         <div className="flex flex-col space-y-1.5 pt-2">
           <label htmlFor="name" className="text-sm font-semibold text-gray-700 flex items-center">
@@ -319,7 +364,7 @@ const AddRecipePopup = ({ closePopup, refreshRecipes }) => {
         />
       </Modal>
 
-    </div>
+    </div >
   );
 }
 
