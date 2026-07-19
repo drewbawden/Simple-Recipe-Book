@@ -59,19 +59,38 @@ export const RecipeTable = () => {
       {/* mobile layout */}
       <div className="block md:hidden space-y-4 px-4">
         {recipes.map((recipe) => (
+
+
           <div key={recipe.id} className="text-gray-900 p-4 border rounded-lg shadow-sm bg-white space-y-2">
-            <div className="flex justify-between items-center">
+            {recipe.imagePath ? (
+              <div className="relative aspect-[16/9] bg-gray-100 overflow-hidden rounded-lg">
+                <Image
+                  src={recipe.imagePath}
+                  alt={recipe.name}
+                  className="object-cover"
+                  fill
+                />
+              </div>) : (null)}
+            <div className="flex justify-between items-start">
               <Link href={recipe.url || "#"} className={`text-lg ${recipe.url ? "underline font-bold" : ""}`}>
                 {recipe.name}
               </Link>
-              <span className="text-sm bg-gray-100 px-2 py-1 rounded">{recipe.types || "---"}</span>
+              <span className="text-sm bg-gray-100 px-2 py-1 rounded ml-2">{recipe.types.join(', ') || "---"}</span>
+            </div>
+            <div className="flex gap-4 text-sm text-gray-600">
+              {recipe.servingSize ? (<span>{recipe.servingSize} servings</span>) :
+                (null)
+              }
+              {recipe.totalTimeMins ? (<span>{recipe.totalTimeMins} mins</span>) :
+                (null)
+              }
             </div>
 
             <div className="flex justify-between items-center pt-2 border-t">
               <div>
                 <p className="text-xs text-gray-500">Ingredients</p>
                 {recipe.ingredients.length > 0 ? (
-                  <button onClick={() => setSelectedIngredients(recipe)} className="text-blue-500 font-bold">
+                  <button onClick={() => setSelectedIngredients(recipe)} className="text-blue-500 underline font-bold">
                     {recipe.ingredients.length} Items
                   </button>
                 ) : "0"}
@@ -80,7 +99,7 @@ export const RecipeTable = () => {
               <div>
                 <p className="text-xs text-gray-500">Notes</p>
                 {recipe.notes ? (
-                  <button onClick={() => setSelectedNotes(recipe)} className="text-blue-500 underline truncate max-w-32">
+                  <button onClick={() => setSelectedNotes(recipe)} className="text-blue-500 underline font-bold truncate max-w-32">
                     View Notes
                   </button>
                 ) : "---"}
@@ -96,11 +115,13 @@ export const RecipeTable = () => {
 
       {/* desktop layout */}
       <div className="hidden md:block w-full overflow-x-auto">
-        <table className="w-full text-left table-auto min-w-max">
+        <table className="w-full text-center table-fixed">
           <thead>
             <tr>
               <th className="text-center align-middle p-4 border-b border-blue-gray-100 bg-blue-gray-50">Name</th>
               <th className="text-center align-middle p-4 border-b border-blue-gray-100 bg-blue-gray-50">Type</th>
+              <th className="text-center align-middle p-4 border-b border-blue-gray-100 bg-blue-gray-50">Serving Size</th>
+              <th className="text-center align-middle p-4 border-b border-blue-gray-100 bg-blue-gray-50">Time to make (mins)</th>
               <th className="text-center align-middle p-4 border-b border-blue-gray-100 bg-blue-gray-50">Ingredients</th>
               <th className="text-center align-middle p-4 border-b border-blue-gray-100 bg-blue-gray-50">Notes</th>
               <th className="text-center align-middle p-4 border-b border-blue-gray-100 bg-blue-gray-50">Add to shopping list</th>
@@ -109,36 +130,81 @@ export const RecipeTable = () => {
           <tbody>
             {recipes.map((recipe) => (
               <tr key={recipe.id} value={recipe.id}>
-                <td className={`text-center align-middle p-4 border-b border-blue-gray-50 ${recipe.url ? "underline font-bold" : ""}`}>
-                  <Link href={recipe.url || "#"}>{recipe.name}</Link>
+                <td
+                  className={`text-center align-middle p-4 border-b border-blue-gray-50 ${recipe.url ? "underline font-bold" : ""
+                    }`}
+                >
+                  {recipe.imagePath ? (
+                    <div className="relative w-48 h-32 mx-auto">
+                      <Image
+                        src={recipe.imagePath}
+                        alt="Recipe Image"
+                        fill
+                        className="object-cover rounded"
+                      />
+                      <p className="absolute inset-0 flex items-center justify-center z-10 text-white font-bold text-lg bg-black/30">
+                        <Link href={recipe.url || "#"}>{recipe.name}</Link>
+                      </p>
+                    </div>
+                  ) : (
+                    <p title="Recipe name">
+                      <Link href={recipe.url || "#"}>{recipe.name}</Link>
+                    </p>
+                  )}
                 </td>
-                <td className="text-center align-middle p-4 border-b border-blue-gray-50">{recipe.types.join(', ') || "---"}</td>
+                <td className="text-center align-middle p-4 border-b border-blue-gray-50">
+                  <p title='Recipe Type(s)'>
+                    {recipe.types.join(', ') || "---"}
+                  </p>
+                </td>
+                <td className="text-centerName align-middle p-4 border-b border-blue-gray-50">
+                  <p title='Serving Size'>
+                    {recipe.servingSize ?
+                      (recipe.servingSize + " serves") :
+                      ('---')
+                    }
+                  </p>
+                </td>
+                <td className="text-center align-middle p-4 border-b border-blue-gray-50">
+                  <p title='Time to make (mins)'>
+                    {recipe.totalTimeMins ?
+                      (recipe.totalTimeMins + " mins") :
+                      ('---')
+                    }
+                  </p>
+                </td>
                 <td className="text-center align-middle p-4 border-b border-blue-gray-50">
                   {recipe.ingredients.length > 0 ? (
                     <button
                       onClick={() => setSelectedIngredients(recipe)}
                       className="border-1 hover:bg-gray-900 active:bg-gray-800 text-white font-bold py-2 px-4 rounded"
+                      title='View ingredients'
                     >
                       {recipe.ingredients.length} Items
                     </button>
                   ) : (
-                    0
+                    <p title='Ingredients'>
+                      0
+                    </p>
                   )}
                 </td>
-                <td className="text-center align-middle p-4 border-b border-blue-gray-50 truncate max-w-40 max-h-8">
+                <td className="text-center align-middle p-4 border-b border-blue-gray-50 max-w-40 max-h-8">
                   {recipe.notes ? (
                     <button
                       onClick={() => setSelectedNotes(recipe)}
-                      className="truncate max-w-80 border-1 hover:bg-gray-900 active:bg-gray-800 text-white font-bold py-2 px-4 rounded"
+                      className="max-w-80 border-1 hover:bg-gray-900 active:bg-gray-800 text-white font-bold py-2 px-4 rounded"
+                      title='View notes'
                     >
                       View Notes
                     </button>
                   ) : (
-                    "---"
+                    <p title='Notes'>
+                      ---
+                    </p>
                   )}
                 </td>
                 <td className="text-center align-middle p-4 border-b border-blue-gray-50">
-                  <button className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded"
+                  <button title='Add to shopping list' className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded"
                     onClick={() => setIsAddShoppingListOpen(true)}
                     type="button">
                     Add

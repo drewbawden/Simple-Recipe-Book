@@ -16,7 +16,7 @@ const nextConfig: NextConfig = {
       },
     ]
   },
-  allowedDevOrigins: ["johnston-ratings-gave-sorted.trycloudflare.com"]
+  allowedDevOrigins: [""]
 };
 
 export default nextConfig;
