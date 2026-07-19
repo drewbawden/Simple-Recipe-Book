@@ -47,9 +47,16 @@ export async function insertNewRecipe(formData: FormData) {
   const recipeTypes = formData.getAll("recipeType") as RecipeType[];
   const notes = formData.get("notes") as string;
   const url = formData.get("url") as string;
+  const servingSizeValue = formData.get("servingSize");
+  const totalTimeMinsValue = formData.get("totalTime");
   const ingredients = JSON.parse(
     formData.get("ingredients") as string
   )
+
+  const servingSize =
+    servingSizeValue === null ? null : Number(servingSizeValue);
+  const totalTimeMins =
+    totalTimeMinsValue === null ? null : Number(totalTimeMinsValue);
 
   await prisma.$transaction(async (tx) => {
     const recipe = await tx.recipes.create({
@@ -58,6 +65,8 @@ export async function insertNewRecipe(formData: FormData) {
         types: recipeTypes as RecipeType[],
         url,
         notes,
+        servingSize,
+        totalTimeMins,
 
         ingredients: {
           create: await Promise.all(

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Form from 'next/form';
 import Link from 'next/link';
+import Image from 'next/image';
 
 import { getRecipes, insertNewRecipe } from '@/actions/recipes';
 import AutocompleteInput from './autocomplete';
@@ -185,7 +186,20 @@ const AddRecipePopup = ({ closePopup, refreshRecipes }) => {
 
   return (
     <div className="flex flex-col max-h-[80vh] w-full text-gray-900">
-      <h2 className="text-2xl text-gray-900 font-bold mb-2">Add Recipe</h2>
+      <div className="relative h-64 w-full mt-6 mb-2 group cursor-pointer overflow-hidden rounded-lg">
+        <Image
+          src="/recipe-pictures/placeholder.png"
+          alt="Placeholder"
+          fill
+          className="object-cover transition-transform duration-300 group-hover:scale-105"
+        />
+        <div className="absolute inset-0 bg-black/40 transition-colors duration-300 group-hover:bg-black/55" />
+        <button
+          className="absolute inset-0 z-10 flex items-center justify-center text-3xl font-semibold text-gray-900"
+        >
+          + Add Image
+        </button>
+      </div>
       <hr className='h-0.5 bg-black' />
       <Form action={async (formData) => {
         await insertNewRecipe(formData);
@@ -215,6 +229,32 @@ const AddRecipePopup = ({ closePopup, refreshRecipes }) => {
           <div className="w-full">
             <EnumOptions id="recipeType" name="recipeType" enumType='recipeType' />
           </div>
+        </div>
+
+        <div className="flex flex-col space-y-1.5">
+          <label htmlFor="servingSize" className="text-sm font-semibold text-gray-700">
+            Serving Size
+          </label>
+          <input
+            type="number"
+            id="servingSize"
+            name="servingSize"
+            placeholder="e.g. 4"
+            className="w-full px-3 py-2 border border-gray-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-base"
+          />
+        </div>
+
+        <div className="flex flex-col space-y-1.5">
+          <label htmlFor="totalTime" className="text-sm font-semibold text-gray-700">
+            Time to make (minutes)
+          </label>
+          <input
+            type="number"
+            id="totalTime"
+            name="totalTime"
+            placeholder="e.g. 45"
+            className="w-full px-3 py-2 border border-gray-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-base"
+          />
         </div>
 
         <div className="flex flex-col space-y-1.5">

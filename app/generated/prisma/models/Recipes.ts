@@ -28,10 +28,14 @@ export type AggregateRecipes = {
 
 export type RecipesAvgAggregateOutputType = {
   id: number | null
+  totalTimeMins: number | null
+  servingSize: number | null
 }
 
 export type RecipesSumAggregateOutputType = {
   id: number | null
+  totalTimeMins: number | null
+  servingSize: number | null
 }
 
 export type RecipesMinAggregateOutputType = {
@@ -39,6 +43,9 @@ export type RecipesMinAggregateOutputType = {
   name: string | null
   notes: string | null
   url: string | null
+  totalTimeMins: number | null
+  servingSize: number | null
+  imagePath: string | null
 }
 
 export type RecipesMaxAggregateOutputType = {
@@ -46,6 +53,9 @@ export type RecipesMaxAggregateOutputType = {
   name: string | null
   notes: string | null
   url: string | null
+  totalTimeMins: number | null
+  servingSize: number | null
+  imagePath: string | null
 }
 
 export type RecipesCountAggregateOutputType = {
@@ -54,16 +64,23 @@ export type RecipesCountAggregateOutputType = {
   types: number
   notes: number
   url: number
+  totalTimeMins: number
+  servingSize: number
+  imagePath: number
   _all: number
 }
 
 
 export type RecipesAvgAggregateInputType = {
   id?: true
+  totalTimeMins?: true
+  servingSize?: true
 }
 
 export type RecipesSumAggregateInputType = {
   id?: true
+  totalTimeMins?: true
+  servingSize?: true
 }
 
 export type RecipesMinAggregateInputType = {
@@ -71,6 +88,9 @@ export type RecipesMinAggregateInputType = {
   name?: true
   notes?: true
   url?: true
+  totalTimeMins?: true
+  servingSize?: true
+  imagePath?: true
 }
 
 export type RecipesMaxAggregateInputType = {
@@ -78,6 +98,9 @@ export type RecipesMaxAggregateInputType = {
   name?: true
   notes?: true
   url?: true
+  totalTimeMins?: true
+  servingSize?: true
+  imagePath?: true
 }
 
 export type RecipesCountAggregateInputType = {
@@ -86,6 +109,9 @@ export type RecipesCountAggregateInputType = {
   types?: true
   notes?: true
   url?: true
+  totalTimeMins?: true
+  servingSize?: true
+  imagePath?: true
   _all?: true
 }
 
@@ -181,6 +207,9 @@ export type RecipesGroupByOutputType = {
   types: $Enums.RecipeType[]
   notes: string | null
   url: string | null
+  totalTimeMins: number | null
+  servingSize: number | null
+  imagePath: string | null
   _count: RecipesCountAggregateOutputType | null
   _avg: RecipesAvgAggregateOutputType | null
   _sum: RecipesSumAggregateOutputType | null
@@ -212,6 +241,9 @@ export type RecipesWhereInput = {
   types?: Prisma.EnumRecipeTypeNullableListFilter<"Recipes">
   notes?: Prisma.StringNullableFilter<"Recipes"> | string | null
   url?: Prisma.StringNullableFilter<"Recipes"> | string | null
+  totalTimeMins?: Prisma.IntNullableFilter<"Recipes"> | number | null
+  servingSize?: Prisma.IntNullableFilter<"Recipes"> | number | null
+  imagePath?: Prisma.StringNullableFilter<"Recipes"> | string | null
   ingredients?: Prisma.RecipeIngredientListRelationFilter
   shoppingListItemSources?: Prisma.ShoppingListItemSourceListRelationFilter
 }
@@ -222,6 +254,9 @@ export type RecipesOrderByWithRelationInput = {
   types?: Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   url?: Prisma.SortOrderInput | Prisma.SortOrder
+  totalTimeMins?: Prisma.SortOrderInput | Prisma.SortOrder
+  servingSize?: Prisma.SortOrderInput | Prisma.SortOrder
+  imagePath?: Prisma.SortOrderInput | Prisma.SortOrder
   ingredients?: Prisma.RecipeIngredientOrderByRelationAggregateInput
   shoppingListItemSources?: Prisma.ShoppingListItemSourceOrderByRelationAggregateInput
 }
@@ -235,6 +270,9 @@ export type RecipesWhereUniqueInput = Prisma.AtLeast<{
   types?: Prisma.EnumRecipeTypeNullableListFilter<"Recipes">
   notes?: Prisma.StringNullableFilter<"Recipes"> | string | null
   url?: Prisma.StringNullableFilter<"Recipes"> | string | null
+  totalTimeMins?: Prisma.IntNullableFilter<"Recipes"> | number | null
+  servingSize?: Prisma.IntNullableFilter<"Recipes"> | number | null
+  imagePath?: Prisma.StringNullableFilter<"Recipes"> | string | null
   ingredients?: Prisma.RecipeIngredientListRelationFilter
   shoppingListItemSources?: Prisma.ShoppingListItemSourceListRelationFilter
 }, "id">
@@ -245,6 +283,9 @@ export type RecipesOrderByWithAggregationInput = {
   types?: Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   url?: Prisma.SortOrderInput | Prisma.SortOrder
+  totalTimeMins?: Prisma.SortOrderInput | Prisma.SortOrder
+  servingSize?: Prisma.SortOrderInput | Prisma.SortOrder
+  imagePath?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.RecipesCountOrderByAggregateInput
   _avg?: Prisma.RecipesAvgOrderByAggregateInput
   _max?: Prisma.RecipesMaxOrderByAggregateInput
@@ -261,6 +302,9 @@ export type RecipesScalarWhereWithAggregatesInput = {
   types?: Prisma.EnumRecipeTypeNullableListFilter<"Recipes">
   notes?: Prisma.StringNullableWithAggregatesFilter<"Recipes"> | string | null
   url?: Prisma.StringNullableWithAggregatesFilter<"Recipes"> | string | null
+  totalTimeMins?: Prisma.IntNullableWithAggregatesFilter<"Recipes"> | number | null
+  servingSize?: Prisma.IntNullableWithAggregatesFilter<"Recipes"> | number | null
+  imagePath?: Prisma.StringNullableWithAggregatesFilter<"Recipes"> | string | null
 }
 
 export type RecipesCreateInput = {
@@ -268,6 +312,9 @@ export type RecipesCreateInput = {
   types?: Prisma.RecipesCreatetypesInput | $Enums.RecipeType[]
   notes?: string | null
   url?: string | null
+  totalTimeMins?: number | null
+  servingSize?: number | null
+  imagePath?: string | null
   ingredients?: Prisma.RecipeIngredientCreateNestedManyWithoutRecipeInput
   shoppingListItemSources?: Prisma.ShoppingListItemSourceCreateNestedManyWithoutRecipeInput
 }
@@ -278,6 +325,9 @@ export type RecipesUncheckedCreateInput = {
   types?: Prisma.RecipesCreatetypesInput | $Enums.RecipeType[]
   notes?: string | null
   url?: string | null
+  totalTimeMins?: number | null
+  servingSize?: number | null
+  imagePath?: string | null
   ingredients?: Prisma.RecipeIngredientUncheckedCreateNestedManyWithoutRecipeInput
   shoppingListItemSources?: Prisma.ShoppingListItemSourceUncheckedCreateNestedManyWithoutRecipeInput
 }
@@ -287,6 +337,9 @@ export type RecipesUpdateInput = {
   types?: Prisma.RecipesUpdatetypesInput | $Enums.RecipeType[]
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totalTimeMins?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  servingSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  imagePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ingredients?: Prisma.RecipeIngredientUpdateManyWithoutRecipeNestedInput
   shoppingListItemSources?: Prisma.ShoppingListItemSourceUpdateManyWithoutRecipeNestedInput
 }
@@ -297,6 +350,9 @@ export type RecipesUncheckedUpdateInput = {
   types?: Prisma.RecipesUpdatetypesInput | $Enums.RecipeType[]
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totalTimeMins?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  servingSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  imagePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ingredients?: Prisma.RecipeIngredientUncheckedUpdateManyWithoutRecipeNestedInput
   shoppingListItemSources?: Prisma.ShoppingListItemSourceUncheckedUpdateManyWithoutRecipeNestedInput
 }
@@ -307,6 +363,9 @@ export type RecipesCreateManyInput = {
   types?: Prisma.RecipesCreatetypesInput | $Enums.RecipeType[]
   notes?: string | null
   url?: string | null
+  totalTimeMins?: number | null
+  servingSize?: number | null
+  imagePath?: string | null
 }
 
 export type RecipesUpdateManyMutationInput = {
@@ -314,6 +373,9 @@ export type RecipesUpdateManyMutationInput = {
   types?: Prisma.RecipesUpdatetypesInput | $Enums.RecipeType[]
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totalTimeMins?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  servingSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  imagePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type RecipesUncheckedUpdateManyInput = {
@@ -322,6 +384,9 @@ export type RecipesUncheckedUpdateManyInput = {
   types?: Prisma.RecipesUpdatetypesInput | $Enums.RecipeType[]
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totalTimeMins?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  servingSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  imagePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type EnumRecipeTypeNullableListFilter<$PrismaModel = never> = {
@@ -338,10 +403,15 @@ export type RecipesCountOrderByAggregateInput = {
   types?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   url?: Prisma.SortOrder
+  totalTimeMins?: Prisma.SortOrder
+  servingSize?: Prisma.SortOrder
+  imagePath?: Prisma.SortOrder
 }
 
 export type RecipesAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  totalTimeMins?: Prisma.SortOrder
+  servingSize?: Prisma.SortOrder
 }
 
 export type RecipesMaxOrderByAggregateInput = {
@@ -349,6 +419,9 @@ export type RecipesMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   url?: Prisma.SortOrder
+  totalTimeMins?: Prisma.SortOrder
+  servingSize?: Prisma.SortOrder
+  imagePath?: Prisma.SortOrder
 }
 
 export type RecipesMinOrderByAggregateInput = {
@@ -356,10 +429,15 @@ export type RecipesMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   url?: Prisma.SortOrder
+  totalTimeMins?: Prisma.SortOrder
+  servingSize?: Prisma.SortOrder
+  imagePath?: Prisma.SortOrder
 }
 
 export type RecipesSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  totalTimeMins?: Prisma.SortOrder
+  servingSize?: Prisma.SortOrder
 }
 
 export type RecipesScalarRelationFilter = {
@@ -409,6 +487,9 @@ export type RecipesCreateWithoutIngredientsInput = {
   types?: Prisma.RecipesCreatetypesInput | $Enums.RecipeType[]
   notes?: string | null
   url?: string | null
+  totalTimeMins?: number | null
+  servingSize?: number | null
+  imagePath?: string | null
   shoppingListItemSources?: Prisma.ShoppingListItemSourceCreateNestedManyWithoutRecipeInput
 }
 
@@ -418,6 +499,9 @@ export type RecipesUncheckedCreateWithoutIngredientsInput = {
   types?: Prisma.RecipesCreatetypesInput | $Enums.RecipeType[]
   notes?: string | null
   url?: string | null
+  totalTimeMins?: number | null
+  servingSize?: number | null
+  imagePath?: string | null
   shoppingListItemSources?: Prisma.ShoppingListItemSourceUncheckedCreateNestedManyWithoutRecipeInput
 }
 
@@ -442,6 +526,9 @@ export type RecipesUpdateWithoutIngredientsInput = {
   types?: Prisma.RecipesUpdatetypesInput | $Enums.RecipeType[]
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totalTimeMins?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  servingSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  imagePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shoppingListItemSources?: Prisma.ShoppingListItemSourceUpdateManyWithoutRecipeNestedInput
 }
 
@@ -451,6 +538,9 @@ export type RecipesUncheckedUpdateWithoutIngredientsInput = {
   types?: Prisma.RecipesUpdatetypesInput | $Enums.RecipeType[]
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totalTimeMins?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  servingSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  imagePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shoppingListItemSources?: Prisma.ShoppingListItemSourceUncheckedUpdateManyWithoutRecipeNestedInput
 }
 
@@ -459,6 +549,9 @@ export type RecipesCreateWithoutShoppingListItemSourcesInput = {
   types?: Prisma.RecipesCreatetypesInput | $Enums.RecipeType[]
   notes?: string | null
   url?: string | null
+  totalTimeMins?: number | null
+  servingSize?: number | null
+  imagePath?: string | null
   ingredients?: Prisma.RecipeIngredientCreateNestedManyWithoutRecipeInput
 }
 
@@ -468,6 +561,9 @@ export type RecipesUncheckedCreateWithoutShoppingListItemSourcesInput = {
   types?: Prisma.RecipesCreatetypesInput | $Enums.RecipeType[]
   notes?: string | null
   url?: string | null
+  totalTimeMins?: number | null
+  servingSize?: number | null
+  imagePath?: string | null
   ingredients?: Prisma.RecipeIngredientUncheckedCreateNestedManyWithoutRecipeInput
 }
 
@@ -492,6 +588,9 @@ export type RecipesUpdateWithoutShoppingListItemSourcesInput = {
   types?: Prisma.RecipesUpdatetypesInput | $Enums.RecipeType[]
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totalTimeMins?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  servingSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  imagePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ingredients?: Prisma.RecipeIngredientUpdateManyWithoutRecipeNestedInput
 }
 
@@ -501,6 +600,9 @@ export type RecipesUncheckedUpdateWithoutShoppingListItemSourcesInput = {
   types?: Prisma.RecipesUpdatetypesInput | $Enums.RecipeType[]
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totalTimeMins?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  servingSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  imagePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ingredients?: Prisma.RecipeIngredientUncheckedUpdateManyWithoutRecipeNestedInput
 }
 
@@ -550,6 +652,9 @@ export type RecipesSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   types?: boolean
   notes?: boolean
   url?: boolean
+  totalTimeMins?: boolean
+  servingSize?: boolean
+  imagePath?: boolean
   ingredients?: boolean | Prisma.Recipes$ingredientsArgs<ExtArgs>
   shoppingListItemSources?: boolean | Prisma.Recipes$shoppingListItemSourcesArgs<ExtArgs>
   _count?: boolean | Prisma.RecipesCountOutputTypeDefaultArgs<ExtArgs>
@@ -561,6 +666,9 @@ export type RecipesSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   types?: boolean
   notes?: boolean
   url?: boolean
+  totalTimeMins?: boolean
+  servingSize?: boolean
+  imagePath?: boolean
 }, ExtArgs["result"]["recipes"]>
 
 export type RecipesSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -569,6 +677,9 @@ export type RecipesSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   types?: boolean
   notes?: boolean
   url?: boolean
+  totalTimeMins?: boolean
+  servingSize?: boolean
+  imagePath?: boolean
 }, ExtArgs["result"]["recipes"]>
 
 export type RecipesSelectScalar = {
@@ -577,9 +688,12 @@ export type RecipesSelectScalar = {
   types?: boolean
   notes?: boolean
   url?: boolean
+  totalTimeMins?: boolean
+  servingSize?: boolean
+  imagePath?: boolean
 }
 
-export type RecipesOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "types" | "notes" | "url", ExtArgs["result"]["recipes"]>
+export type RecipesOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "types" | "notes" | "url" | "totalTimeMins" | "servingSize" | "imagePath", ExtArgs["result"]["recipes"]>
 export type RecipesInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   ingredients?: boolean | Prisma.Recipes$ingredientsArgs<ExtArgs>
   shoppingListItemSources?: boolean | Prisma.Recipes$shoppingListItemSourcesArgs<ExtArgs>
@@ -600,6 +714,9 @@ export type $RecipesPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     types: $Enums.RecipeType[]
     notes: string | null
     url: string | null
+    totalTimeMins: number | null
+    servingSize: number | null
+    imagePath: string | null
   }, ExtArgs["result"]["recipes"]>
   composites: {}
 }
@@ -1030,6 +1147,9 @@ export interface RecipesFieldRefs {
   readonly types: Prisma.FieldRef<"Recipes", 'RecipeType[]'>
   readonly notes: Prisma.FieldRef<"Recipes", 'String'>
   readonly url: Prisma.FieldRef<"Recipes", 'String'>
+  readonly totalTimeMins: Prisma.FieldRef<"Recipes", 'Int'>
+  readonly servingSize: Prisma.FieldRef<"Recipes", 'Int'>
+  readonly imagePath: Prisma.FieldRef<"Recipes", 'String'>
 }
     
 

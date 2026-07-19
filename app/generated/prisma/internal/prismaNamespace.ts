@@ -1269,7 +1269,10 @@ export const RecipesScalarFieldEnum = {
   name: 'name',
   types: 'types',
   notes: 'notes',
-  url: 'url'
+  url: 'url',
+  totalTimeMins: 'totalTimeMins',
+  servingSize: 'servingSize',
+  imagePath: 'imagePath'
 } as const
 
 export type RecipesScalarFieldEnum = (typeof RecipesScalarFieldEnum)[keyof typeof RecipesScalarFieldEnum]
