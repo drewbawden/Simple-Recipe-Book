@@ -307,6 +307,9 @@ const AddRecipePopup = ({ closePopup, refreshRecipes }) => {
             alt="Recipe"
             fill
             className="object-cover"
+            sizes="(max-width: 768px) 100vw,
+                   (max-width: 1200px) 50vw,
+                   33vw"
           />
           <div className="absolute inset-0 bg-black/40 group-hover:bg-black/55" />
           <label
