@@ -69,6 +69,9 @@ export const RecipeTable = () => {
                   alt={recipe.name}
                   className="object-cover"
                   fill
+                  sizes="(max-width: 768px) 100vw,
+                         (max-width: 1200px) 50vw,
+                         33vw"
                 />
               </div>) : (null)}
             <div className="flex justify-between items-start">
@@ -141,6 +144,9 @@ export const RecipeTable = () => {
                         alt="Recipe Image"
                         fill
                         className="object-cover rounded"
+                        sizes="(max-width: 768px) 100vw,
+                               (max-width: 1200px) 50vw,
+                               33vw"
                       />
                       <p className="absolute inset-0 flex items-center justify-center z-10 text-white font-bold text-lg bg-black/30">
                         <Link href={recipe.url || "#"}>{recipe.name}</Link>
