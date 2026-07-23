@@ -67,7 +67,6 @@ export const AddToShoppingListPopup = ({ closePopup, recipe }) => {
         addRecipeToShoppingList(formData);
         closePopup();
       }}>
-        <input type='hidden' name='recipeId' value={recipe.id}/>
         <ul className='mt-4 divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm'>
           {ingredients.map((ingredient) => {
             const ingredientCheckboxId = `ingredient-${ingredient.id}`;
