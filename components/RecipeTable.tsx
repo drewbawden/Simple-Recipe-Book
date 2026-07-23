@@ -9,7 +9,7 @@ import { getRecipes, insertNewRecipe } from '@/actions/recipes';
 import AutocompleteInput from './autocomplete';
 import { Modal } from '@/components/modal';
 import { NormalUnit } from "../app/generated/prisma/enums";
-import { AddToShoppingListPopup } from "./shoppingList"
+import { AddToShoppingListPopup } from "./addToShoppingListPopup"
 import { isValidQuantity } from '@/lib/quantity';
 import { EnumOptions } from './enums';
 import imageCompression from 'browser-image-compression';
@@ -20,7 +20,7 @@ export const RecipeTable = () => {
   const [isAddRecipeOpen, setIsAddRecipeOpen] = useState(false);
   const [selectedIngredients, setSelectedIngredients] = useState(null);
   const [selectedNotes, setSelectedNotes] = useState(null);
-  const [isAddShoppingListOpen, setIsAddShoppingListOpen] = useState(false);
+  const [selectedShoppingList, setSelectedShoppingList] = useState(false);
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -211,7 +211,7 @@ export const RecipeTable = () => {
                 </td>
                 <td className="text-center align-middle p-4 border-b border-blue-gray-50">
                   <button title='Add to shopping list' className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded"
-                    onClick={() => setIsAddShoppingListOpen(true)}
+                    onClick={() => setSelectedShoppingList(recipe)}
                     type="button">
                     Add
                   </button>
@@ -234,8 +234,10 @@ export const RecipeTable = () => {
       <Modal isOpen={isAddRecipeOpen} onClose={() => setIsAddRecipeOpen(false)}>
         <AddRecipePopup closePopup={() => setIsAddRecipeOpen(false)} refreshRecipes={refreshRecipes} />
       </Modal>
-      <Modal isOpen={isAddShoppingListOpen} onClose={() => setIsAddShoppingListOpen(false)}>
-        <AddToShoppingListPopup closePopup={() => setIsAddShoppingListOpen(false)} />
+      <Modal isOpen={selectedShoppingList} onClose={() => setSelectedShoppingList(null)}>
+        {selectedShoppingList && (
+          <AddToShoppingListPopup closePopup={() => setSelectedShoppingList(null)} recipe={selectedShoppingList} />
+        )}
       </Modal>
     </div>
   );
