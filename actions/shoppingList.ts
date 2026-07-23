@@ -49,6 +49,25 @@ export async function getShoppingList() {
     }
 }
 
+export async function setItemCompleted(listItemId: number, completed: boolean) {
+    await prisma.shoppingListItem.update({
+        where: {
+            id: listItemId
+        },
+        data: {
+            completed
+        }
+    })
+}
+
+export async function deleteItem(listItemId: number) {
+    await prisma.shoppingListItem.delete({
+        where: {
+            id: listItemId
+        }
+    })
+}
+
 export async function addRecipeToShoppingList(formData: FormData) {
     const ingredientIdValues = formData.getAll('ingredientIds');
     const ingredientIds = ingredientIdValues.map(Number);
