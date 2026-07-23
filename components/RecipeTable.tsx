@@ -48,12 +48,14 @@ export const RecipeTable = () => {
 
   return (
     <div>
-      <div className="flex flex-col items-center m-8">
+      <div className="flex flex-row justify-between m-8">
         <button className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded "
           type="button"
           onClick={() => setIsAddRecipeOpen(true)}>
           Add Recipe
         </button>
+        <h1 className='text-4xl font-bold'>Recipes</h1>
+        <Link href="/list" className='bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded '>Shopping List</Link>
       </div>
 
       {/* mobile layout */}

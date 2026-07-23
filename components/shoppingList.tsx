@@ -1,5 +1,6 @@
 import { getShoppingList, setItemCompleted, deleteItem } from '@/actions/shoppingList';
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 export const ShoppingList = () => {
     const [loading, setLoading] = useState(true);
@@ -11,7 +12,6 @@ export const ShoppingList = () => {
         const data = await getShoppingList();
         setList(data);
         setLoading(false);
-        console.log(data)
       } catch (error) {
         console.error('Error fetching shopping list items:', error);
         setLoading(false);
@@ -54,9 +54,10 @@ export const ShoppingList = () => {
   }
 
   return (
-    <div className="mx-auto max-w-xl p-6">
-      <h1 className="mb-6 text-3xl font-bold">{list.name}</h1>
-
+    <div className="mx-auto max-w-xl p-6 flex flex-col text-center space-y-1">
+      <Link href="/" className='bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded mb-4'>Recipes</Link>
+      <h1 className="mb-6 text-4xl font-bold">{list.name}</h1>
+      <hr className='h-0.5 bg-black' />
       <div className="space-y-2">
         {list.items.map((listItem) => (
           <label

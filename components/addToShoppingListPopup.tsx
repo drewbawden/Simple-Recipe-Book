@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Form from 'next/form';
 import { addRecipeToShoppingList } from '@/actions/shoppingList';
+import { redirect, RedirectType } from 'next/navigation';
 
 export const AddToShoppingListPopup = ({ closePopup, recipe }) => {
   const ingredients = recipe.ingredients;
@@ -47,26 +48,40 @@ export const AddToShoppingListPopup = ({ closePopup, recipe }) => {
     });
   };
 
+  async function handleAdd(formData: FormData){
+    const continueToList = formData.get('continueToList');
+    addRecipeToShoppingList(formData);
+    if (continueToList) {
+      redirect('/list', RedirectType.push);
+    }
+    closePopup();
+  }
+
   return (
     <div className='text-gray-900'>
       <h1 className='text-2xl p-2 pb-4'>Add Ingredients to Shopping List</h1>
       <hr className='h-0.5 bg-black' />
-      <div className='flex justify-between items-center'>
-        <div className='flex flex-col p-2'>
-          <label htmlFor='selectAllCheck'>Select All</label>
-          <input
-            id='selectAllCheck'
-            type='checkbox'
-            checked={allSelected}
-            onChange={toggleSelectAll}
-          />
+      <Form action={handleAdd}>
+      <div className='flex p-2 justify-between space-x-2 items-center'>
+          <div className='border border-gray-200 rounded-xl p-2 space-x-2'>
+            <label htmlFor='selectAllCheck'>Select All</label>
+            <input
+              id='selectAllCheck'
+              type='checkbox'
+              checked={allSelected}
+              onChange={toggleSelectAll}
+            />
+          </div>
+          <div className='border border-gray-200 rounded-xl p-2 space-x-2'>
+            <label htmlFor='continueToList'>Continue to shopping list?</label>
+            <input
+              id='continueToList'
+              name='continueToList'
+              type='checkbox'
+            />
         </div>
       </div>
       <hr className='h-0.5 bg-black' />
-      <Form action={async (formData) => {
-        addRecipeToShoppingList(formData);
-        closePopup();
-      }}>
         <ul className='mt-4 divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm'>
           {ingredients.map((ingredient) => {
             const ingredientCheckboxId = `ingredient-${ingredient.id}`;
