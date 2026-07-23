@@ -1,5 +1,6 @@
 "use server"
 
+import { ShoppingList } from "@/components/shoppingList";
 import { PrismaClient} from "../app/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import "dotenv/config";
@@ -12,6 +13,41 @@ const prisma = new PrismaClient({
   adapter,
 });
 
+export async function getShoppingList() {
+    try {
+        const listItems = await prisma.shoppingList.findUnique({
+            where: {
+                id: 1
+            },
+            include: {
+                items: {
+                    include: {
+                        item: true,
+                        shoppingListItemSources: true
+                    }
+                }
+            }
+        })
+
+        if (!listItems) {
+            return null;
+        }
+
+        return {
+            ...listItems,
+            items: listItems.items.map(item => ({
+                ...item,
+                normalQuantity: item.normalQuantity
+                    ? Number(item.normalQuantity)
+                    : null,
+            }))
+        }
+    }
+    catch (error) {
+        console.error('Database Error:', error);
+        return {success: false, error: "Failed to fetch recipes"}
+    }
+}
 
 export async function addRecipeToShoppingList(formData: FormData) {
     const ingredientIdValues = formData.getAll('ingredientIds');

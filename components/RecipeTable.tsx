@@ -29,7 +29,7 @@ export const RecipeTable = () => {
         setRecipes(data);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching categories:', error);
+        console.error('Error fetching recipes:', error);
         setLoading(false);
       }
     };
