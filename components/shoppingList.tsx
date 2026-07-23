@@ -43,7 +43,7 @@ export const ShoppingList = () => {
     await setItemCompleted(id, e.target.checked)
 
     await sleep(1500); // wait 2 seconds
-    if (completed) {
+    if (e.target.checked) {
         await deleteItem(id);
 
         setList((prev) => ({
