@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { isValidQuantity } from "@/lib/quantity";
 import AutocompleteInput from "@/components/templates/autocomplete";
 import Form from "next/form";
+import { Trash2 } from "lucide-react";
 
 export const AddIngredientsPopup = ({
   ingredientsList,
@@ -26,6 +27,12 @@ export const AddIngredientsPopup = ({
     setName("");
     setQuantity("");
     setFoodId(null);
+  }
+
+  function removeIngredient(index: number) {
+    console.log(ingredientsList);
+    setIngredientsList((prev) => prev.filter((_, i) => i !== index));
+    console.log(ingredientsList);
   }
 
   return (
@@ -98,11 +105,19 @@ export const AddIngredientsPopup = ({
           {ingredientsList.map((ingredient, index) => (
             <li
               key={index}
-              className="flex justify-between items-center p-3.5 hover:bg-gray-50 transition"
+              className="relative flex justify-between items-center px-4 py-2 hover:bg-gray-100 transition group"
             >
               <span className="font-medium text-gray-900">
                 {ingredient.name}
               </span>
+              <button
+                onClick={() => {
+                  removeIngredient(index);
+                }}
+                className="absolute top-1/2 left-1/2 transform -translate-1/2 opacity-0 transition-opacity duration-100 group-hover:opacity-100 focus:opacity-100 group-focus-within:opacity-100 bg-white hover:bg-red-100 rounded-sm"
+              >
+                <Trash2 className="h-max w-max px-3 py-1" />
+              </button>
               <span className="bg-gray-100 text-gray-700 text-sm font-semibold px-3 py-1 rounded-md border border-gray-200">
                 {ingredient.quantity}
               </span>
