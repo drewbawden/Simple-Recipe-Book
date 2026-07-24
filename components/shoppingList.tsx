@@ -121,6 +121,10 @@ export const ShoppingList = () => {
             standardUnits.add(sources[i].recipeIngredient.standardUnit);
             normalUnits.add(sources[i].recipeIngredient.normalUnit);
             stringUnits.add(sources[i].recipeIngredient.unit);
+            console.log(normalUnits);
+            console.log(standardUnits);
+            console.log(stringUnits);
+            console.log('\n');
           }
           let totalUnit = '';
           const firstNormal = Array.from(normalUnits)[0];
@@ -148,6 +152,11 @@ export const ShoppingList = () => {
             if (!totalUnit.endsWith('s') && totalStandardQuantity > 1) {
               totalUnit += 's';
             }
+          }
+          // one standard and normal unit
+          else if (normalUnits.size === 1 && standardUnits.size === 1) {
+            totalQuantity = totalStandardQuantity;
+            totalUnit = firstStandard?.toLowerCase() + 's';
           }
           // no normal or standard units
           else {
