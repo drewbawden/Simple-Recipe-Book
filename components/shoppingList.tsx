@@ -1,10 +1,27 @@
 import { getShoppingList, setItemCompleted, deleteItem } from '@/actions/shoppingList';
+import { Prisma } from "@/app/generated/prisma/client";
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
+
+type ShoppingListWithItems = Prisma.ShoppingListGetPayload<{
+  include: {
+    items: {
+      include: {
+        item: true;
+        shoppingListItemSources: {
+          include: {
+            recipeIngredient: true;
+          };
+        };
+      };
+    };
+  };
+}>;
+
 export const ShoppingList = () => {
     const [loading, setLoading] = useState(true);
-    const [list, setList] = useState();
+    const [list, setList] = useState<ShoppingListWithItems | null>(null);
 
   useEffect(() => {
     const fetchList = async () => {
@@ -23,6 +40,10 @@ export const ShoppingList = () => {
 
   if (loading) {
     return <p>Loading Items...</p>
+  }
+
+  if (!list) {
+    return <p>No shopping list found</p>
   }
 
   const sleep = (ms: number) =>
@@ -84,8 +105,8 @@ export const ShoppingList = () => {
             </div>
 
             <span className="text-sm text-muted-foreground">
-              {listItem.quantity}
-              {listItem.unit ? ` ${listItem.unit}` : ""}
+              {listItem.shoppingListItemSources[0]?.recipeIngredient?.quantity}
+              {listItem.shoppingListItemSources[0]?.recipeIngredient?.unit ? ` ${listItem.shoppingListItemSources[0]?.recipeIngredient.unit}` : ""}
             </span>
           </label>
         ))}

@@ -15,7 +15,7 @@ const prisma = new PrismaClient({
 
 export async function getShoppingList() {
     try {
-        const listItems = await prisma.shoppingList.findUnique({
+        const shoppingList = await prisma.shoppingList.findUnique({
             where: {
                 id: 1
             },
@@ -23,29 +23,38 @@ export async function getShoppingList() {
                 items: {
                     include: {
                         item: true,
-                        shoppingListItemSources: true
+                        shoppingListItemSources: {
+                            include: {
+                                recipeIngredient: true,
+                            }
+                        }
                     }
                 }
             }
-        })
+        });
 
-        if (!listItems) {
-            return null;
-        }
+        if (!shoppingList) return null;
 
         return {
-            ...listItems,
-            items: listItems.items.map(item => ({
+            ...shoppingList,
+            items: shoppingList.items.map(item => ({
                 ...item,
-                normalQuantity: item.normalQuantity
-                    ? Number(item.normalQuantity)
-                    : null,
-            }))
-        }
+                shoppingListItemSources: item.shoppingListItemSources.map(source => ({
+                    ...source,
+                    recipeIngredient: {
+                        ...source.recipeIngredient,
+                        normalQuantity:
+                            source.recipeIngredient.normalQuantity == null
+                                ? null
+                                : Number(source.recipeIngredient.normalQuantity),
+                    },
+                })),
+            })),
+        };
     }
     catch (error) {
         console.error('Database Error:', error);
-        return {success: false, error: "Failed to fetch recipes"}
+        return {success: false, error: "Failed to fetch recipes"};
     }
 }
 
@@ -69,49 +78,62 @@ export async function deleteItem(listItemId: number) {
 }
 
 export async function addRecipeToShoppingList(formData: FormData) {
-    const ingredientIdValues = formData.getAll('ingredientIds');
-    const ingredientIds = ingredientIdValues.map(Number);
-    console.log(ingredientIds);
+    const ingredientIds = formData
+        .getAll("ingredientIds")
+        .map(Number);
 
     return prisma.$transaction(async (tx) => {
         const shoppingList =
             (await tx.shoppingList.findFirst({
                 orderBy: {
-                updatedAt: "desc",
+                    updatedAt: "desc",
                 },
             })) ??
             (await tx.shoppingList.create({
                 data: {
-                name: "Shopping List",
+                    name: "Shopping List",
                 },
-        }));
+            }));
 
         const ingredients = await tx.recipeIngredient.findMany({
-        where: {
-            id: {
-            in: ingredientIds,
+            where: {
+                id: {
+                    in: ingredientIds,
+                },
             },
-        },
         });
 
         for (const ingredient of ingredients) {
-        await tx.shoppingListItem.create({
-            data: {
-            shoppingListId: shoppingList.id,
-
-            itemId: ingredient.itemId,
-            quantity: ingredient.quantity,
-            unit: ingredient.unit,
-            normalQuantity: ingredient.normalQuantity,
-            normalUnit: ingredient.normalUnit,
-
-            shoppingListItemSources: {
-                create: {
-                recipeId: ingredient.recipeId,
+            const existingItem = await tx.shoppingListItem.findFirst({
+                where: {
+                    shoppingListId: shoppingList.id,
+                    itemId: ingredient.itemId,
                 },
-            },
-            },
-        });
+            });
+
+            if (existingItem) {
+                await tx.shoppingListItemSource.create({
+                    data: {
+                        shoppingListItemId: existingItem.id,
+                        recipeIngredientId: ingredient.id,
+                    },
+                });
+            } else {
+                await tx.shoppingListItem.create({
+                    data: {
+                        shoppingListId: shoppingList.id,
+                        itemId: ingredient.itemId,
+
+                        shoppingListItemSources: {
+                            create: {
+                                recipeIngredientId: ingredient.id,
+                            },
+                        },
+                    },
+                });
+            }
         }
-  });
+
+        return shoppingList;
+    });
 }
