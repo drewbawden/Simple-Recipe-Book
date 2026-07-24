@@ -9,7 +9,7 @@ import { getRecipes, insertNewRecipe } from '@/actions/recipes';
 import AutocompleteInput from './autocomplete';
 import { Modal } from '@/components/modal';
 import { NormalUnit } from "../app/generated/prisma/enums";
-import { AddToShoppingListPopup } from "./shoppingList"
+import { AddToShoppingListPopup } from "./addToShoppingListPopup"
 import { isValidQuantity } from '@/lib/quantity';
 import { EnumOptions } from './enums';
 import imageCompression from 'browser-image-compression';
@@ -20,7 +20,7 @@ export const RecipeTable = () => {
   const [isAddRecipeOpen, setIsAddRecipeOpen] = useState(false);
   const [selectedIngredients, setSelectedIngredients] = useState(null);
   const [selectedNotes, setSelectedNotes] = useState(null);
-  const [isAddShoppingListOpen, setIsAddShoppingListOpen] = useState(false);
+  const [selectedShoppingList, setSelectedShoppingList] = useState(false);
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -29,7 +29,7 @@ export const RecipeTable = () => {
         setRecipes(data);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching categories:', error);
+        console.error('Error fetching recipes:', error);
         setLoading(false);
       }
     };
@@ -48,12 +48,14 @@ export const RecipeTable = () => {
 
   return (
     <div>
-      <div className="flex flex-col items-center m-8">
+      <div className="flex flex-row justify-between m-8">
         <button className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded "
           type="button"
           onClick={() => setIsAddRecipeOpen(true)}>
           Add Recipe
         </button>
+        <h1 className='text-4xl font-bold'>Recipes</h1>
+        <Link href="/list" className='bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded '>Shopping List</Link>
       </div>
 
       {/* mobile layout */}
@@ -107,10 +109,11 @@ export const RecipeTable = () => {
                   </button>
                 ) : "---"}
               </div>
-
-              <button className="bg-blue-500 text-white text-sm font-bold py-1 px-3 rounded">
-                Add
-              </button>
+                <button title='Add to shopping list' className="bg-blue-500 text-white text-sm font-bold py-1 px-3 rounded"
+                  onClick={() => setSelectedShoppingList(recipe)}
+                  type="button">
+                  Add
+                </button>
             </div>
           </div>
         ))}
@@ -211,7 +214,7 @@ export const RecipeTable = () => {
                 </td>
                 <td className="text-center align-middle p-4 border-b border-blue-gray-50">
                   <button title='Add to shopping list' className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded"
-                    onClick={() => setIsAddShoppingListOpen(true)}
+                    onClick={() => setSelectedShoppingList(recipe)}
                     type="button">
                     Add
                   </button>
@@ -234,8 +237,10 @@ export const RecipeTable = () => {
       <Modal isOpen={isAddRecipeOpen} onClose={() => setIsAddRecipeOpen(false)}>
         <AddRecipePopup closePopup={() => setIsAddRecipeOpen(false)} refreshRecipes={refreshRecipes} />
       </Modal>
-      <Modal isOpen={isAddShoppingListOpen} onClose={() => setIsAddShoppingListOpen(false)}>
-        <AddToShoppingListPopup closePopup={() => setIsAddShoppingListOpen(false)} />
+      <Modal isOpen={selectedShoppingList} onClose={() => setSelectedShoppingList(null)}>
+        {selectedShoppingList && (
+          <AddToShoppingListPopup closePopup={() => setSelectedShoppingList(null)} recipe={selectedShoppingList} />
+        )}
       </Modal>
     </div>
   );

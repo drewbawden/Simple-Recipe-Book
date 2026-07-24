@@ -29,33 +29,33 @@ export type AggregateShoppingListItemSource = {
 export type ShoppingListItemSourceAvgAggregateOutputType = {
   id: number | null
   shoppingListItemId: number | null
-  recipeId: number | null
+  recipeIngredientId: number | null
 }
 
 export type ShoppingListItemSourceSumAggregateOutputType = {
   id: number | null
   shoppingListItemId: number | null
-  recipeId: number | null
+  recipeIngredientId: number | null
 }
 
 export type ShoppingListItemSourceMinAggregateOutputType = {
   id: number | null
   shoppingListItemId: number | null
-  recipeId: number | null
+  recipeIngredientId: number | null
   dateAdded: Date | null
 }
 
 export type ShoppingListItemSourceMaxAggregateOutputType = {
   id: number | null
   shoppingListItemId: number | null
-  recipeId: number | null
+  recipeIngredientId: number | null
   dateAdded: Date | null
 }
 
 export type ShoppingListItemSourceCountAggregateOutputType = {
   id: number
   shoppingListItemId: number
-  recipeId: number
+  recipeIngredientId: number
   dateAdded: number
   _all: number
 }
@@ -64,33 +64,33 @@ export type ShoppingListItemSourceCountAggregateOutputType = {
 export type ShoppingListItemSourceAvgAggregateInputType = {
   id?: true
   shoppingListItemId?: true
-  recipeId?: true
+  recipeIngredientId?: true
 }
 
 export type ShoppingListItemSourceSumAggregateInputType = {
   id?: true
   shoppingListItemId?: true
-  recipeId?: true
+  recipeIngredientId?: true
 }
 
 export type ShoppingListItemSourceMinAggregateInputType = {
   id?: true
   shoppingListItemId?: true
-  recipeId?: true
+  recipeIngredientId?: true
   dateAdded?: true
 }
 
 export type ShoppingListItemSourceMaxAggregateInputType = {
   id?: true
   shoppingListItemId?: true
-  recipeId?: true
+  recipeIngredientId?: true
   dateAdded?: true
 }
 
 export type ShoppingListItemSourceCountAggregateInputType = {
   id?: true
   shoppingListItemId?: true
-  recipeId?: true
+  recipeIngredientId?: true
   dateAdded?: true
   _all?: true
 }
@@ -184,7 +184,7 @@ export type ShoppingListItemSourceGroupByArgs<ExtArgs extends runtime.Types.Exte
 export type ShoppingListItemSourceGroupByOutputType = {
   id: number
   shoppingListItemId: number
-  recipeId: number
+  recipeIngredientId: number
   dateAdded: Date
   _count: ShoppingListItemSourceCountAggregateOutputType | null
   _avg: ShoppingListItemSourceAvgAggregateOutputType | null
@@ -214,19 +214,19 @@ export type ShoppingListItemSourceWhereInput = {
   NOT?: Prisma.ShoppingListItemSourceWhereInput | Prisma.ShoppingListItemSourceWhereInput[]
   id?: Prisma.IntFilter<"ShoppingListItemSource"> | number
   shoppingListItemId?: Prisma.IntFilter<"ShoppingListItemSource"> | number
-  recipeId?: Prisma.IntFilter<"ShoppingListItemSource"> | number
+  recipeIngredientId?: Prisma.IntFilter<"ShoppingListItemSource"> | number
   dateAdded?: Prisma.DateTimeFilter<"ShoppingListItemSource"> | Date | string
   shoppingListItem?: Prisma.XOR<Prisma.ShoppingListItemScalarRelationFilter, Prisma.ShoppingListItemWhereInput>
-  recipe?: Prisma.XOR<Prisma.RecipesScalarRelationFilter, Prisma.RecipesWhereInput>
+  recipeIngredient?: Prisma.XOR<Prisma.RecipeIngredientScalarRelationFilter, Prisma.RecipeIngredientWhereInput>
 }
 
 export type ShoppingListItemSourceOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   shoppingListItemId?: Prisma.SortOrder
-  recipeId?: Prisma.SortOrder
+  recipeIngredientId?: Prisma.SortOrder
   dateAdded?: Prisma.SortOrder
   shoppingListItem?: Prisma.ShoppingListItemOrderByWithRelationInput
-  recipe?: Prisma.RecipesOrderByWithRelationInput
+  recipeIngredient?: Prisma.RecipeIngredientOrderByWithRelationInput
 }
 
 export type ShoppingListItemSourceWhereUniqueInput = Prisma.AtLeast<{
@@ -235,16 +235,16 @@ export type ShoppingListItemSourceWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.ShoppingListItemSourceWhereInput[]
   NOT?: Prisma.ShoppingListItemSourceWhereInput | Prisma.ShoppingListItemSourceWhereInput[]
   shoppingListItemId?: Prisma.IntFilter<"ShoppingListItemSource"> | number
-  recipeId?: Prisma.IntFilter<"ShoppingListItemSource"> | number
+  recipeIngredientId?: Prisma.IntFilter<"ShoppingListItemSource"> | number
   dateAdded?: Prisma.DateTimeFilter<"ShoppingListItemSource"> | Date | string
   shoppingListItem?: Prisma.XOR<Prisma.ShoppingListItemScalarRelationFilter, Prisma.ShoppingListItemWhereInput>
-  recipe?: Prisma.XOR<Prisma.RecipesScalarRelationFilter, Prisma.RecipesWhereInput>
+  recipeIngredient?: Prisma.XOR<Prisma.RecipeIngredientScalarRelationFilter, Prisma.RecipeIngredientWhereInput>
 }, "id">
 
 export type ShoppingListItemSourceOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   shoppingListItemId?: Prisma.SortOrder
-  recipeId?: Prisma.SortOrder
+  recipeIngredientId?: Prisma.SortOrder
   dateAdded?: Prisma.SortOrder
   _count?: Prisma.ShoppingListItemSourceCountOrderByAggregateInput
   _avg?: Prisma.ShoppingListItemSourceAvgOrderByAggregateInput
@@ -259,40 +259,40 @@ export type ShoppingListItemSourceScalarWhereWithAggregatesInput = {
   NOT?: Prisma.ShoppingListItemSourceScalarWhereWithAggregatesInput | Prisma.ShoppingListItemSourceScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"ShoppingListItemSource"> | number
   shoppingListItemId?: Prisma.IntWithAggregatesFilter<"ShoppingListItemSource"> | number
-  recipeId?: Prisma.IntWithAggregatesFilter<"ShoppingListItemSource"> | number
+  recipeIngredientId?: Prisma.IntWithAggregatesFilter<"ShoppingListItemSource"> | number
   dateAdded?: Prisma.DateTimeWithAggregatesFilter<"ShoppingListItemSource"> | Date | string
 }
 
 export type ShoppingListItemSourceCreateInput = {
   dateAdded?: Date | string
   shoppingListItem: Prisma.ShoppingListItemCreateNestedOneWithoutShoppingListItemSourcesInput
-  recipe: Prisma.RecipesCreateNestedOneWithoutShoppingListItemSourcesInput
+  recipeIngredient: Prisma.RecipeIngredientCreateNestedOneWithoutShoppingListItemSourcesInput
 }
 
 export type ShoppingListItemSourceUncheckedCreateInput = {
   id?: number
   shoppingListItemId: number
-  recipeId: number
+  recipeIngredientId: number
   dateAdded?: Date | string
 }
 
 export type ShoppingListItemSourceUpdateInput = {
   dateAdded?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   shoppingListItem?: Prisma.ShoppingListItemUpdateOneRequiredWithoutShoppingListItemSourcesNestedInput
-  recipe?: Prisma.RecipesUpdateOneRequiredWithoutShoppingListItemSourcesNestedInput
+  recipeIngredient?: Prisma.RecipeIngredientUpdateOneRequiredWithoutShoppingListItemSourcesNestedInput
 }
 
 export type ShoppingListItemSourceUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   shoppingListItemId?: Prisma.IntFieldUpdateOperationsInput | number
-  recipeId?: Prisma.IntFieldUpdateOperationsInput | number
+  recipeIngredientId?: Prisma.IntFieldUpdateOperationsInput | number
   dateAdded?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ShoppingListItemSourceCreateManyInput = {
   id?: number
   shoppingListItemId: number
-  recipeId: number
+  recipeIngredientId: number
   dateAdded?: Date | string
 }
 
@@ -303,7 +303,7 @@ export type ShoppingListItemSourceUpdateManyMutationInput = {
 export type ShoppingListItemSourceUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   shoppingListItemId?: Prisma.IntFieldUpdateOperationsInput | number
-  recipeId?: Prisma.IntFieldUpdateOperationsInput | number
+  recipeIngredientId?: Prisma.IntFieldUpdateOperationsInput | number
   dateAdded?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -320,75 +320,75 @@ export type ShoppingListItemSourceOrderByRelationAggregateInput = {
 export type ShoppingListItemSourceCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   shoppingListItemId?: Prisma.SortOrder
-  recipeId?: Prisma.SortOrder
+  recipeIngredientId?: Prisma.SortOrder
   dateAdded?: Prisma.SortOrder
 }
 
 export type ShoppingListItemSourceAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   shoppingListItemId?: Prisma.SortOrder
-  recipeId?: Prisma.SortOrder
+  recipeIngredientId?: Prisma.SortOrder
 }
 
 export type ShoppingListItemSourceMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   shoppingListItemId?: Prisma.SortOrder
-  recipeId?: Prisma.SortOrder
+  recipeIngredientId?: Prisma.SortOrder
   dateAdded?: Prisma.SortOrder
 }
 
 export type ShoppingListItemSourceMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   shoppingListItemId?: Prisma.SortOrder
-  recipeId?: Prisma.SortOrder
+  recipeIngredientId?: Prisma.SortOrder
   dateAdded?: Prisma.SortOrder
 }
 
 export type ShoppingListItemSourceSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   shoppingListItemId?: Prisma.SortOrder
-  recipeId?: Prisma.SortOrder
+  recipeIngredientId?: Prisma.SortOrder
 }
 
-export type ShoppingListItemSourceCreateNestedManyWithoutRecipeInput = {
-  create?: Prisma.XOR<Prisma.ShoppingListItemSourceCreateWithoutRecipeInput, Prisma.ShoppingListItemSourceUncheckedCreateWithoutRecipeInput> | Prisma.ShoppingListItemSourceCreateWithoutRecipeInput[] | Prisma.ShoppingListItemSourceUncheckedCreateWithoutRecipeInput[]
-  connectOrCreate?: Prisma.ShoppingListItemSourceCreateOrConnectWithoutRecipeInput | Prisma.ShoppingListItemSourceCreateOrConnectWithoutRecipeInput[]
-  createMany?: Prisma.ShoppingListItemSourceCreateManyRecipeInputEnvelope
+export type ShoppingListItemSourceCreateNestedManyWithoutRecipeIngredientInput = {
+  create?: Prisma.XOR<Prisma.ShoppingListItemSourceCreateWithoutRecipeIngredientInput, Prisma.ShoppingListItemSourceUncheckedCreateWithoutRecipeIngredientInput> | Prisma.ShoppingListItemSourceCreateWithoutRecipeIngredientInput[] | Prisma.ShoppingListItemSourceUncheckedCreateWithoutRecipeIngredientInput[]
+  connectOrCreate?: Prisma.ShoppingListItemSourceCreateOrConnectWithoutRecipeIngredientInput | Prisma.ShoppingListItemSourceCreateOrConnectWithoutRecipeIngredientInput[]
+  createMany?: Prisma.ShoppingListItemSourceCreateManyRecipeIngredientInputEnvelope
   connect?: Prisma.ShoppingListItemSourceWhereUniqueInput | Prisma.ShoppingListItemSourceWhereUniqueInput[]
 }
 
-export type ShoppingListItemSourceUncheckedCreateNestedManyWithoutRecipeInput = {
-  create?: Prisma.XOR<Prisma.ShoppingListItemSourceCreateWithoutRecipeInput, Prisma.ShoppingListItemSourceUncheckedCreateWithoutRecipeInput> | Prisma.ShoppingListItemSourceCreateWithoutRecipeInput[] | Prisma.ShoppingListItemSourceUncheckedCreateWithoutRecipeInput[]
-  connectOrCreate?: Prisma.ShoppingListItemSourceCreateOrConnectWithoutRecipeInput | Prisma.ShoppingListItemSourceCreateOrConnectWithoutRecipeInput[]
-  createMany?: Prisma.ShoppingListItemSourceCreateManyRecipeInputEnvelope
+export type ShoppingListItemSourceUncheckedCreateNestedManyWithoutRecipeIngredientInput = {
+  create?: Prisma.XOR<Prisma.ShoppingListItemSourceCreateWithoutRecipeIngredientInput, Prisma.ShoppingListItemSourceUncheckedCreateWithoutRecipeIngredientInput> | Prisma.ShoppingListItemSourceCreateWithoutRecipeIngredientInput[] | Prisma.ShoppingListItemSourceUncheckedCreateWithoutRecipeIngredientInput[]
+  connectOrCreate?: Prisma.ShoppingListItemSourceCreateOrConnectWithoutRecipeIngredientInput | Prisma.ShoppingListItemSourceCreateOrConnectWithoutRecipeIngredientInput[]
+  createMany?: Prisma.ShoppingListItemSourceCreateManyRecipeIngredientInputEnvelope
   connect?: Prisma.ShoppingListItemSourceWhereUniqueInput | Prisma.ShoppingListItemSourceWhereUniqueInput[]
 }
 
-export type ShoppingListItemSourceUpdateManyWithoutRecipeNestedInput = {
-  create?: Prisma.XOR<Prisma.ShoppingListItemSourceCreateWithoutRecipeInput, Prisma.ShoppingListItemSourceUncheckedCreateWithoutRecipeInput> | Prisma.ShoppingListItemSourceCreateWithoutRecipeInput[] | Prisma.ShoppingListItemSourceUncheckedCreateWithoutRecipeInput[]
-  connectOrCreate?: Prisma.ShoppingListItemSourceCreateOrConnectWithoutRecipeInput | Prisma.ShoppingListItemSourceCreateOrConnectWithoutRecipeInput[]
-  upsert?: Prisma.ShoppingListItemSourceUpsertWithWhereUniqueWithoutRecipeInput | Prisma.ShoppingListItemSourceUpsertWithWhereUniqueWithoutRecipeInput[]
-  createMany?: Prisma.ShoppingListItemSourceCreateManyRecipeInputEnvelope
+export type ShoppingListItemSourceUpdateManyWithoutRecipeIngredientNestedInput = {
+  create?: Prisma.XOR<Prisma.ShoppingListItemSourceCreateWithoutRecipeIngredientInput, Prisma.ShoppingListItemSourceUncheckedCreateWithoutRecipeIngredientInput> | Prisma.ShoppingListItemSourceCreateWithoutRecipeIngredientInput[] | Prisma.ShoppingListItemSourceUncheckedCreateWithoutRecipeIngredientInput[]
+  connectOrCreate?: Prisma.ShoppingListItemSourceCreateOrConnectWithoutRecipeIngredientInput | Prisma.ShoppingListItemSourceCreateOrConnectWithoutRecipeIngredientInput[]
+  upsert?: Prisma.ShoppingListItemSourceUpsertWithWhereUniqueWithoutRecipeIngredientInput | Prisma.ShoppingListItemSourceUpsertWithWhereUniqueWithoutRecipeIngredientInput[]
+  createMany?: Prisma.ShoppingListItemSourceCreateManyRecipeIngredientInputEnvelope
   set?: Prisma.ShoppingListItemSourceWhereUniqueInput | Prisma.ShoppingListItemSourceWhereUniqueInput[]
   disconnect?: Prisma.ShoppingListItemSourceWhereUniqueInput | Prisma.ShoppingListItemSourceWhereUniqueInput[]
   delete?: Prisma.ShoppingListItemSourceWhereUniqueInput | Prisma.ShoppingListItemSourceWhereUniqueInput[]
   connect?: Prisma.ShoppingListItemSourceWhereUniqueInput | Prisma.ShoppingListItemSourceWhereUniqueInput[]
-  update?: Prisma.ShoppingListItemSourceUpdateWithWhereUniqueWithoutRecipeInput | Prisma.ShoppingListItemSourceUpdateWithWhereUniqueWithoutRecipeInput[]
-  updateMany?: Prisma.ShoppingListItemSourceUpdateManyWithWhereWithoutRecipeInput | Prisma.ShoppingListItemSourceUpdateManyWithWhereWithoutRecipeInput[]
+  update?: Prisma.ShoppingListItemSourceUpdateWithWhereUniqueWithoutRecipeIngredientInput | Prisma.ShoppingListItemSourceUpdateWithWhereUniqueWithoutRecipeIngredientInput[]
+  updateMany?: Prisma.ShoppingListItemSourceUpdateManyWithWhereWithoutRecipeIngredientInput | Prisma.ShoppingListItemSourceUpdateManyWithWhereWithoutRecipeIngredientInput[]
   deleteMany?: Prisma.ShoppingListItemSourceScalarWhereInput | Prisma.ShoppingListItemSourceScalarWhereInput[]
 }
 
-export type ShoppingListItemSourceUncheckedUpdateManyWithoutRecipeNestedInput = {
-  create?: Prisma.XOR<Prisma.ShoppingListItemSourceCreateWithoutRecipeInput, Prisma.ShoppingListItemSourceUncheckedCreateWithoutRecipeInput> | Prisma.ShoppingListItemSourceCreateWithoutRecipeInput[] | Prisma.ShoppingListItemSourceUncheckedCreateWithoutRecipeInput[]
-  connectOrCreate?: Prisma.ShoppingListItemSourceCreateOrConnectWithoutRecipeInput | Prisma.ShoppingListItemSourceCreateOrConnectWithoutRecipeInput[]
-  upsert?: Prisma.ShoppingListItemSourceUpsertWithWhereUniqueWithoutRecipeInput | Prisma.ShoppingListItemSourceUpsertWithWhereUniqueWithoutRecipeInput[]
-  createMany?: Prisma.ShoppingListItemSourceCreateManyRecipeInputEnvelope
+export type ShoppingListItemSourceUncheckedUpdateManyWithoutRecipeIngredientNestedInput = {
+  create?: Prisma.XOR<Prisma.ShoppingListItemSourceCreateWithoutRecipeIngredientInput, Prisma.ShoppingListItemSourceUncheckedCreateWithoutRecipeIngredientInput> | Prisma.ShoppingListItemSourceCreateWithoutRecipeIngredientInput[] | Prisma.ShoppingListItemSourceUncheckedCreateWithoutRecipeIngredientInput[]
+  connectOrCreate?: Prisma.ShoppingListItemSourceCreateOrConnectWithoutRecipeIngredientInput | Prisma.ShoppingListItemSourceCreateOrConnectWithoutRecipeIngredientInput[]
+  upsert?: Prisma.ShoppingListItemSourceUpsertWithWhereUniqueWithoutRecipeIngredientInput | Prisma.ShoppingListItemSourceUpsertWithWhereUniqueWithoutRecipeIngredientInput[]
+  createMany?: Prisma.ShoppingListItemSourceCreateManyRecipeIngredientInputEnvelope
   set?: Prisma.ShoppingListItemSourceWhereUniqueInput | Prisma.ShoppingListItemSourceWhereUniqueInput[]
   disconnect?: Prisma.ShoppingListItemSourceWhereUniqueInput | Prisma.ShoppingListItemSourceWhereUniqueInput[]
   delete?: Prisma.ShoppingListItemSourceWhereUniqueInput | Prisma.ShoppingListItemSourceWhereUniqueInput[]
   connect?: Prisma.ShoppingListItemSourceWhereUniqueInput | Prisma.ShoppingListItemSourceWhereUniqueInput[]
-  update?: Prisma.ShoppingListItemSourceUpdateWithWhereUniqueWithoutRecipeInput | Prisma.ShoppingListItemSourceUpdateWithWhereUniqueWithoutRecipeInput[]
-  updateMany?: Prisma.ShoppingListItemSourceUpdateManyWithWhereWithoutRecipeInput | Prisma.ShoppingListItemSourceUpdateManyWithWhereWithoutRecipeInput[]
+  update?: Prisma.ShoppingListItemSourceUpdateWithWhereUniqueWithoutRecipeIngredientInput | Prisma.ShoppingListItemSourceUpdateWithWhereUniqueWithoutRecipeIngredientInput[]
+  updateMany?: Prisma.ShoppingListItemSourceUpdateManyWithWhereWithoutRecipeIngredientInput | Prisma.ShoppingListItemSourceUpdateManyWithWhereWithoutRecipeIngredientInput[]
   deleteMany?: Prisma.ShoppingListItemSourceScalarWhereInput | Prisma.ShoppingListItemSourceScalarWhereInput[]
 }
 
@@ -434,41 +434,41 @@ export type ShoppingListItemSourceUncheckedUpdateManyWithoutShoppingListItemNest
   deleteMany?: Prisma.ShoppingListItemSourceScalarWhereInput | Prisma.ShoppingListItemSourceScalarWhereInput[]
 }
 
-export type ShoppingListItemSourceCreateWithoutRecipeInput = {
+export type ShoppingListItemSourceCreateWithoutRecipeIngredientInput = {
   dateAdded?: Date | string
   shoppingListItem: Prisma.ShoppingListItemCreateNestedOneWithoutShoppingListItemSourcesInput
 }
 
-export type ShoppingListItemSourceUncheckedCreateWithoutRecipeInput = {
+export type ShoppingListItemSourceUncheckedCreateWithoutRecipeIngredientInput = {
   id?: number
   shoppingListItemId: number
   dateAdded?: Date | string
 }
 
-export type ShoppingListItemSourceCreateOrConnectWithoutRecipeInput = {
+export type ShoppingListItemSourceCreateOrConnectWithoutRecipeIngredientInput = {
   where: Prisma.ShoppingListItemSourceWhereUniqueInput
-  create: Prisma.XOR<Prisma.ShoppingListItemSourceCreateWithoutRecipeInput, Prisma.ShoppingListItemSourceUncheckedCreateWithoutRecipeInput>
+  create: Prisma.XOR<Prisma.ShoppingListItemSourceCreateWithoutRecipeIngredientInput, Prisma.ShoppingListItemSourceUncheckedCreateWithoutRecipeIngredientInput>
 }
 
-export type ShoppingListItemSourceCreateManyRecipeInputEnvelope = {
-  data: Prisma.ShoppingListItemSourceCreateManyRecipeInput | Prisma.ShoppingListItemSourceCreateManyRecipeInput[]
+export type ShoppingListItemSourceCreateManyRecipeIngredientInputEnvelope = {
+  data: Prisma.ShoppingListItemSourceCreateManyRecipeIngredientInput | Prisma.ShoppingListItemSourceCreateManyRecipeIngredientInput[]
   skipDuplicates?: boolean
 }
 
-export type ShoppingListItemSourceUpsertWithWhereUniqueWithoutRecipeInput = {
+export type ShoppingListItemSourceUpsertWithWhereUniqueWithoutRecipeIngredientInput = {
   where: Prisma.ShoppingListItemSourceWhereUniqueInput
-  update: Prisma.XOR<Prisma.ShoppingListItemSourceUpdateWithoutRecipeInput, Prisma.ShoppingListItemSourceUncheckedUpdateWithoutRecipeInput>
-  create: Prisma.XOR<Prisma.ShoppingListItemSourceCreateWithoutRecipeInput, Prisma.ShoppingListItemSourceUncheckedCreateWithoutRecipeInput>
+  update: Prisma.XOR<Prisma.ShoppingListItemSourceUpdateWithoutRecipeIngredientInput, Prisma.ShoppingListItemSourceUncheckedUpdateWithoutRecipeIngredientInput>
+  create: Prisma.XOR<Prisma.ShoppingListItemSourceCreateWithoutRecipeIngredientInput, Prisma.ShoppingListItemSourceUncheckedCreateWithoutRecipeIngredientInput>
 }
 
-export type ShoppingListItemSourceUpdateWithWhereUniqueWithoutRecipeInput = {
+export type ShoppingListItemSourceUpdateWithWhereUniqueWithoutRecipeIngredientInput = {
   where: Prisma.ShoppingListItemSourceWhereUniqueInput
-  data: Prisma.XOR<Prisma.ShoppingListItemSourceUpdateWithoutRecipeInput, Prisma.ShoppingListItemSourceUncheckedUpdateWithoutRecipeInput>
+  data: Prisma.XOR<Prisma.ShoppingListItemSourceUpdateWithoutRecipeIngredientInput, Prisma.ShoppingListItemSourceUncheckedUpdateWithoutRecipeIngredientInput>
 }
 
-export type ShoppingListItemSourceUpdateManyWithWhereWithoutRecipeInput = {
+export type ShoppingListItemSourceUpdateManyWithWhereWithoutRecipeIngredientInput = {
   where: Prisma.ShoppingListItemSourceScalarWhereInput
-  data: Prisma.XOR<Prisma.ShoppingListItemSourceUpdateManyMutationInput, Prisma.ShoppingListItemSourceUncheckedUpdateManyWithoutRecipeInput>
+  data: Prisma.XOR<Prisma.ShoppingListItemSourceUpdateManyMutationInput, Prisma.ShoppingListItemSourceUncheckedUpdateManyWithoutRecipeIngredientInput>
 }
 
 export type ShoppingListItemSourceScalarWhereInput = {
@@ -477,18 +477,18 @@ export type ShoppingListItemSourceScalarWhereInput = {
   NOT?: Prisma.ShoppingListItemSourceScalarWhereInput | Prisma.ShoppingListItemSourceScalarWhereInput[]
   id?: Prisma.IntFilter<"ShoppingListItemSource"> | number
   shoppingListItemId?: Prisma.IntFilter<"ShoppingListItemSource"> | number
-  recipeId?: Prisma.IntFilter<"ShoppingListItemSource"> | number
+  recipeIngredientId?: Prisma.IntFilter<"ShoppingListItemSource"> | number
   dateAdded?: Prisma.DateTimeFilter<"ShoppingListItemSource"> | Date | string
 }
 
 export type ShoppingListItemSourceCreateWithoutShoppingListItemInput = {
   dateAdded?: Date | string
-  recipe: Prisma.RecipesCreateNestedOneWithoutShoppingListItemSourcesInput
+  recipeIngredient: Prisma.RecipeIngredientCreateNestedOneWithoutShoppingListItemSourcesInput
 }
 
 export type ShoppingListItemSourceUncheckedCreateWithoutShoppingListItemInput = {
   id?: number
-  recipeId: number
+  recipeIngredientId: number
   dateAdded?: Date | string
 }
 
@@ -518,24 +518,24 @@ export type ShoppingListItemSourceUpdateManyWithWhereWithoutShoppingListItemInpu
   data: Prisma.XOR<Prisma.ShoppingListItemSourceUpdateManyMutationInput, Prisma.ShoppingListItemSourceUncheckedUpdateManyWithoutShoppingListItemInput>
 }
 
-export type ShoppingListItemSourceCreateManyRecipeInput = {
+export type ShoppingListItemSourceCreateManyRecipeIngredientInput = {
   id?: number
   shoppingListItemId: number
   dateAdded?: Date | string
 }
 
-export type ShoppingListItemSourceUpdateWithoutRecipeInput = {
+export type ShoppingListItemSourceUpdateWithoutRecipeIngredientInput = {
   dateAdded?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   shoppingListItem?: Prisma.ShoppingListItemUpdateOneRequiredWithoutShoppingListItemSourcesNestedInput
 }
 
-export type ShoppingListItemSourceUncheckedUpdateWithoutRecipeInput = {
+export type ShoppingListItemSourceUncheckedUpdateWithoutRecipeIngredientInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   shoppingListItemId?: Prisma.IntFieldUpdateOperationsInput | number
   dateAdded?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type ShoppingListItemSourceUncheckedUpdateManyWithoutRecipeInput = {
+export type ShoppingListItemSourceUncheckedUpdateManyWithoutRecipeIngredientInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   shoppingListItemId?: Prisma.IntFieldUpdateOperationsInput | number
   dateAdded?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -543,24 +543,24 @@ export type ShoppingListItemSourceUncheckedUpdateManyWithoutRecipeInput = {
 
 export type ShoppingListItemSourceCreateManyShoppingListItemInput = {
   id?: number
-  recipeId: number
+  recipeIngredientId: number
   dateAdded?: Date | string
 }
 
 export type ShoppingListItemSourceUpdateWithoutShoppingListItemInput = {
   dateAdded?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  recipe?: Prisma.RecipesUpdateOneRequiredWithoutShoppingListItemSourcesNestedInput
+  recipeIngredient?: Prisma.RecipeIngredientUpdateOneRequiredWithoutShoppingListItemSourcesNestedInput
 }
 
 export type ShoppingListItemSourceUncheckedUpdateWithoutShoppingListItemInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  recipeId?: Prisma.IntFieldUpdateOperationsInput | number
+  recipeIngredientId?: Prisma.IntFieldUpdateOperationsInput | number
   dateAdded?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ShoppingListItemSourceUncheckedUpdateManyWithoutShoppingListItemInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  recipeId?: Prisma.IntFieldUpdateOperationsInput | number
+  recipeIngredientId?: Prisma.IntFieldUpdateOperationsInput | number
   dateAdded?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -569,61 +569,61 @@ export type ShoppingListItemSourceUncheckedUpdateManyWithoutShoppingListItemInpu
 export type ShoppingListItemSourceSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   shoppingListItemId?: boolean
-  recipeId?: boolean
+  recipeIngredientId?: boolean
   dateAdded?: boolean
   shoppingListItem?: boolean | Prisma.ShoppingListItemDefaultArgs<ExtArgs>
-  recipe?: boolean | Prisma.RecipesDefaultArgs<ExtArgs>
+  recipeIngredient?: boolean | Prisma.RecipeIngredientDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["shoppingListItemSource"]>
 
 export type ShoppingListItemSourceSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   shoppingListItemId?: boolean
-  recipeId?: boolean
+  recipeIngredientId?: boolean
   dateAdded?: boolean
   shoppingListItem?: boolean | Prisma.ShoppingListItemDefaultArgs<ExtArgs>
-  recipe?: boolean | Prisma.RecipesDefaultArgs<ExtArgs>
+  recipeIngredient?: boolean | Prisma.RecipeIngredientDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["shoppingListItemSource"]>
 
 export type ShoppingListItemSourceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   shoppingListItemId?: boolean
-  recipeId?: boolean
+  recipeIngredientId?: boolean
   dateAdded?: boolean
   shoppingListItem?: boolean | Prisma.ShoppingListItemDefaultArgs<ExtArgs>
-  recipe?: boolean | Prisma.RecipesDefaultArgs<ExtArgs>
+  recipeIngredient?: boolean | Prisma.RecipeIngredientDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["shoppingListItemSource"]>
 
 export type ShoppingListItemSourceSelectScalar = {
   id?: boolean
   shoppingListItemId?: boolean
-  recipeId?: boolean
+  recipeIngredientId?: boolean
   dateAdded?: boolean
 }
 
-export type ShoppingListItemSourceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "shoppingListItemId" | "recipeId" | "dateAdded", ExtArgs["result"]["shoppingListItemSource"]>
+export type ShoppingListItemSourceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "shoppingListItemId" | "recipeIngredientId" | "dateAdded", ExtArgs["result"]["shoppingListItemSource"]>
 export type ShoppingListItemSourceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   shoppingListItem?: boolean | Prisma.ShoppingListItemDefaultArgs<ExtArgs>
-  recipe?: boolean | Prisma.RecipesDefaultArgs<ExtArgs>
+  recipeIngredient?: boolean | Prisma.RecipeIngredientDefaultArgs<ExtArgs>
 }
 export type ShoppingListItemSourceIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   shoppingListItem?: boolean | Prisma.ShoppingListItemDefaultArgs<ExtArgs>
-  recipe?: boolean | Prisma.RecipesDefaultArgs<ExtArgs>
+  recipeIngredient?: boolean | Prisma.RecipeIngredientDefaultArgs<ExtArgs>
 }
 export type ShoppingListItemSourceIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   shoppingListItem?: boolean | Prisma.ShoppingListItemDefaultArgs<ExtArgs>
-  recipe?: boolean | Prisma.RecipesDefaultArgs<ExtArgs>
+  recipeIngredient?: boolean | Prisma.RecipeIngredientDefaultArgs<ExtArgs>
 }
 
 export type $ShoppingListItemSourcePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ShoppingListItemSource"
   objects: {
     shoppingListItem: Prisma.$ShoppingListItemPayload<ExtArgs>
-    recipe: Prisma.$RecipesPayload<ExtArgs>
+    recipeIngredient: Prisma.$RecipeIngredientPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     shoppingListItemId: number
-    recipeId: number
+    recipeIngredientId: number
     dateAdded: Date
   }, ExtArgs["result"]["shoppingListItemSource"]>
   composites: {}
@@ -1020,7 +1020,7 @@ readonly fields: ShoppingListItemSourceFieldRefs;
 export interface Prisma__ShoppingListItemSourceClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   shoppingListItem<T extends Prisma.ShoppingListItemDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ShoppingListItemDefaultArgs<ExtArgs>>): Prisma.Prisma__ShoppingListItemClient<runtime.Types.Result.GetResult<Prisma.$ShoppingListItemPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  recipe<T extends Prisma.RecipesDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RecipesDefaultArgs<ExtArgs>>): Prisma.Prisma__RecipesClient<runtime.Types.Result.GetResult<Prisma.$RecipesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  recipeIngredient<T extends Prisma.RecipeIngredientDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RecipeIngredientDefaultArgs<ExtArgs>>): Prisma.Prisma__RecipeIngredientClient<runtime.Types.Result.GetResult<Prisma.$RecipeIngredientPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1052,7 +1052,7 @@ export interface Prisma__ShoppingListItemSourceClient<T, Null = never, ExtArgs e
 export interface ShoppingListItemSourceFieldRefs {
   readonly id: Prisma.FieldRef<"ShoppingListItemSource", 'Int'>
   readonly shoppingListItemId: Prisma.FieldRef<"ShoppingListItemSource", 'Int'>
-  readonly recipeId: Prisma.FieldRef<"ShoppingListItemSource", 'Int'>
+  readonly recipeIngredientId: Prisma.FieldRef<"ShoppingListItemSource", 'Int'>
   readonly dateAdded: Prisma.FieldRef<"ShoppingListItemSource", 'DateTime'>
 }
     

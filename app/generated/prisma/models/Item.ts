@@ -373,12 +373,10 @@ export type ItemCreateNestedOneWithoutShoppingListItemsInput = {
   connect?: Prisma.ItemWhereUniqueInput
 }
 
-export type ItemUpdateOneWithoutShoppingListItemsNestedInput = {
+export type ItemUpdateOneRequiredWithoutShoppingListItemsNestedInput = {
   create?: Prisma.XOR<Prisma.ItemCreateWithoutShoppingListItemsInput, Prisma.ItemUncheckedCreateWithoutShoppingListItemsInput>
   connectOrCreate?: Prisma.ItemCreateOrConnectWithoutShoppingListItemsInput
   upsert?: Prisma.ItemUpsertWithoutShoppingListItemsInput
-  disconnect?: Prisma.ItemWhereInput | boolean
-  delete?: Prisma.ItemWhereInput | boolean
   connect?: Prisma.ItemWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.ItemUpdateToOneWithWhereWithoutShoppingListItemsInput, Prisma.ItemUpdateWithoutShoppingListItemsInput>, Prisma.ItemUncheckedUpdateWithoutShoppingListItemsInput>
 }

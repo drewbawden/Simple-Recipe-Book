@@ -245,7 +245,6 @@ export type RecipesWhereInput = {
   servingSize?: Prisma.IntNullableFilter<"Recipes"> | number | null
   imagePath?: Prisma.StringNullableFilter<"Recipes"> | string | null
   ingredients?: Prisma.RecipeIngredientListRelationFilter
-  shoppingListItemSources?: Prisma.ShoppingListItemSourceListRelationFilter
 }
 
 export type RecipesOrderByWithRelationInput = {
@@ -258,7 +257,6 @@ export type RecipesOrderByWithRelationInput = {
   servingSize?: Prisma.SortOrderInput | Prisma.SortOrder
   imagePath?: Prisma.SortOrderInput | Prisma.SortOrder
   ingredients?: Prisma.RecipeIngredientOrderByRelationAggregateInput
-  shoppingListItemSources?: Prisma.ShoppingListItemSourceOrderByRelationAggregateInput
 }
 
 export type RecipesWhereUniqueInput = Prisma.AtLeast<{
@@ -274,7 +272,6 @@ export type RecipesWhereUniqueInput = Prisma.AtLeast<{
   servingSize?: Prisma.IntNullableFilter<"Recipes"> | number | null
   imagePath?: Prisma.StringNullableFilter<"Recipes"> | string | null
   ingredients?: Prisma.RecipeIngredientListRelationFilter
-  shoppingListItemSources?: Prisma.ShoppingListItemSourceListRelationFilter
 }, "id">
 
 export type RecipesOrderByWithAggregationInput = {
@@ -316,7 +313,6 @@ export type RecipesCreateInput = {
   servingSize?: number | null
   imagePath?: string | null
   ingredients?: Prisma.RecipeIngredientCreateNestedManyWithoutRecipeInput
-  shoppingListItemSources?: Prisma.ShoppingListItemSourceCreateNestedManyWithoutRecipeInput
 }
 
 export type RecipesUncheckedCreateInput = {
@@ -329,7 +325,6 @@ export type RecipesUncheckedCreateInput = {
   servingSize?: number | null
   imagePath?: string | null
   ingredients?: Prisma.RecipeIngredientUncheckedCreateNestedManyWithoutRecipeInput
-  shoppingListItemSources?: Prisma.ShoppingListItemSourceUncheckedCreateNestedManyWithoutRecipeInput
 }
 
 export type RecipesUpdateInput = {
@@ -341,7 +336,6 @@ export type RecipesUpdateInput = {
   servingSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   imagePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ingredients?: Prisma.RecipeIngredientUpdateManyWithoutRecipeNestedInput
-  shoppingListItemSources?: Prisma.ShoppingListItemSourceUpdateManyWithoutRecipeNestedInput
 }
 
 export type RecipesUncheckedUpdateInput = {
@@ -354,7 +348,6 @@ export type RecipesUncheckedUpdateInput = {
   servingSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   imagePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ingredients?: Prisma.RecipeIngredientUncheckedUpdateManyWithoutRecipeNestedInput
-  shoppingListItemSources?: Prisma.ShoppingListItemSourceUncheckedUpdateManyWithoutRecipeNestedInput
 }
 
 export type RecipesCreateManyInput = {
@@ -468,20 +461,6 @@ export type RecipesUpdateOneRequiredWithoutIngredientsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.RecipesUpdateToOneWithWhereWithoutIngredientsInput, Prisma.RecipesUpdateWithoutIngredientsInput>, Prisma.RecipesUncheckedUpdateWithoutIngredientsInput>
 }
 
-export type RecipesCreateNestedOneWithoutShoppingListItemSourcesInput = {
-  create?: Prisma.XOR<Prisma.RecipesCreateWithoutShoppingListItemSourcesInput, Prisma.RecipesUncheckedCreateWithoutShoppingListItemSourcesInput>
-  connectOrCreate?: Prisma.RecipesCreateOrConnectWithoutShoppingListItemSourcesInput
-  connect?: Prisma.RecipesWhereUniqueInput
-}
-
-export type RecipesUpdateOneRequiredWithoutShoppingListItemSourcesNestedInput = {
-  create?: Prisma.XOR<Prisma.RecipesCreateWithoutShoppingListItemSourcesInput, Prisma.RecipesUncheckedCreateWithoutShoppingListItemSourcesInput>
-  connectOrCreate?: Prisma.RecipesCreateOrConnectWithoutShoppingListItemSourcesInput
-  upsert?: Prisma.RecipesUpsertWithoutShoppingListItemSourcesInput
-  connect?: Prisma.RecipesWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.RecipesUpdateToOneWithWhereWithoutShoppingListItemSourcesInput, Prisma.RecipesUpdateWithoutShoppingListItemSourcesInput>, Prisma.RecipesUncheckedUpdateWithoutShoppingListItemSourcesInput>
-}
-
 export type RecipesCreateWithoutIngredientsInput = {
   name: string
   types?: Prisma.RecipesCreatetypesInput | $Enums.RecipeType[]
@@ -490,7 +469,6 @@ export type RecipesCreateWithoutIngredientsInput = {
   totalTimeMins?: number | null
   servingSize?: number | null
   imagePath?: string | null
-  shoppingListItemSources?: Prisma.ShoppingListItemSourceCreateNestedManyWithoutRecipeInput
 }
 
 export type RecipesUncheckedCreateWithoutIngredientsInput = {
@@ -502,7 +480,6 @@ export type RecipesUncheckedCreateWithoutIngredientsInput = {
   totalTimeMins?: number | null
   servingSize?: number | null
   imagePath?: string | null
-  shoppingListItemSources?: Prisma.ShoppingListItemSourceUncheckedCreateNestedManyWithoutRecipeInput
 }
 
 export type RecipesCreateOrConnectWithoutIngredientsInput = {
@@ -529,7 +506,6 @@ export type RecipesUpdateWithoutIngredientsInput = {
   totalTimeMins?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   servingSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   imagePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  shoppingListItemSources?: Prisma.ShoppingListItemSourceUpdateManyWithoutRecipeNestedInput
 }
 
 export type RecipesUncheckedUpdateWithoutIngredientsInput = {
@@ -541,69 +517,6 @@ export type RecipesUncheckedUpdateWithoutIngredientsInput = {
   totalTimeMins?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   servingSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   imagePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  shoppingListItemSources?: Prisma.ShoppingListItemSourceUncheckedUpdateManyWithoutRecipeNestedInput
-}
-
-export type RecipesCreateWithoutShoppingListItemSourcesInput = {
-  name: string
-  types?: Prisma.RecipesCreatetypesInput | $Enums.RecipeType[]
-  notes?: string | null
-  url?: string | null
-  totalTimeMins?: number | null
-  servingSize?: number | null
-  imagePath?: string | null
-  ingredients?: Prisma.RecipeIngredientCreateNestedManyWithoutRecipeInput
-}
-
-export type RecipesUncheckedCreateWithoutShoppingListItemSourcesInput = {
-  id?: number
-  name: string
-  types?: Prisma.RecipesCreatetypesInput | $Enums.RecipeType[]
-  notes?: string | null
-  url?: string | null
-  totalTimeMins?: number | null
-  servingSize?: number | null
-  imagePath?: string | null
-  ingredients?: Prisma.RecipeIngredientUncheckedCreateNestedManyWithoutRecipeInput
-}
-
-export type RecipesCreateOrConnectWithoutShoppingListItemSourcesInput = {
-  where: Prisma.RecipesWhereUniqueInput
-  create: Prisma.XOR<Prisma.RecipesCreateWithoutShoppingListItemSourcesInput, Prisma.RecipesUncheckedCreateWithoutShoppingListItemSourcesInput>
-}
-
-export type RecipesUpsertWithoutShoppingListItemSourcesInput = {
-  update: Prisma.XOR<Prisma.RecipesUpdateWithoutShoppingListItemSourcesInput, Prisma.RecipesUncheckedUpdateWithoutShoppingListItemSourcesInput>
-  create: Prisma.XOR<Prisma.RecipesCreateWithoutShoppingListItemSourcesInput, Prisma.RecipesUncheckedCreateWithoutShoppingListItemSourcesInput>
-  where?: Prisma.RecipesWhereInput
-}
-
-export type RecipesUpdateToOneWithWhereWithoutShoppingListItemSourcesInput = {
-  where?: Prisma.RecipesWhereInput
-  data: Prisma.XOR<Prisma.RecipesUpdateWithoutShoppingListItemSourcesInput, Prisma.RecipesUncheckedUpdateWithoutShoppingListItemSourcesInput>
-}
-
-export type RecipesUpdateWithoutShoppingListItemSourcesInput = {
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  types?: Prisma.RecipesUpdatetypesInput | $Enums.RecipeType[]
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  totalTimeMins?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  servingSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  imagePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  ingredients?: Prisma.RecipeIngredientUpdateManyWithoutRecipeNestedInput
-}
-
-export type RecipesUncheckedUpdateWithoutShoppingListItemSourcesInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  types?: Prisma.RecipesUpdatetypesInput | $Enums.RecipeType[]
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  totalTimeMins?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  servingSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  imagePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  ingredients?: Prisma.RecipeIngredientUncheckedUpdateManyWithoutRecipeNestedInput
 }
 
 
@@ -613,12 +526,10 @@ export type RecipesUncheckedUpdateWithoutShoppingListItemSourcesInput = {
 
 export type RecipesCountOutputType = {
   ingredients: number
-  shoppingListItemSources: number
 }
 
 export type RecipesCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   ingredients?: boolean | RecipesCountOutputTypeCountIngredientsArgs
-  shoppingListItemSources?: boolean | RecipesCountOutputTypeCountShoppingListItemSourcesArgs
 }
 
 /**
@@ -638,13 +549,6 @@ export type RecipesCountOutputTypeCountIngredientsArgs<ExtArgs extends runtime.T
   where?: Prisma.RecipeIngredientWhereInput
 }
 
-/**
- * RecipesCountOutputType without action
- */
-export type RecipesCountOutputTypeCountShoppingListItemSourcesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ShoppingListItemSourceWhereInput
-}
-
 
 export type RecipesSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -656,7 +560,6 @@ export type RecipesSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   servingSize?: boolean
   imagePath?: boolean
   ingredients?: boolean | Prisma.Recipes$ingredientsArgs<ExtArgs>
-  shoppingListItemSources?: boolean | Prisma.Recipes$shoppingListItemSourcesArgs<ExtArgs>
   _count?: boolean | Prisma.RecipesCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["recipes"]>
 
@@ -696,7 +599,6 @@ export type RecipesSelectScalar = {
 export type RecipesOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "types" | "notes" | "url" | "totalTimeMins" | "servingSize" | "imagePath", ExtArgs["result"]["recipes"]>
 export type RecipesInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   ingredients?: boolean | Prisma.Recipes$ingredientsArgs<ExtArgs>
-  shoppingListItemSources?: boolean | Prisma.Recipes$shoppingListItemSourcesArgs<ExtArgs>
   _count?: boolean | Prisma.RecipesCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type RecipesIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -706,7 +608,6 @@ export type $RecipesPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   name: "Recipes"
   objects: {
     ingredients: Prisma.$RecipeIngredientPayload<ExtArgs>[]
-    shoppingListItemSources: Prisma.$ShoppingListItemSourcePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1112,7 +1013,6 @@ readonly fields: RecipesFieldRefs;
 export interface Prisma__RecipesClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   ingredients<T extends Prisma.Recipes$ingredientsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Recipes$ingredientsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RecipeIngredientPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  shoppingListItemSources<T extends Prisma.Recipes$shoppingListItemSourcesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Recipes$shoppingListItemSourcesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ShoppingListItemSourcePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1564,30 +1464,6 @@ export type Recipes$ingredientsArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.RecipeIngredientScalarFieldEnum | Prisma.RecipeIngredientScalarFieldEnum[]
-}
-
-/**
- * Recipes.shoppingListItemSources
- */
-export type Recipes$shoppingListItemSourcesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the ShoppingListItemSource
-   */
-  select?: Prisma.ShoppingListItemSourceSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the ShoppingListItemSource
-   */
-  omit?: Prisma.ShoppingListItemSourceOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ShoppingListItemSourceInclude<ExtArgs> | null
-  where?: Prisma.ShoppingListItemSourceWhereInput
-  orderBy?: Prisma.ShoppingListItemSourceOrderByWithRelationInput | Prisma.ShoppingListItemSourceOrderByWithRelationInput[]
-  cursor?: Prisma.ShoppingListItemSourceWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ShoppingListItemSourceScalarFieldEnum | Prisma.ShoppingListItemSourceScalarFieldEnum[]
 }
 
 /**
