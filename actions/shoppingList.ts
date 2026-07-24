@@ -67,7 +67,7 @@ export async function getShoppingList() {
 }
 
 export async function setItemCompleted(listItemId: number, completed: boolean) {
-    await prisma.shoppingListItem.update({
+    await prisma.shoppingListItem.updateMany({
         where: {
             id: listItemId
         },

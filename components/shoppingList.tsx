@@ -1,7 +1,7 @@
 import { getShoppingList, setItemCompleted, deleteItem } from '@/actions/shoppingList';
 import { Prisma } from "@/app/generated/prisma/client";
 import { NormalUnit } from '@/app/generated/prisma/enums'
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { ChevronDown } from 'lucide-react';
 
@@ -28,6 +28,7 @@ type ShoppingListWithItems = Prisma.ShoppingListGetPayload<{
 export const ShoppingList = () => {
     const [loading, setLoading] = useState(true);
     const [list, setList] = useState<ShoppingListWithItems | null>(null);
+    const deleteTimers = useRef<Record<number, NodeJS.Timeout>>({});
 
   useEffect(() => {
     const fetchList = async () => {
@@ -58,29 +59,42 @@ export const ShoppingList = () => {
   async function handleItemChecked(id: number, e: React.ChangeEvent<HTMLInputElement>) {
     const completed = e.target.checked;
 
-    setList((prev) => {
-      if(!prev) return prev;
-      return {
-        ...prev,
-        items: prev.items.map((item) =>
+  if (!completed && deleteTimers.current[id]) {
+    clearTimeout(deleteTimers.current[id]);
+    deleteTimers.current[id] = undefined;
+  }
+
+  setList((prev) => {
+    if (!prev) return prev;
+
+    return {
+      ...prev,
+      items: prev.items.map((item) =>
         item.id === id
-            ? { ...item, completed }
-            : item
-        ),
-      }
-    });
+          ? { ...item, completed }
+          : item
+      ),
+    };
+  });
 
-    await setItemCompleted(id, e.target.checked)
+  await setItemCompleted(id, completed);
 
-    await sleep(1500); // wait 2 seconds
-    if (e.target.checked) {
-        await deleteItem(id);
+  if (completed) {
+    deleteTimers.current[id] = setTimeout(async () => {
+      await deleteItem(id);
 
-        setList((prev) => ({
-        ...prev,
-        items: prev.items.filter((item) => item.id !== id),
-        }));
-    }
+      setList((prev) => {
+        if (!prev) return prev;
+
+        return {
+          ...prev,
+          items: prev.items.filter((item) => item.id !== id),
+        };
+      });
+
+      deleteTimers.current[id] = undefined;
+    }, 1500);
+  }
   }
 
   return (

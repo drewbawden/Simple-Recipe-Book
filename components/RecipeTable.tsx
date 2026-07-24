@@ -109,10 +109,11 @@ export const RecipeTable = () => {
                   </button>
                 ) : "---"}
               </div>
-
-              <button className="bg-blue-500 text-white text-sm font-bold py-1 px-3 rounded">
-                Add
-              </button>
+                <button title='Add to shopping list' className="bg-blue-500 text-white text-sm font-bold py-1 px-3 rounded"
+                  onClick={() => setSelectedShoppingList(recipe)}
+                  type="button">
+                  Add
+                </button>
             </div>
           </div>
         ))}
