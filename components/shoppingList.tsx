@@ -87,7 +87,7 @@ export const ShoppingList = () => {
     <div className="mx-auto max-w-xl p-6 flex flex-col text-center space-y-1">
       <Link href="/" className='bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded mb-4'>Recipes</Link>
       <h1 className="mb-6 text-4xl font-bold">{list.name}</h1>
-      <hr className='h-0.5 bg-black' />
+      <hr className='h-0.5 bg-black pb-2' />
       <div className="space-y-2">
         {list.items.map((listItem) => {
           const sources = listItem.shoppingListItemSources
@@ -155,7 +155,7 @@ function ListItemCard({ listItem, totalQuantity, totalUnit, sources, handleItemC
   return (
     <div className="mb-3 rounded-xl border bg-card text-card-foreground shadow-sm transition-all hover:border-accent hover:shadow-md">
       <label className="flex items-center justify-between p-4">
-        <div className="flex items-center gap-3">
+        <div className="mx-1 flex items-center gap-3">
           <input
             type="checkbox"
             id={`item-${listItem.id}`}
@@ -208,7 +208,7 @@ function ListItemCard({ listItem, totalQuantity, totalUnit, sources, handleItemC
           <ul className="space-y-1.5 pl-2 text-sm text-muted-foreground">
             {sources.map((source) => (
               <li key={source.id} className="flex items-center justify-between">
-                <span>{source.recipeIngredient.recipe.name || "Recipe Source"}</span>
+                <span className="max-w-md">{source.recipeIngredient.recipe.name || "Recipe Source"}</span>
                 <span className="font-mono text-xs">
                   {source.recipeIngredient.quantity} {source.recipeIngredient.unit}
                 </span>

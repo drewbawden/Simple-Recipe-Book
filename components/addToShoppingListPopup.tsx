@@ -91,7 +91,7 @@ export const AddToShoppingListPopup = ({ closePopup, recipe }) => {
               <li key={ingredient.id}>
                 <label
                   htmlFor={ingredientCheckboxId}
-                  className='flex justify-between items-center p-3.5 hover:bg-gray-50 transition'
+                  className='flex justify-between items-center p-3.5 hover:bg-gray-50 transition space-x-2'
                 >
                   <input
                     id={ingredientCheckboxId}
