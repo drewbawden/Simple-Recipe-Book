@@ -260,6 +260,12 @@ export function parseQuantity(input: string) {
   return {
     quantity: quantityText,
     unit: unitText,
+    ...(standardisedQuantity !== null && {
+      standardisedQuantity,
+    }),
+    ...(standardisedUnit !== null && {
+      standardisedUnit,
+    }),
     ...(normalisedQuantity !== null && {
       normalisedQuantity,
     }),

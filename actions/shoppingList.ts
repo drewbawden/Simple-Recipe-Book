@@ -47,6 +47,10 @@ export async function getShoppingList() {
                             source.recipeIngredient.normalQuantity == null
                                 ? null
                                 : Number(source.recipeIngredient.normalQuantity),
+                        standardQuantity:
+                            source.recipeIngredient.standardQuantity == null
+                                ? null
+                                : Number(source.recipeIngredient.standardQuantity),
                     },
                 })),
             })),

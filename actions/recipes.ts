@@ -35,6 +35,9 @@ export async function getRecipes() {
         ...ingredient,
         normalQuantity: ingredient.normalQuantity
           ? Number(ingredient.normalQuantity)
+          : null,
+        standardQuantity: ingredient.standardQuantity
+          ? Number(ingredient.standardQuantity)
           : null
       }))
     }));
@@ -126,6 +129,8 @@ export async function insertNewRecipe(formData: FormData) {
                 itemId: item.id,
                 quantity: parsed.quantity,
                 unit: parsed.unit,
+                standardQuantity: parsed.standardisedQuantity,
+                standardUnit: parsed.standardisedUnit,
                 normalQuantity: parsed.normalisedQuantity,
                 normalUnit: parsed.normalisedUnit,
               };

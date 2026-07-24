@@ -105,10 +105,12 @@ model RecipeIngredient {
   item     Item    @relation(fields: [itemId], references: [id])
   itemId   Int
 
-  quantity       String
-  unit           String?
-  normalQuantity Decimal?    @db.Decimal(12, 4)
-  normalUnit     NormalUnit?
+  quantity         String
+  unit             String?
+  standardQuantity Decimal?      @db.Decimal(12, 4)
+  standardUnit     StandardUnit?
+  normalQuantity   Decimal?      @db.Decimal(12, 4)
+  normalUnit       NormalUnit?
 
   shoppingListItemSources ShoppingListItemSource[]
 }

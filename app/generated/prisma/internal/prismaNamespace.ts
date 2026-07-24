@@ -1284,6 +1284,8 @@ export const RecipeIngredientScalarFieldEnum = {
   itemId: 'itemId',
   quantity: 'quantity',
   unit: 'unit',
+  standardQuantity: 'standardQuantity',
+  standardUnit: 'standardUnit',
   normalQuantity: 'normalQuantity',
   normalUnit: 'normalUnit'
 } as const
@@ -1461,6 +1463,20 @@ export type ListEnumRecipeTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$P
  * Reference to a field of type 'RecipeType'
  */
 export type EnumRecipeTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RecipeType'>
+    
+
+
+/**
+ * Reference to a field of type 'StandardUnit'
+ */
+export type EnumStandardUnitFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StandardUnit'>
+    
+
+
+/**
+ * Reference to a field of type 'StandardUnit[]'
+ */
+export type ListEnumStandardUnitFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StandardUnit[]'>
     
 
 
