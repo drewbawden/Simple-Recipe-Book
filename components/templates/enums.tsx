@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
-import { getEnums, enumType } from '@/actions/enums';
+import { getEnums, enumType } from "@/actions/enums";
 
 type EnumOptionsProps = {
   enumType: enumType;
@@ -23,7 +23,7 @@ export const EnumOptions = ({ enumType, ...inputProps }: EnumOptionsProps) => {
         setEnums(data);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching options:', error);
+        console.error("Error fetching options:", error);
         setLoading(false);
       }
     };
@@ -32,21 +32,17 @@ export const EnumOptions = ({ enumType, ...inputProps }: EnumOptionsProps) => {
   }, []);
 
   if (loading) {
-    return <p>Loading options...</p>
+    return <p>Loading options...</p>;
   }
 
   return (
     <div>
-      {enums.map(option => (
+      {enums.map((option) => (
         <label key={option.id} className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            value={option.id}
-            {...inputProps}
-          />
+          <input type="checkbox" value={option.id} {...inputProps} />
           {option.name.charAt(0).toUpperCase() + option.name.substring(1)}
         </label>
       ))}
     </div>
   );
-}
+};

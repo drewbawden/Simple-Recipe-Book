@@ -1,6 +1,10 @@
-"use server"
+"use server";
 
-import { PrismaClient, RecipeType, ItemType } from "../app/generated/prisma/client";
+import {
+  PrismaClient,
+  RecipeType,
+  ItemType,
+} from "../app/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import "dotenv/config";
 import { parseQuantity } from "@/lib/quantity";
@@ -16,7 +20,6 @@ const prisma = new PrismaClient({
   adapter,
 });
 
-
 export async function getRecipes() {
   try {
     const recipes = await prisma.recipes.findMany({
@@ -27,21 +30,20 @@ export async function getRecipes() {
           },
         },
       },
-    });;
+    });
 
-    return recipes.map(recipe => ({
+    return recipes.map((recipe) => ({
       ...recipe,
-      ingredients: recipe.ingredients.map(ingredient => ({
+      ingredients: recipe.ingredients.map((ingredient) => ({
         ...ingredient,
         normalQuantity: ingredient.normalQuantity
           ? Number(ingredient.normalQuantity)
           : null,
         standardQuantity: ingredient.standardQuantity
           ? Number(ingredient.standardQuantity)
-          : null
-      }))
+          : null,
+      })),
     }));
-
   } catch (error) {
     console.error("Database Error:", error);
     return { success: false, error: "Failed to fetch recipes" };
@@ -55,7 +57,7 @@ export async function insertNewRecipe(formData: FormData) {
   const url = formData.get("url") as string;
   const servingSizeValue = formData.get("servingSize");
   const totalTimeMinsValue = formData.get("totalTime");
-  const ingredients = JSON.parse(formData.get("ingredients") as string)
+  const ingredients = JSON.parse(formData.get("ingredients") as string);
   const image = formData.get("recipeImage") as File;
 
   const servingSize =
@@ -71,10 +73,7 @@ export async function insertNewRecipe(formData: FormData) {
     const filename = `${randomUUID()}.${extension}`;
     const uploadDir = path.join(process.cwd(), "public", "recipe-pictures");
 
-    await writeFile(
-      path.join(uploadDir, filename),
-      buffer
-    );
+    await writeFile(path.join(uploadDir, filename), buffer);
     imagePath = `/recipe-pictures/${filename}`;
   }
 
@@ -100,13 +99,13 @@ export async function insertNewRecipe(formData: FormData) {
               if (ingredient.itemId) {
                 item = await tx.item.findUnique({
                   where: {
-                    id: ingredient.itemId
-                  }
+                    id: ingredient.itemId,
+                  },
                 });
 
                 if (!item) {
                   throw new Error(
-                    `Item with id ${ingredient.itemId} does not exist`
+                    `Item with id ${ingredient.itemId} does not exist`,
                   );
                 }
               }
@@ -115,13 +114,13 @@ export async function insertNewRecipe(formData: FormData) {
               else {
                 item = await tx.item.upsert({
                   where: {
-                    name: ingredient.name
+                    name: ingredient.name,
                   },
                   update: {},
                   create: {
                     name: ingredient.name,
                     type: ItemType.FOOD,
-                  }
+                  },
                 });
               }
 
@@ -134,10 +133,10 @@ export async function insertNewRecipe(formData: FormData) {
                 normalQuantity: parsed.normalisedQuantity,
                 normalUnit: parsed.normalisedUnit,
               };
-            })
-          )
-        }
-      }
+            }),
+          ),
+        },
+      },
     });
   });
 }

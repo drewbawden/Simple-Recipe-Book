@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Product } from "@/types/inventory";
 import { addNewProduct } from "@/actions/manage-products";
@@ -47,7 +47,10 @@ export function ProductCard({ product }: ProductCardProps) {
 
         <CategoryDropdown />
 
-        <button onClick={async () => addNewProduct(product)} className="mt-4 w-full rounded-lg bg-slate-900 py-2 text-xs font-medium text-white transition-colors hover:bg-slate-800">
+        <button
+          onClick={async () => addNewProduct(product)}
+          className="mt-4 w-full rounded-lg bg-slate-900 py-2 text-xs font-medium text-white transition-colors hover:bg-slate-800"
+        >
           Add to Inventory
         </button>
       </div>

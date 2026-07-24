@@ -51,11 +51,11 @@ const UNIT_MAP: Record<string, StandardUnit> = {
 
   fl_oz: StandardUnit.FLUID_OUNCE,
   floz: StandardUnit.FLUID_OUNCE,
-  'fluid ounce': StandardUnit.FLUID_OUNCE,
-  'fluid ounces': StandardUnit.FLUID_OUNCE,
-  'fl ounce': StandardUnit.FLUID_OUNCE,
-  'fl ounces': StandardUnit.FLUID_OUNCE,
-  'fl oz': StandardUnit.FLUID_OUNCE,
+  "fluid ounce": StandardUnit.FLUID_OUNCE,
+  "fluid ounces": StandardUnit.FLUID_OUNCE,
+  "fl ounce": StandardUnit.FLUID_OUNCE,
+  "fl ounces": StandardUnit.FLUID_OUNCE,
+  "fl oz": StandardUnit.FLUID_OUNCE,
 
   pt: StandardUnit.PINT,
   pts: StandardUnit.PINT,
@@ -254,7 +254,6 @@ const UNIT_MAP: Record<string, StandardUnit> = {
 };
 
 const UNIT_MULTIPLIERS: Record<StandardUnit, number> = {
-
   // millilitre
   [StandardUnit.DECILITRE]: 100,
   [StandardUnit.MILLILITRE]: 1,
@@ -275,7 +274,7 @@ const UNIT_MULTIPLIERS: Record<StandardUnit, number> = {
   [StandardUnit.POUND]: 453.592,
 
   // individual
-  [StandardUnit.INDIVIDUAL]: 1
+  [StandardUnit.INDIVIDUAL]: 1,
 };
 
 const NORMAL_UNIT_MAP: Record<StandardUnit, NormalUnit> = {
@@ -299,10 +298,8 @@ const NORMAL_UNIT_MAP: Record<StandardUnit, NormalUnit> = {
   [StandardUnit.INDIVIDUAL]: NormalUnit.INDIVIDUAL,
 };
 
-
-
 export function tryStandardiseUnit(input: string) {
-  const standardisedUnit = UNIT_MAP[input.toLowerCase().replace('.', '')]
+  const standardisedUnit = UNIT_MAP[input.toLowerCase().replace(".", "")];
 
   if (!standardisedUnit) {
     return null;
@@ -311,7 +308,10 @@ export function tryStandardiseUnit(input: string) {
   return standardisedUnit;
 }
 
-export function normaliseUnit(quantity: number, unit: StandardUnit,): { normalisedQuantity: number; normalisedUnit: NormalUnit; } {
+export function normaliseUnit(
+  quantity: number,
+  unit: StandardUnit,
+): { normalisedQuantity: number; normalisedUnit: NormalUnit } {
   const multiplier = UNIT_MULTIPLIERS[unit];
   const normalisedUnit = NORMAL_UNIT_MAP[unit];
 
@@ -323,4 +323,3 @@ export function normaliseUnit(quantity: number, unit: StandardUnit,): { normalis
     normalisedUnit,
   };
 }
-

@@ -37,8 +37,8 @@ export function useBarcodeScanner(onScan: (barcode: string) => void) {
             video: {
               facingMode: "environment",
               width: { ideal: 1920 },
-              height: { ideal: 1080 }
-            }
+              height: { ideal: 1080 },
+            },
           },
           videoRef.current!,
           (result) => {
@@ -47,7 +47,7 @@ export function useBarcodeScanner(onScan: (barcode: string) => void) {
               setIsScanning(false);
               controls.stop();
             }
-          }
+          },
         );
 
         controlsRef.current = controls;
@@ -56,7 +56,6 @@ export function useBarcodeScanner(onScan: (barcode: string) => void) {
         if (stream) {
           await applyZoom(stream);
         }
-
       } catch (err) {
         console.error("Scanner error:", err);
       }
@@ -74,6 +73,6 @@ export function useBarcodeScanner(onScan: (barcode: string) => void) {
     isScanning,
     rescan: () => {
       setIsScanning(true);
-    }
+    },
   };
 }

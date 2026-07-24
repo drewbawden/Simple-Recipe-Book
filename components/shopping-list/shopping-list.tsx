@@ -1,10 +1,13 @@
-import { getShoppingList, setItemCompleted, deleteItem } from '@/actions/shopping-lists';
+import {
+  getShoppingList,
+  setItemCompleted,
+  deleteItem,
+} from "@/actions/shopping-lists";
 import { Prisma } from "@/app/generated/prisma/client";
-import { NormalUnit } from '@/app/generated/prisma/enums'
-import { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
-import { ChevronDown } from 'lucide-react';
-
+import { NormalUnit } from "@/app/generated/prisma/enums";
+import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
+import { ChevronDown } from "lucide-react";
 
 type ShoppingListWithItems = Prisma.ShoppingListGetPayload<{
   include: {
@@ -15,9 +18,9 @@ type ShoppingListWithItems = Prisma.ShoppingListGetPayload<{
           include: {
             recipeIngredient: {
               include: {
-                recipe: true,
-              }
-            }
+                recipe: true;
+              };
+            };
           };
         };
       };
@@ -26,9 +29,9 @@ type ShoppingListWithItems = Prisma.ShoppingListGetPayload<{
 }>;
 
 export const ShoppingList = () => {
-    const [loading, setLoading] = useState(true);
-    const [list, setList] = useState<ShoppingListWithItems | null>(null);
-    const deleteTimers = useRef<Record<number, NodeJS.Timeout>>({});
+  const [loading, setLoading] = useState(true);
+  const [list, setList] = useState<ShoppingListWithItems | null>(null);
+  const deleteTimers = useRef<Record<number, NodeJS.Timeout>>({});
 
   useEffect(() => {
     const fetchList = async () => {
@@ -37,7 +40,7 @@ export const ShoppingList = () => {
         setList(data);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching shopping list items:', error);
+        console.error("Error fetching shopping list items:", error);
         setLoading(false);
       }
     };
@@ -46,75 +49,82 @@ export const ShoppingList = () => {
   }, []);
 
   if (loading) {
-    return <p>Loading Items...</p>
+    return <p>Loading Items...</p>;
   }
 
   if (!list) {
-    return <p>No shopping list found</p>
+    return <p>No shopping list found</p>;
   }
 
   const sleep = (ms: number) =>
     new Promise((resolve) => setTimeout(resolve, ms));
 
-  async function handleItemChecked(id: number, e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleItemChecked(
+    id: number,
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) {
     const completed = e.target.checked;
 
-  if (!completed && deleteTimers.current[id]) {
-    clearTimeout(deleteTimers.current[id]);
-    deleteTimers.current[id] = undefined;
-  }
-
-  setList((prev) => {
-    if (!prev) return prev;
-
-    return {
-      ...prev,
-      items: prev.items.map((item) =>
-        item.id === id
-          ? { ...item, completed }
-          : item
-      ),
-    };
-  });
-
-  await setItemCompleted(id, completed);
-
-  if (completed) {
-    deleteTimers.current[id] = setTimeout(async () => {
-      await deleteItem(id);
-
-      setList((prev) => {
-        if (!prev) return prev;
-
-        return {
-          ...prev,
-          items: prev.items.filter((item) => item.id !== id),
-        };
-      });
-
+    if (!completed && deleteTimers.current[id]) {
+      clearTimeout(deleteTimers.current[id]);
       deleteTimers.current[id] = undefined;
-    }, 1500);
-  }
+    }
+
+    setList((prev) => {
+      if (!prev) return prev;
+
+      return {
+        ...prev,
+        items: prev.items.map((item) =>
+          item.id === id ? { ...item, completed } : item,
+        ),
+      };
+    });
+
+    await setItemCompleted(id, completed);
+
+    if (completed) {
+      deleteTimers.current[id] = setTimeout(async () => {
+        await deleteItem(id);
+
+        setList((prev) => {
+          if (!prev) return prev;
+
+          return {
+            ...prev,
+            items: prev.items.filter((item) => item.id !== id),
+          };
+        });
+
+        deleteTimers.current[id] = undefined;
+      }, 1500);
+    }
   }
 
   return (
     <div className="mx-auto max-w-xl p-6 flex flex-col text-center space-y-1">
-      <Link href="/" className='bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded mb-4'>Recipes</Link>
+      <Link
+        href="/"
+        className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded mb-4"
+      >
+        Recipes
+      </Link>
       <h1 className="mb-6 text-4xl font-bold">{list.name}</h1>
-      <hr className='h-0.5 bg-black pb-2' />
+      <hr className="h-0.5 bg-black pb-2" />
       <div className="space-y-2">
         {list.items.map((listItem) => {
-          const sources = listItem.shoppingListItemSources
+          const sources = listItem.shoppingListItemSources;
           if (sources.length === 0) return null;
 
-          let totalNormalQuantity = 0.00;
-          let totalStandardQuantity = 0.00;
-          let totalQuantity = 0.00;
+          let totalNormalQuantity = 0.0;
+          let totalStandardQuantity = 0.0;
+          let totalQuantity = 0.0;
           let standardUnits = new Set();
           let normalUnits = new Set();
           let stringUnits = new Set();
           for (let i = 0; i < sources.length; i++) {
-            const standardQuantity = sources[i].recipeIngredient.standardQuantity
+            const standardQuantity = sources[i].recipeIngredient
+              .standardQuantity
               ? Number(sources[i].recipeIngredient.standardQuantity)
               : null;
             const normalQuantity = sources[i].recipeIngredient.normalQuantity
@@ -126,13 +136,13 @@ export const ShoppingList = () => {
             normalUnits.add(sources[i].recipeIngredient.normalUnit);
             stringUnits.add(sources[i].recipeIngredient.unit);
           }
-          let totalUnit = '';
+          let totalUnit = "";
           const firstNormal = Array.from(normalUnits)[0];
           const firstStandard = Array.from(standardUnits)[0];
           const firstString = Array.from(stringUnits)[0];
           // more than one normal unit
           if (normalUnits.size > 1) {
-            totalUnit = 'mixed units';
+            totalUnit = "mixed units";
           }
           // no normal or standard units
           else if (firstStandard === null) {
@@ -140,39 +150,52 @@ export const ShoppingList = () => {
           }
           // one normal unit, but multiple standards
           else if (standardUnits.size > 1 && normalUnits.size === 1) {
-            totalUnit = firstNormal?.toLowerCase() + 's';
+            totalUnit = firstNormal?.toLowerCase() + "s";
             totalQuantity = totalNormalQuantity;
           }
           // one standard, but multiple strings
           else if (stringUnits.size > 1 && standardUnits.size === 1) {
-            totalUnit = firstStandard?.toLowerCase() + 's';
+            totalUnit = firstStandard?.toLowerCase() + "s";
             totalQuantity = totalStandardQuantity;
           }
           // multiple individual units
           else if (firstNormal === NormalUnit.INDIVIDUAL) {
             totalUnit = firstString?.toLowerCase();
 
-            totalQuantity = totalStandardQuantity
-            if (!totalUnit.endsWith('s') && totalStandardQuantity > 1) {
-              totalUnit += 's';
+            totalQuantity = totalStandardQuantity;
+            if (!totalUnit.endsWith("s") && totalStandardQuantity > 1) {
+              totalUnit += "s";
             }
           }
           // one standard and normal unit
           else if (normalUnits.size === 1 && standardUnits.size === 1) {
             totalQuantity = totalStandardQuantity;
-            totalUnit = firstStandard?.toLowerCase() + 's';
+            totalUnit = firstStandard?.toLowerCase() + "s";
           }
 
           return (
-          <ListItemCard key={listItem.id} listItem={listItem} totalQuantity={totalQuantity} totalUnit={totalUnit} sources={sources} handleItemChecked={handleItemChecked}/>
+            <ListItemCard
+              key={listItem.id}
+              listItem={listItem}
+              totalQuantity={totalQuantity}
+              totalUnit={totalUnit}
+              sources={sources}
+              handleItemChecked={handleItemChecked}
+            />
           );
         })}
       </div>
     </div>
   );
-  }
+};
 
-function ListItemCard({ listItem, totalQuantity, totalUnit, sources, handleItemChecked }) {
+function ListItemCard({
+  listItem,
+  totalQuantity,
+  totalUnit,
+  sources,
+  handleItemChecked,
+}) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -231,9 +254,12 @@ function ListItemCard({ listItem, totalQuantity, totalUnit, sources, handleItemC
           <ul className="space-y-1.5 pl-2 text-sm text-muted-foreground">
             {sources.map((source) => (
               <li key={source.id} className="flex items-center justify-between">
-                <span className="max-w-md">{source.recipeIngredient.recipe.name || "Recipe Source"}</span>
+                <span className="max-w-md">
+                  {source.recipeIngredient.recipe.name || "Recipe Source"}
+                </span>
                 <span className="font-mono text-xs">
-                  {source.recipeIngredient.quantity} {source.recipeIngredient.unit}
+                  {source.recipeIngredient.quantity}{" "}
+                  {source.recipeIngredient.unit}
                 </span>
               </li>
             ))}

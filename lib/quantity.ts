@@ -54,7 +54,7 @@ const FRACTION_WORDS: Record<string, number> = {
 function replaceUnicodeFractions(value: string): string {
   return value.replace(
     /[½⅓⅔¼¾⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞]/g,
-    (match) => ` ${UNICODE_FRACTIONS[match]} `
+    (match) => ` ${UNICODE_FRACTIONS[match]} `,
   );
 }
 
@@ -128,16 +128,10 @@ export function tryNormaliseQuantity(input: string | number): number | null {
   value = replaceUnicodeFractions(value);
 
   // normalise punctuation
-  value = value
-    .replace(/-/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
+  value = value.replace(/-/g, " ").replace(/\s+/g, " ").trim();
 
   // "1½" becomes "1 1/2"ut
-  value = value.replace(
-    /^(\d+)\s+(1\/\d+)$/,
-    "$1 $2"
-  );
+  value = value.replace(/^(\d+)\s+(1\/\d+)$/, "$1 $2");
 
   // "a half" to "half"
   value = value.replace(/^a\s+/, "");
@@ -161,13 +155,11 @@ export function tryNormaliseQuantity(input: string | number): number | null {
 
   // "three quarters"
   const fractionWordsMatch = value.match(
-    /^(.+)\s+(half|halves|third|quarter|fourth|fifth|sixth|seventh|eighth|ninth|tenth)s?$/
+    /^(.+)\s+(half|halves|third|quarter|fourth|fifth|sixth|seventh|eighth|ninth|tenth)s?$/,
   );
   if (fractionWordsMatch) {
     const numerator = parseNumberWords(fractionWordsMatch[1]);
-    const denominator = FRACTION_WORDS[
-      fractionWordsMatch[2].replace(/s$/, "")
-    ];
+    const denominator = FRACTION_WORDS[fractionWordsMatch[2].replace(/s$/, "")];
 
     if (numerator !== null && denominator) {
       return numerator * denominator;
@@ -200,11 +192,13 @@ export function tryNormaliseQuantity(input: string | number): number | null {
   return null;
 }
 
-
 export function parseQuantity(input: string) {
-  const formattedInput = input.replace(/(\d+(?:\.\d+)?)([a-zA-Z\u½-⅞]+)/g, "$1 $2");
+  const formattedInput = input.replace(
+    /(\d+(?:\.\d+)?)([a-zA-Z\u½-⅞]+)/g,
+    "$1 $2",
+  );
 
-  const tokens = formattedInput.trim().replace(/\s+/g, ' ').split(' ');
+  const tokens = formattedInput.trim().replace(/\s+/g, " ").split(" ");
 
   let quantityText = null;
   let unitText = null;
@@ -214,9 +208,9 @@ export function parseQuantity(input: string) {
   let quantityCutoff = 0;
   for (let i = 0; i < tokens.length; i++) {
     const tokensCutOff = tokens.slice(0, tokens.length - i);
-    const standardQuantity = tryNormaliseQuantity(tokensCutOff.join(' '));
+    const standardQuantity = tryNormaliseQuantity(tokensCutOff.join(" "));
     if (standardQuantity !== null) {
-      quantityText = tokensCutOff.join(' ');
+      quantityText = tokensCutOff.join(" ");
       standardisedQuantity = standardQuantity;
       quantityCutoff = tokens.length - i;
       break;
@@ -225,17 +219,17 @@ export function parseQuantity(input: string) {
 
   for (let i = 0; i < tokens.length - quantityCutoff; i++) {
     const tokensCutOff = tokens.slice(quantityCutoff + i, tokens.length);
-    const standardUnit = tryStandardiseUnit(tokensCutOff.join(' '));
+    const standardUnit = tryStandardiseUnit(tokensCutOff.join(" "));
 
     if (standardUnit !== null) {
-      unitText = tokensCutOff.join(' ');
+      unitText = tokensCutOff.join(" ");
       standardisedUnit = standardUnit;
       break;
     }
   }
 
   if (standardisedQuantity === null && standardisedUnit !== null) {
-    quantityText = '';
+    quantityText = "";
     standardisedQuantity = 1;
   }
 
@@ -251,10 +245,12 @@ export function parseQuantity(input: string) {
   let normalisedQuantity = null;
   let normalisedUnit = null;
   if (standardisedUnit !== null && standardisedQuantity !== null) {
-    ({ normalisedQuantity, normalisedUnit } = normaliseUnit(standardisedQuantity, standardisedUnit))
-  }
-  else if (standardisedUnit === null && standardisedQuantity === null) {
-    throw new Error('Unit or Quantity cannot be parsed');
+    ({ normalisedQuantity, normalisedUnit } = normaliseUnit(
+      standardisedQuantity,
+      standardisedUnit,
+    ));
+  } else if (standardisedUnit === null && standardisedQuantity === null) {
+    throw new Error("Unit or Quantity cannot be parsed");
   }
 
   return {
@@ -272,7 +268,7 @@ export function parseQuantity(input: string) {
     ...(normalisedUnit !== null && {
       normalisedUnit,
     }),
-  }
+  };
 }
 
 export function isValidQuantity(input: string): boolean {

@@ -1,8 +1,8 @@
-"use server"
+"use server";
 
 import { PrismaClient, Prisma } from "../app/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { Product } from "@/types/inventory"
+import { Product } from "@/types/inventory";
 import "dotenv/config";
 
 const adapter = new PrismaPg({
@@ -12,7 +12,6 @@ const adapter = new PrismaPg({
 const prisma = new PrismaClient({
   adapter,
 });
-
 
 export async function addNewProduct(productData: Product) {
   try {
