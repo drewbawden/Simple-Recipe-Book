@@ -1,4 +1,4 @@
-"use server"
+"use server";
 
 import { PrismaClient, Prisma } from "../app/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
@@ -11,7 +11,6 @@ const adapter = new PrismaPg({
 const prisma = new PrismaClient({
   adapter,
 });
-
 
 export async function getCategories() {
   try {

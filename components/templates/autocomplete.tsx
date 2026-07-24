@@ -1,7 +1,10 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useRef, ChangeEvent } from 'react';
-import { AutocompleteType, getAutocompleteSuggestions } from '@/actions/autocomplete';
+import { useState, useEffect, useRef, ChangeEvent } from "react";
+import {
+  AutocompleteType,
+  getAutocompleteSuggestions,
+} from "@/actions/autocomplete";
 
 interface Suggestion {
   id: string | number;
@@ -19,7 +22,16 @@ interface AutocompleteInputProps {
   value?: string;
 }
 
-export default function AutocompleteInput({ modelType, placeholder, onSelect, onChange, className, id, name, value = '' }: AutocompleteInputProps) {
+export default function AutocompleteInput({
+  modelType,
+  placeholder,
+  onSelect,
+  onChange,
+  className,
+  id,
+  name,
+  value = "",
+}: AutocompleteInputProps) {
   const [query, setQuery] = useState(value);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -42,7 +54,7 @@ export default function AutocompleteInput({ modelType, placeholder, onSelect, on
           setSuggestions(data);
           setIsOpen(true);
         } catch (err) {
-          console.error('Error fetching autocomplete data:', err);
+          console.error("Error fetching autocomplete data:", err);
         }
       } else {
         setSuggestions([]);
@@ -58,7 +70,7 @@ export default function AutocompleteInput({ modelType, placeholder, onSelect, on
     setIsOpen(false);
     selectedRef.current = true;
     if (onChange) {
-      onChange(item.name)
+      onChange(item.name);
     }
     if (onSelect) {
       onSelect(item);
@@ -81,7 +93,7 @@ export default function AutocompleteInput({ modelType, placeholder, onSelect, on
           }
         }}
         onBlur={() => setIsOpen(false)}
-        placeholder={placeholder || ''}
+        placeholder={placeholder || ""}
         className={className || ""}
         id={id || ""}
         name={name || ""}
@@ -94,7 +106,7 @@ export default function AutocompleteInput({ modelType, placeholder, onSelect, on
               key={item.id}
               onMouseDown={(e) => {
                 e.preventDefault();
-                handleSelect(item)
+                handleSelect(item);
               }}
               className="px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer transition-colors"
             >

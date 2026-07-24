@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
-import { getCategories } from '@/actions/dropdowns';
+import { getCategories } from "@/actions/dropdowns";
 
 export const CategoryDropdown = () => {
   const [categories, setCategories] = useState([]);
@@ -15,7 +15,7 @@ export const CategoryDropdown = () => {
         setCategories(data);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching categories:', error);
+        console.error("Error fetching categories:", error);
         setLoading(false);
       }
     };
@@ -24,7 +24,7 @@ export const CategoryDropdown = () => {
   }, []);
 
   if (loading) {
-    return <p>Loading Categories...</p>
+    return <p>Loading Categories...</p>;
   }
 
   return (
@@ -36,4 +36,4 @@ export const CategoryDropdown = () => {
       ))}
     </select>
   );
-}
+};

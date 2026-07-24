@@ -1,6 +1,6 @@
 "use client";
 
-import { RecipeTable } from "@/components/RecipeTable"
+import { RecipeTable } from "@/components/recipes/recipe-table";
 
 export default function RecipesPage() {
   return (

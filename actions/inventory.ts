@@ -1,8 +1,8 @@
-"use server"
+"use server";
 import { Product } from "@/types/inventory";
 
 export async function getProductAction(
-  barcode: string
+  barcode: string,
 ): Promise<Product | null> {
   const url = `https://world.openfoodfacts.org/api/v0/product/${barcode}.json`;
 
