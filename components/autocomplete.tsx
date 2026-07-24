@@ -92,7 +92,10 @@ export default function AutocompleteInput({ modelType, placeholder, onSelect, on
           {suggestions.map((item) => (
             <li
               key={item.id}
-              onClick={() => handleSelect(item)}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                handleSelect(item)
+              }}
               className="px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer transition-colors"
             >
               {item.name}

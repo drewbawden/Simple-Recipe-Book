@@ -114,17 +114,17 @@ export const ShoppingList = () => {
           let normalUnits = new Set();
           let stringUnits = new Set();
           for (let i = 0; i < sources.length; i++) {
-            const standardQuantity = Number(sources[i].recipeIngredient.standardQuantity) || 0;
-            const normalQuantity = Number(sources[i].recipeIngredient.normalQuantity) || 0;
+            const standardQuantity = sources[i].recipeIngredient.standardQuantity
+              ? Number(sources[i].recipeIngredient.standardQuantity)
+              : null;
+            const normalQuantity = sources[i].recipeIngredient.normalQuantity
+              ? Number(sources[i].recipeIngredient.normalQuantity)
+              : null;
             totalStandardQuantity += standardQuantity;
             totalNormalQuantity += normalQuantity;
             standardUnits.add(sources[i].recipeIngredient.standardUnit);
             normalUnits.add(sources[i].recipeIngredient.normalUnit);
             stringUnits.add(sources[i].recipeIngredient.unit);
-            console.log(normalUnits);
-            console.log(standardUnits);
-            console.log(stringUnits);
-            console.log('\n');
           }
           let totalUnit = '';
           const firstNormal = Array.from(normalUnits)[0];
@@ -133,6 +133,10 @@ export const ShoppingList = () => {
           // more than one normal unit
           if (normalUnits.size > 1) {
             totalUnit = 'mixed units';
+          }
+          // no normal or standard units
+          else if (firstStandard === null) {
+            totalQuantity = totalStandardQuantity;
           }
           // one normal unit, but multiple standards
           else if (standardUnits.size > 1 && normalUnits.size === 1) {
@@ -157,10 +161,6 @@ export const ShoppingList = () => {
           else if (normalUnits.size === 1 && standardUnits.size === 1) {
             totalQuantity = totalStandardQuantity;
             totalUnit = firstStandard?.toLowerCase() + 's';
-          }
-          // no normal or standard units
-          else {
-            totalQuantity = totalStandardQuantity;
           }
 
           return (
