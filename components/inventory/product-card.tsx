@@ -1,8 +1,8 @@
 "use client"
 
 import { Product } from "@/types/inventory";
-import { addNewProduct } from "@/actions/manageProducts";
-import { CategoryDropdown } from "./dropdowns";
+import { addNewProduct } from "@/actions/manage-products";
+import { CategoryDropdown } from "@/components/templates/dropdowns";
 
 interface ProductCardProps {
   product: Product;

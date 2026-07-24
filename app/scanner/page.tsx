@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { BarcodeScanner } from "@/components/BarcodeScanner";
-import { ProductCard } from "@/components/ProductCard";
+import { BarcodeScanner } from "@/components/inventory/barcode-scanner";
+import { ProductCard } from "@/components/inventory/product-card";
 import { getProductAction } from "@/actions/inventory";
 
 export default function InventoryPage() {

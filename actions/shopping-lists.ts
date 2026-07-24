@@ -1,6 +1,6 @@
 "use server"
 
-import { ShoppingList } from "@/components/shoppingList";
+import { ShoppingList } from "@/components/shopping-list/shopping-list";
 import { PrismaClient} from "../app/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import "dotenv/config";

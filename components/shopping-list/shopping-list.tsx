@@ -1,4 +1,4 @@
-import { getShoppingList, setItemCompleted, deleteItem } from '@/actions/shoppingList';
+import { getShoppingList, setItemCompleted, deleteItem } from '@/actions/shopping-lists';
 import { Prisma } from "@/app/generated/prisma/client";
 import { NormalUnit } from '@/app/generated/prisma/enums'
 import { useState, useEffect, useRef } from 'react';

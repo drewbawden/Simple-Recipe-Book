@@ -6,12 +6,12 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 import { getRecipes, insertNewRecipe } from '@/actions/recipes';
-import AutocompleteInput from './autocomplete';
-import { Modal } from '@/components/modal';
-import { NormalUnit } from "../app/generated/prisma/enums";
-import { AddToShoppingListPopup } from "./addToShoppingListPopup"
+import AutocompleteInput from '@/components/templates/autocomplete';
+import { Modal } from '@/components/templates/modal';
+import { NormalUnit } from "@/app/generated/prisma/enums";
+import { AddToShoppingListPopup } from "@/components/recipes/popup-content"
 import { isValidQuantity } from '@/lib/quantity';
-import { EnumOptions } from './enums';
+import { EnumOptions } from '@/components/templates/enums';
 import imageCompression from 'browser-image-compression';
 
 export const RecipeTable = () => {

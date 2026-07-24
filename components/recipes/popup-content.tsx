@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Form from 'next/form';
-import { addRecipeToShoppingList } from '@/actions/shoppingList';
+import { addRecipeToShoppingList } from '@/actions/shopping-lists';
 import { redirect, RedirectType } from 'next/navigation';
 
 export const AddToShoppingListPopup = ({ closePopup, recipe }) => {
