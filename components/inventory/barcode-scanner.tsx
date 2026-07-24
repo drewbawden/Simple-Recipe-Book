@@ -1,4 +1,4 @@
-import { useBarcodeScanner } from "@/hooks/useBarcodeScanner";
+import { useBarcodeScanner } from "@/hooks/use-barcode-scanner";
 
 interface Props {
   onResult: (barcode: string) => void;
