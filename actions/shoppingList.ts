@@ -25,7 +25,11 @@ export async function getShoppingList() {
                         item: true,
                         shoppingListItemSources: {
                             include: {
-                                recipeIngredient: true,
+                                recipeIngredient: {
+                                    include: {
+                                        recipe: true,
+                                    }
+                                }
                             }
                         }
                     }

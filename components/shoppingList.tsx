@@ -3,6 +3,7 @@ import { Prisma } from "@/app/generated/prisma/client";
 import { NormalUnit } from '@/app/generated/prisma/enums'
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { ChevronDown } from 'lucide-react';
 
 
 type ShoppingListWithItems = Prisma.ShoppingListGetPayload<{
@@ -12,7 +13,11 @@ type ShoppingListWithItems = Prisma.ShoppingListGetPayload<{
         item: true;
         shoppingListItemSources: {
           include: {
-            recipeIngredient: true;
+            recipeIngredient: {
+              include: {
+                recipe: true,
+              }
+            }
           };
         };
       };
@@ -53,14 +58,17 @@ export const ShoppingList = () => {
   async function handleItemChecked(id: number, e: React.ChangeEvent<HTMLInputElement>) {
     const completed = e.target.checked;
 
-    setList((prev) => ({
+    setList((prev) => {
+      if(!prev) return prev;
+      return {
         ...prev,
         items: prev.items.map((item) =>
         item.id === id
             ? { ...item, completed }
             : item
         ),
-    }));
+      }
+    });
 
     await setItemCompleted(id, e.target.checked)
 
@@ -88,74 +96,127 @@ export const ShoppingList = () => {
           let totalNormalQuantity = 0.00;
           let totalStandardQuantity = 0.00;
           let totalQuantity = 0.00;
-          let units = new Set();
+          let standardUnits = new Set();
           let normalUnits = new Set();
+          let stringUnits = new Set();
           for (let i = 0; i < sources.length; i++) {
             const standardQuantity = Number(sources[i].recipeIngredient.standardQuantity) || 0;
             const normalQuantity = Number(sources[i].recipeIngredient.normalQuantity) || 0;
-            if (standardQuantity === 0) {
-              totalStandardQuantity += 1;
-            }
             totalStandardQuantity += standardQuantity;
             totalNormalQuantity += normalQuantity;
-            units.add(sources[i].recipeIngredient.unit);
+            standardUnits.add(sources[i].recipeIngredient.standardUnit);
             normalUnits.add(sources[i].recipeIngredient.normalUnit);
+            stringUnits.add(sources[i].recipeIngredient.unit);
           }
           let totalUnit = '';
+          const firstNormal = Array.from(normalUnits)[0];
+          const firstStandard = Array.from(standardUnits)[0];
+          const firstString = Array.from(stringUnits)[0];
+          // more than one normal unit
           if (normalUnits.size > 1) {
             totalUnit = 'mixed units';
           }
-          else if (units.size > 1 && normalUnits.size === 1) {
-            totalUnit = normalUnits.values().next().value.toLowerCase() + 's';
+          // one normal unit, but multiple standards
+          else if (standardUnits.size > 1 && normalUnits.size === 1) {
+            totalUnit = firstNormal?.toLowerCase() + 's';
             totalQuantity = totalNormalQuantity;
           }
-          else {
-            totalUnit = units.values().next().value ?? '';
+          // one standard, but multiple strings
+          else if (stringUnits.size > 1 && standardUnits.size === 1) {
+            totalUnit = firstStandard?.toLowerCase() + 's';
+            totalQuantity = totalStandardQuantity;
+          }
+          // multiple individual units
+          else if (firstNormal === NormalUnit.INDIVIDUAL) {
+            totalUnit = firstString?.toLowerCase();
 
             totalQuantity = totalStandardQuantity
-            const normalUnit = sources[0].recipeIngredient.normalUnit;
-            if (normalUnit == NormalUnit.INDIVIDUAL && !totalUnit.endsWith('s') && totalStandardQuantity > 1) {
+            if (!totalUnit.endsWith('s') && totalStandardQuantity > 1) {
               totalUnit += 's';
             }
           }
+          // no normal or standard units
+          else {
+            totalQuantity = totalStandardQuantity;
+          }
 
           return (
-            <label
-              key={listItem.id}
-              className="flex flex-col items-center justify-between rounded-lg border p-4 hover:bg-muted"
-            >
-              <div className="flex items-center gap-3">
-                <input
-                  type="checkbox"
-                  checked={listItem.completed}
-                  onChange={(e) => handleItemChecked(listItem.id, e)}
-                  className="h-5 w-5"
-                />
-
-                <span
-                  className={
-                    listItem.completed
-                      ? "line-through text-muted-foreground"
-                      : ""
-                  }
-                >
-                  {listItem.customName ?? listItem.item.name}
-                </span>
-              <span className="text-sm text-muted-foreground">
-                {totalUnit == 'mixed units' ? '' : totalQuantity}
-                {totalUnit ? ` ${totalUnit}` : ""}
-              </span>
-              </div>
-
-              <ul>
-                {sources.map((source) => (
-                  <li key={source.id}>{source.recipeIngredient.quantity} {source.recipeIngredient.unit}</li>
-                ))}
-              </ul>
-            </label>
+          <ListItemCard key={listItem.id} listItem={listItem} totalQuantity={totalQuantity} totalUnit={totalUnit} sources={sources} handleItemChecked={handleItemChecked}/>
           );
         })}
       </div>
     </div>
   );
   }
+
+function ListItemCard({ listItem, totalQuantity, totalUnit, sources, handleItemChecked }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="mb-3 rounded-xl border bg-card text-card-foreground shadow-sm transition-all hover:border-accent hover:shadow-md">
+      <label className="flex items-center justify-between p-4">
+        <div className="flex items-center gap-3">
+          <input
+            type="checkbox"
+            id={`item-${listItem.id}`}
+            checked={listItem.completed}
+            onChange={(e) => handleItemChecked(listItem.id, e)}
+            className="h-5 w-5 rounded border-muted-foreground/30 text-primary focus:ring-primary cursor-pointer accent-primary"
+          />
+
+          <label
+            htmlFor={`item-${listItem.id}`}
+            className={`font-medium cursor-pointer select-none ${
+              listItem.completed
+                ? "line-through text-muted-foreground opacity-70"
+                : "text-foreground"
+            }`}
+          >
+            {listItem.customName ?? listItem.item.name}
+          </label>
+        </div>
+
+        <label className="flex items-center gap-4 border-1 border-gray-500 rounded">
+          <span className="rounded-md bg-muted px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+            {totalUnit === "mixed units" ? "" : totalQuantity}
+            {totalUnit ? ` ${totalUnit}` : ""}
+          </span>
+
+          {sources && sources.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setIsOpen(!isOpen)}
+              className="rounded-md p-1 hover:bg-muted text-muted-foreground transition-colors"
+              aria-expanded={isOpen}
+              aria-label="Toggle ingredients"
+            >
+              <ChevronDown
+                className={`h-5 w-5 transition-transform duration-200 ${
+                  isOpen ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+          )}
+        </label>
+      </label>
+
+      {isOpen && sources && sources.length > 0 && (
+        <div className="border-t bg-muted/40 px-4 py-3">
+          <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            Needed for
+          </p>
+          <ul className="space-y-1.5 pl-2 text-sm text-muted-foreground">
+            {sources.map((source) => (
+              <li key={source.id} className="flex items-center justify-between">
+                <span>{source.recipeIngredient.recipe.name || "Recipe Source"}</span>
+                <span className="font-mono text-xs">
+                  {source.recipeIngredient.quantity} {source.recipeIngredient.unit}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
