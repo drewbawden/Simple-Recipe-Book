@@ -1303,15 +1303,10 @@ export type ShoppingListScalarFieldEnum = (typeof ShoppingListScalarFieldEnum)[k
 
 export const ShoppingListItemScalarFieldEnum = {
   id: 'id',
-  shoppingListId: 'shoppingListId',
   itemId: 'itemId',
+  shoppingListId: 'shoppingListId',
   customName: 'customName',
-  quantity: 'quantity',
-  unit: 'unit',
-  normalQuantity: 'normalQuantity',
-  normalUnit: 'normalUnit',
-  completed: 'completed',
-  createdAt: 'createdAt'
+  completed: 'completed'
 } as const
 
 export type ShoppingListItemScalarFieldEnum = (typeof ShoppingListItemScalarFieldEnum)[keyof typeof ShoppingListItemScalarFieldEnum]
@@ -1320,7 +1315,7 @@ export type ShoppingListItemScalarFieldEnum = (typeof ShoppingListItemScalarFiel
 export const ShoppingListItemSourceScalarFieldEnum = {
   id: 'id',
   shoppingListItemId: 'shoppingListItemId',
-  recipeId: 'recipeId',
+  recipeIngredientId: 'recipeIngredientId',
   dateAdded: 'dateAdded'
 } as const
 

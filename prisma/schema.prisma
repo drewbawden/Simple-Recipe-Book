@@ -87,16 +87,15 @@ model Nutrition {
 }
 
 model Recipes {
-  id                      Int                      @id @default(autoincrement())
-  name                    String
-  types                   RecipeType[]
-  notes                   String?
-  url                     String?
-  totalTimeMins           Int?
-  servingSize             Int?
-  ingredients             RecipeIngredient[]
-  imagePath               String?
-  shoppingListItemSources ShoppingListItemSource[]
+  id            Int                @id @default(autoincrement())
+  name          String
+  types         RecipeType[]
+  notes         String?
+  url           String?
+  totalTimeMins Int?
+  servingSize   Int?
+  ingredients   RecipeIngredient[]
+  imagePath     String?
 }
 
 model RecipeIngredient {
@@ -110,6 +109,8 @@ model RecipeIngredient {
   unit           String?
   normalQuantity Decimal?    @db.Decimal(12, 4)
   normalUnit     NormalUnit?
+
+  shoppingListItemSources ShoppingListItemSource[]
 }
 
 model ShoppingList {
@@ -123,20 +124,15 @@ model ShoppingList {
 model ShoppingListItem {
   id Int @id @default(autoincrement())
 
+  item   Item @relation(fields: [itemId], references: [id])
+  itemId Int
+
   shoppingList   ShoppingList @relation(fields: [shoppingListId], references: [id])
   shoppingListId Int
 
-  item   Item? @relation(fields: [itemId], references: [id])
-  itemId Int?
-
-  customName     String? // temp name for "some random thing in the house", stuff that shouldn't really be stored
-  quantity       String? // quantity not required because of things like "batteries", "salt to taste"
-  unit           String?
-  normalQuantity Decimal?    @db.Decimal(12, 4)
-  normalUnit     NormalUnit?
+  customName String? // temp name for "some random thing in the house", stuff that shouldn't really be stored
 
   completed               Boolean                  @default(false)
-  createdAt               DateTime                 @default(now())
   shoppingListItemSources ShoppingListItemSource[]
 }
 
@@ -146,8 +142,8 @@ model ShoppingListItemSource {
   shoppingListItem   ShoppingListItem @relation(fields: [shoppingListItemId], references: [id], onDelete: Cascade)
   shoppingListItemId Int
 
-  recipe   Recipes @relation(fields: [recipeId], references: [id])
-  recipeId Int
+  recipeIngredient   RecipeIngredient @relation(fields: [recipeIngredientId], references: [id])
+  recipeIngredientId Int
 
   dateAdded DateTime @default(now())
 }
