@@ -6,9 +6,16 @@ import { getEnums, enumType } from "@/actions/enums";
 
 type EnumOptionsProps = {
   enumType: enumType;
-} & React.InputHTMLAttributes<HTMLInputElement>;
+  selected?: string[];
+  onChange?: (selected: string[]) => void;
+} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange">;
 
-export const EnumOptions = ({ enumType, ...inputProps }: EnumOptionsProps) => {
+export const EnumOptions = ({
+  enumType,
+  selected,
+  onChange,
+  ...inputProps
+}: EnumOptionsProps) => {
   const [enums, setEnums] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -39,7 +46,21 @@ export const EnumOptions = ({ enumType, ...inputProps }: EnumOptionsProps) => {
     <div>
       {enums.map((option) => (
         <label key={option.id} className="flex items-center gap-2">
-          <input type="checkbox" value={option.id} {...inputProps} />
+          <input
+            type="checkbox"
+            value={option.id}
+            checked={selected?.includes(option.id) ?? false}
+            onChange={(e) => {
+              if (!onChange) return;
+
+              if (e.target.checked) {
+                onChange([...selected!, option.id]);
+              } else {
+                onChange(selected!.filter((id) => id !== option.id));
+              }
+            }}
+            {...inputProps}
+          />
           {option.name.charAt(0).toUpperCase() + option.name.substring(1)}
         </label>
       ))}

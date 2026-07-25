@@ -50,7 +50,7 @@ export async function getRecipes() {
   }
 }
 
-export async function insertNewRecipe(formData: FormData) {
+async function parseFormData(formData: FormData) {
   const name = formData.get("name") as string;
   const recipeTypes = formData.getAll("recipeType") as RecipeType[];
   const notes = formData.get("notes") as string;
@@ -77,52 +77,121 @@ export async function insertNewRecipe(formData: FormData) {
     imagePath = `/recipe-pictures/${filename}`;
   }
 
+  return {
+    name,
+    recipeTypes,
+    notes,
+    url,
+    servingSize,
+    totalTimeMins,
+    ingredients,
+    imagePath,
+  };
+}
+
+export async function updateRecipe(recipeId: number, formData: FormData) {
+  const data = await parseFormData(formData);
+  console.log(data);
   await prisma.$transaction(async (tx) => {
-    const recipe = await tx.recipes.create({
+    await tx.recipes.update({
+      where: {
+        id: recipeId,
+      },
       data: {
-        name,
-        types: recipeTypes as RecipeType[],
-        url,
-        notes,
-        servingSize,
-        totalTimeMins,
-        imagePath,
+        name: data.name,
+        types: data.recipeTypes as RecipeType[],
+        url: data.url,
+        notes: data.notes,
+        servingSize: data.servingSize,
+        totalTimeMins: data.totalTimeMins,
+        imagePath: data.imagePath,
 
         ingredients: {
+          deleteMany: {},
           create: await Promise.all(
-            ingredients.map(async (ingredient) => {
+            data.ingredients.map(async (ingredient) => {
               const parsed = parseQuantity(ingredient.quantity);
 
               let item;
+              item = await tx.item.upsert({
+                where: {
+                  name: ingredient.name,
+                },
+                update: {},
+                create: {
+                  name: ingredient.name,
+                  type: ItemType.FOOD,
+                },
+              });
 
-              // Case 1: existing food from autocomplete
-              if (ingredient.itemId) {
-                item = await tx.item.findUnique({
-                  where: {
-                    id: ingredient.itemId,
-                  },
-                });
+              return {
+                itemId: item.id,
+                quantity: parsed.quantity,
+                unit: parsed.unit,
+                standardQuantity: parsed.standardisedQuantity,
+                standardUnit: parsed.standardisedUnit,
+                normalQuantity: parsed.normalisedQuantity,
+                normalUnit: parsed.normalisedUnit,
+              };
+            }),
+          ),
+        },
+      },
+    });
+  });
+  await cleanUpShoppingList();
+}
 
-                if (!item) {
-                  throw new Error(
-                    `Item with id ${ingredient.itemId} does not exist`,
-                  );
-                }
-              }
+export async function deleteRecipe(recipeId: number) {
+  await prisma.recipes.delete({
+    where: {
+      id: recipeId,
+    },
+  });
+  await cleanUpShoppingList();
+}
 
-              // Case 2: No itemId, search by name/create if missing
-              else {
-                item = await tx.item.upsert({
-                  where: {
-                    name: ingredient.name,
-                  },
-                  update: {},
-                  create: {
-                    name: ingredient.name,
-                    type: ItemType.FOOD,
-                  },
-                });
-              }
+async function cleanUpShoppingList() {
+  await prisma.shoppingListItem.deleteMany({
+    where: {
+      customName: null,
+      shoppingListItemSources: {
+        none: {},
+      },
+    },
+  });
+}
+
+export async function insertNewRecipe(formData: FormData) {
+  const data = await parseFormData(formData);
+
+  await prisma.$transaction(async (tx) => {
+    const recipe = await tx.recipes.create({
+      data: {
+        name: data.name,
+        types: data.recipeTypes as RecipeType[],
+        url: data.url,
+        notes: data.notes,
+        servingSize: data.servingSize,
+        totalTimeMins: data.totalTimeMins,
+        imagePath: data.imagePath,
+
+        ingredients: {
+          create: await Promise.all(
+            data.ingredients.map(async (ingredient) => {
+              const parsed = parseQuantity(ingredient.quantity);
+
+              let item;
+              item = await tx.item.upsert({
+                where: {
+                  name: ingredient.name,
+                },
+                update: {},
+                create: {
+                  name: ingredient.name,
+                  type: ItemType.FOOD,
+                },
+              });
 
               return {
                 itemId: item.id,

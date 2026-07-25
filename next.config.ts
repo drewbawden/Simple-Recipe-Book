@@ -1,7 +1,5 @@
 import type { NextConfig } from "next";
 
-
-
 const nextConfig: NextConfig = {
   experimental: {
     serverActions: {
@@ -12,11 +10,11 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "images.openfoodfacts.org"
+        hostname: "images.openfoodfacts.org",
       },
-    ]
+    ],
   },
-  allowedDevOrigins: [""]
+  allowedDevOrigins: ["192.168.1.240"],
 };
 
 export default nextConfig;

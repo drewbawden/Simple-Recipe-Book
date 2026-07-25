@@ -2,15 +2,19 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
-import { getRecipes } from "@/actions/recipes";
+import { deleteRecipe, getRecipes } from "@/actions/recipes";
 import { Modal } from "@/components/templates/modal";
 
 import { AddToShoppingListPopup } from "@/components/recipes/popups/add-to-list";
-import { AddRecipePopup } from "@/components/recipes/popups/add-recipe";
+import { RecipeInputPopup } from "@/components/recipes/popups/recipe-input";
+import { Recipe } from "@/types/recipe";
 import {
   NotesPopup,
   IngredientPopup,
 } from "@/components/recipes/popups/metadata";
+
+import { SettingsIcon, ShoppingBasketIcon } from "lucide-react";
+import { refresh } from "next/cache";
 
 export const RecipeTable = () => {
   const [recipes, setRecipes] = useState([]);
@@ -19,6 +23,8 @@ export const RecipeTable = () => {
   const [selectedIngredients, setSelectedIngredients] = useState(null);
   const [selectedNotes, setSelectedNotes] = useState(null);
   const [selectedShoppingList, setSelectedShoppingList] = useState(false);
+  const [isContextOpen, setIsContextOpen] = useState<string | null>(null);
+  const [selectedEdit, setSelectedEdit] = useState(null);
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -40,12 +46,24 @@ export const RecipeTable = () => {
     setRecipes(data);
   };
 
+  const handleEdit = (recipe: Recipe) => {
+    setSelectedEdit(recipe);
+  };
+
+  const handleDelete = async (recipeId: number) => {
+    await deleteRecipe(recipeId);
+    refreshRecipes();
+  };
+
   if (loading) {
     return <p>Loading Recipes...</p>;
   }
 
   return (
     <div>
+      <div className="flex flex-row justify-center">
+        <h1 className="text-4xl font-bold">Recipes</h1>
+      </div>
       <div className="flex flex-row justify-between m-8">
         <button
           className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded "
@@ -54,7 +72,6 @@ export const RecipeTable = () => {
         >
           Add Recipe
         </button>
-        <h1 className="text-4xl font-bold">Recipes</h1>
         <Link
           href="/list"
           className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded "
@@ -104,6 +121,39 @@ export const RecipeTable = () => {
             </div>
 
             <div className="flex justify-between items-center pt-2 border-t">
+              <div className="relative">
+                <button
+                  className="bg-gray-400 text-white text-sm font-bold p-1 rounded active:bg-gray-500"
+                  onClick={() =>
+                    setIsContextOpen(
+                      isContextOpen === recipe.id ? null : recipe.id,
+                    )
+                  }
+                >
+                  <SettingsIcon />
+                </button>
+                {isContextOpen === recipe.id && (
+                  <div className="absolute top-6 left-0 mt-2 w-40 rounded-md border bg-white shadow-lg">
+                    <button
+                      className="block w-full px-4 py-2 text-left hover:bg-gray-100 active:bg-gray-200"
+                      onClick={() => {
+                        handleEdit(recipe);
+                      }}
+                    >
+                      Edit
+                    </button>
+                    <hr />
+                    <button
+                      className="text-red-600 block w-full px-4 py-2 text-left hover:bg-red-100 active:bg-red-200"
+                      onClick={() => {
+                        handleDelete(recipe.id);
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
+              </div>
               <div>
                 <p className="text-xs text-gray-500">Ingredients</p>
                 {recipe.ingredients.length > 0 ? (
@@ -133,11 +183,11 @@ export const RecipeTable = () => {
               </div>
               <button
                 title="Add to shopping list"
-                className="bg-blue-500 text-white text-sm font-bold py-1 px-3 rounded"
+                className="bg-blue-500 text-white text-base font-bold py-2 px-2 rounded"
                 onClick={() => setSelectedShoppingList(recipe)}
                 type="button"
               >
-                Add
+                <ShoppingBasketIcon />
               </button>
             </div>
           </div>
@@ -246,7 +296,7 @@ export const RecipeTable = () => {
                     <p title="Notes">---</p>
                   )}
                 </td>
-                <td className="text-center align-middle p-4 border-b border-blue-gray-50">
+                <td className="space-x-3 justify-center text-center align-middle p-4 border-b border-blue-gray-50">
                   <button
                     title="Add to shopping list"
                     className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded"
@@ -255,6 +305,39 @@ export const RecipeTable = () => {
                   >
                     Add
                   </button>
+                  <div className="relative inline">
+                    <button
+                      className="bg-gray-400 text-white text-sm font-bold p-1 rounded active:bg-gray-500"
+                      onClick={() =>
+                        setIsContextOpen(
+                          isContextOpen === recipe.id ? null : recipe.id,
+                        )
+                      }
+                    >
+                      <SettingsIcon />
+                    </button>
+                    {isContextOpen === recipe.id && (
+                      <div className="z-10 absolute top-6 left-0 mt-2 w-40 rounded-md border bg-white shadow-lg">
+                        <button
+                          className="text-gray-900 block w-full px-4 py-2 text-left hover:bg-gray-100 active:bg-gray-200"
+                          onClick={() => {
+                            handleEdit(recipe);
+                          }}
+                        >
+                          Edit
+                        </button>
+                        <hr />
+                        <button
+                          className="text-red-600 block w-full px-4 py-2 text-left hover:bg-red-100 active:bg-red-200"
+                          onClick={() => {
+                            handleDelete(recipe.id);
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}
@@ -277,7 +360,7 @@ export const RecipeTable = () => {
         {selectedNotes && <NotesPopup notes={selectedNotes.notes} />}
       </Modal>
       <Modal isOpen={isAddRecipeOpen} onClose={() => setIsAddRecipeOpen(false)}>
-        <AddRecipePopup
+        <RecipeInputPopup
           closePopup={() => setIsAddRecipeOpen(false)}
           refreshRecipes={refreshRecipes}
         />
@@ -290,6 +373,15 @@ export const RecipeTable = () => {
           <AddToShoppingListPopup
             closePopup={() => setSelectedShoppingList(null)}
             recipe={selectedShoppingList}
+          />
+        )}
+      </Modal>
+      <Modal isOpen={selectedEdit} onClose={() => setSelectedEdit(null)}>
+        {selectedEdit && (
+          <RecipeInputPopup
+            closePopup={() => setSelectedEdit(null)}
+            refreshRecipes={refreshRecipes}
+            initialData={selectedEdit}
           />
         )}
       </Modal>
