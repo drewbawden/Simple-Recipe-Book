@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 import { deleteRecipe, getRecipes } from "@/actions/recipes";
-import { Modal } from "@/components/templates/modal";
+import { ImageModal, Modal } from "@/components/templates/modal";
 
 import { AddToShoppingListPopup } from "@/components/recipes/popups/add-to-list";
 import { RecipeInputPopup } from "@/components/recipes/popups/recipe-input";
@@ -93,7 +93,7 @@ export const RecipeTable = () => {
           >
             {recipe.imagePath ? (
               <div className="w-1/3 relative aspect-[16/9] bg-gray-100 overflow-hidden rounded-lg">
-                <Image
+                <ImageModal
                   src={recipe.imagePath}
                   alt={recipe.name}
                   className="object-cover"
