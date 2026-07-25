@@ -7,7 +7,24 @@ import { Modal } from "@/components/templates/modal";
 import Image from "next/image";
 import { AddIngredientsPopup } from "@/components/recipes/popups/add-ingredients";
 
-export const AddRecipePopup = ({ closePopup, refreshRecipes }) => {
+type RecipeInputPopupProp = {
+  closePopup: () => {};
+  refreshRecipes: () => {};
+  initialData: {
+    name: string;
+    types: number[];
+    servings: number;
+    time: number;
+    url: string;
+    notes: string;
+    ingredients: {};
+  };
+};
+export const RecipeInputPopup = ({
+  closePopup,
+  refreshRecipes,
+  initialData,
+}: RecipeInputPopupProp) => {
   const [isIngredientsOpen, setIsIngredientsOpen] = useState(false);
   const [ingredientsList, setIngredientsList] = useState([]);
   const [imageFile, setImageFile] = useState<File | null>(null);

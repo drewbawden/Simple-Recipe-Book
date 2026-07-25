@@ -30,9 +30,7 @@ export const AddIngredientsPopup = ({
   }
 
   function removeIngredient(index: number) {
-    console.log(ingredientsList);
     setIngredientsList((prev) => prev.filter((_, i) => i !== index));
-    console.log(ingredientsList);
   }
 
   return (
