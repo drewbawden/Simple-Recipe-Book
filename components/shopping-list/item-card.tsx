@@ -11,8 +11,8 @@ export const ListItemCard = ({
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="mb-3 rounded-xl border bg-card text-card-foreground shadow-sm transition-all hover:border-accent hover:shadow-md">
-      <label className="flex items-center justify-between p-4">
+    <div className="mb-2 rounded-xl border bg-card text-card-foreground shadow-sm transition-all hover:border-accent hover:shadow-md">
+      <label className="flex items-center justify-between px-4 py-2">
         <div className="mx-1 flex items-center gap-3">
           <input
             type="checkbox"
