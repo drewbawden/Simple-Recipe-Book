@@ -139,12 +139,25 @@ export async function updateRecipe(recipeId: number, formData: FormData) {
       },
     });
   });
+  await cleanUpShoppingList();
 }
 
 export async function deleteRecipe(recipeId: number) {
   await prisma.recipes.delete({
     where: {
       id: recipeId,
+    },
+  });
+  await cleanUpShoppingList();
+}
+
+async function cleanUpShoppingList() {
+  await prisma.shoppingListItem.deleteMany({
+    where: {
+      customName: null,
+      shoppingListItemSources: {
+        none: {},
+      },
     },
   });
 }

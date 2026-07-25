@@ -144,7 +144,7 @@ model ShoppingListItemSource {
   shoppingListItem   ShoppingListItem @relation(fields: [shoppingListItemId], references: [id], onDelete: Cascade)
   shoppingListItemId Int
 
-  recipeIngredient   RecipeIngredient @relation(fields: [recipeIngredientId], references: [id])
+  recipeIngredient   RecipeIngredient @relation(fields: [recipeIngredientId], references: [id], onDelete: Cascade)
   recipeIngredientId Int
 
   dateAdded DateTime @default(now())
