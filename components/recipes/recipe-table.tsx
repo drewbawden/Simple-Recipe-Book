@@ -1,9 +1,14 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 
 import { deleteRecipe, getRecipes } from "@/actions/recipes";
 import { ImageModal, Modal } from "@/components/templates/modal";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/templates/context-menu";
 
 import { AddToShoppingListPopup } from "@/components/recipes/popups/add-to-list";
 import { RecipeInputPopup } from "@/components/recipes/popups/recipe-input";
@@ -15,11 +20,11 @@ import {
 
 import {
   NotepadText,
+  PictureInPictureIcon,
   SaladIcon,
   SettingsIcon,
   ShoppingBasketIcon,
 } from "lucide-react";
-import { refresh } from "next/cache";
 
 export const RecipeTable = () => {
   const [recipes, setRecipes] = useState([]);
@@ -28,7 +33,6 @@ export const RecipeTable = () => {
   const [selectedIngredients, setSelectedIngredients] = useState(null);
   const [selectedNotes, setSelectedNotes] = useState(null);
   const [selectedShoppingList, setSelectedShoppingList] = useState(false);
-  const [isContextOpen, setIsContextOpen] = useState<string | null>(null);
   const [selectedEdit, setSelectedEdit] = useState(null);
 
   useEffect(() => {
@@ -106,19 +110,34 @@ export const RecipeTable = () => {
             ) : null}
             <div className="w-full space-y-1 flex flex-col justify-between">
               <div className="flex justify-between items-start">
-                {recipe.url ? (
-                  <Link
-                    href={recipe.url}
-                    className="text- line-clamp-3 underline font-bold"
-                    title={recipe.name}
-                  >
-                    {recipe.name}
-                  </Link>
-                ) : (
-                  <p className="text- line-clamp-3" title={recipe.name}>
-                    {recipe.name}
-                  </p>
-                )}
+                <ContextMenu>
+                  <ContextMenuTrigger className="text-left bg-gray-100 rounded px-2 py-1 block overflow-hidden">
+                    <span
+                      className="line-clamp-3 font-bold"
+                      title={recipe.name}
+                    >
+                      {recipe.name}
+                    </span>
+                  </ContextMenuTrigger>
+
+                  <ContextMenuContent className="z-10 w-72">
+                    <div className="p-3">
+                      <p className="font-bold mb-2">{recipe.name}</p>
+
+                      {recipe.url ? (
+                        <Link
+                          href={recipe.url}
+                          target="_blank"
+                          className="text-sm text-blue-600 underline break-all"
+                        >
+                          {recipe.url}
+                        </Link>
+                      ) : (
+                        <p className="text-sm text-gray-500">No URL</p>
+                      )}
+                    </div>
+                  </ContextMenuContent>
+                </ContextMenu>
                 <span className="text-sm bg-gray-100 px-2 py-1 rounded ml-2">
                   {recipe.types.join(", ") || "---"}
                 </span>
@@ -133,39 +152,23 @@ export const RecipeTable = () => {
               </div>
               <hr />
               <div className="flex flex-row justify-between items-center">
-                <div className="relative">
-                  <button
-                    className="bg-gray-400 text-white text-sm font-bold p-1 rounded active:bg-gray-500"
-                    onClick={() =>
-                      setIsContextOpen(
-                        isContextOpen === recipe.id ? null : recipe.id,
-                      )
-                    }
-                  >
+                <ContextMenu>
+                  <ContextMenuTrigger>
                     <SettingsIcon />
-                  </button>
-                  {isContextOpen === recipe.id && (
-                    <div className="absolute top-6 left-0 mt-2 w-40 rounded-md border bg-white shadow-lg">
-                      <button
-                        className="block w-full px-4 py-2 text-left hover:bg-gray-100 active:bg-gray-200"
-                        onClick={() => {
-                          handleEdit(recipe);
-                        }}
-                      >
-                        Edit
-                      </button>
-                      <hr />
-                      <button
-                        className="text-red-600 block w-full px-4 py-2 text-left hover:bg-red-100 active:bg-red-200"
-                        onClick={() => {
-                          handleDelete(recipe.id);
-                        }}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  )}
-                </div>
+                  </ContextMenuTrigger>
+                  <ContextMenuContent align="right">
+                    <ContextMenuItem onSelect={() => handleEdit(recipe)}>
+                      Edit
+                    </ContextMenuItem>
+                    <hr />
+                    <ContextMenuItem
+                      onSelect={() => handleDelete(recipe.id)}
+                      className="text-red-600"
+                    >
+                      Delete
+                    </ContextMenuItem>
+                  </ContextMenuContent>
+                </ContextMenu>
                 {recipe.ingredients.length > 0 ? (
                   <button
                     onClick={() => setSelectedIngredients(recipe)}
