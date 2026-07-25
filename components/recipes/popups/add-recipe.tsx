@@ -6,20 +6,14 @@ import Form from "next/form";
 import { Modal } from "@/components/templates/modal";
 import Image from "next/image";
 import { AddIngredientsPopup } from "@/components/recipes/popups/add-ingredients";
+import { Recipe } from "@/types/recipe";
 
-type RecipeInputPopupProp = {
+interface RecipeInputPopupProp {
   closePopup: () => {};
   refreshRecipes: () => {};
-  initialData: {
-    name: string;
-    types: number[];
-    servings: number;
-    time: number;
-    url: string;
-    notes: string;
-    ingredients: {};
-  };
-};
+  initialData: Recipe;
+}
+
 export const RecipeInputPopup = ({
   closePopup,
   refreshRecipes,
