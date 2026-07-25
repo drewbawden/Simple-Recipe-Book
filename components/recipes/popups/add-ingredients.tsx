@@ -10,7 +10,6 @@ export const AddIngredientsPopup = ({
 }) => {
   const [name, setName] = useState("");
   const [quantity, setQuantity] = useState("");
-  const [foodId, setFoodId] = useState(null);
 
   function addIngredient() {
     if (!name || !quantity) return;
@@ -20,13 +19,11 @@ export const AddIngredientsPopup = ({
       {
         name: name.toLowerCase(),
         quantity,
-        foodId,
       },
     ]);
 
     setName("");
     setQuantity("");
-    setFoodId(null);
   }
 
   function removeIngredient(index: number) {
@@ -49,9 +46,6 @@ export const AddIngredientsPopup = ({
               placeholder="Enter ingredient..."
               value={name}
               onChange={(value) => setName(value)}
-              onSelect={(item) => {
-                setFoodId(item.id);
-              }}
               className="w-full px-3 py-2 border border-gray-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-base"
             />
           </div>

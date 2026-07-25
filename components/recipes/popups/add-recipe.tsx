@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { insertNewRecipe } from "@/actions/recipes";
+import { insertNewRecipe, updateRecipe } from "@/actions/recipes";
 import { EnumOptions } from "@/components/templates/enums";
 import imageCompression from "browser-image-compression";
 import Form from "next/form";
@@ -11,7 +11,7 @@ import { Recipe } from "@/types/recipe";
 interface RecipeInputPopupProp {
   closePopup: () => {};
   refreshRecipes: () => {};
-  initialData: Recipe;
+  initialData?: Recipe;
 }
 
 export const RecipeInputPopup = ({
@@ -20,11 +20,27 @@ export const RecipeInputPopup = ({
   initialData,
 }: RecipeInputPopupProp) => {
   const [isIngredientsOpen, setIsIngredientsOpen] = useState(false);
-  const [ingredientsList, setIngredientsList] = useState([]);
+  const [ingredientsList, setIngredientsList] = useState(
+    initialData
+      ? initialData.ingredients.map((ingredient) => ({
+          name: ingredient.item.name,
+          quantity: `${ingredient.quantity} ${ingredient.unit ?? ""}`,
+        }))
+      : [],
+  );
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState(
-    "/recipe-pictures/placeholder.png",
+    initialData?.imagePath ?? "/recipe-pictures/placeholder.png",
   );
+
+  const [name, setName] = useState(initialData?.name || "");
+  const [types, setTypes] = useState<string[]>(initialData?.types ?? []);
+  const [notes, setNotes] = useState(initialData?.notes || null);
+  const [url, setUrl] = useState(initialData?.url || null);
+  const [totalTime, setTotalTime] = useState(
+    initialData?.totalTimeMins || null,
+  );
+  const [servings, setServings] = useState(initialData?.servingSize || null);
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -69,8 +85,13 @@ export const RecipeInputPopup = ({
           if (imageFile) {
             formData.set("recipeImage", imageFile);
           }
-          await insertNewRecipe(formData);
-          await refreshRecipes();
+          if (initialData) {
+            await updateRecipe(initialData.id, formData);
+          } else {
+            await insertNewRecipe(formData);
+          }
+
+          refreshRecipes();
           closePopup();
         }}
         onSubmit={handleSubmit}
@@ -117,6 +138,10 @@ export const RecipeInputPopup = ({
             name="name"
             className="w-full px-3 py-2 border border-gray-400 rounded-lg shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition text-base"
             required
+            value={name || ""}
+            onChange={(e) => {
+              setName(e.target.value);
+            }}
           />
         </div>
 
@@ -132,6 +157,8 @@ export const RecipeInputPopup = ({
               id="recipeType"
               name="recipeType"
               enumType="recipeType"
+              selected={types}
+              onChange={setTypes}
             />
           </div>
         </div>
@@ -149,6 +176,12 @@ export const RecipeInputPopup = ({
             name="servingSize"
             placeholder="e.g. 4"
             className="w-full px-3 py-2 border border-gray-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-base"
+            value={servings || ""}
+            onChange={(e) => {
+              setServings(
+                e.target.value === "" ? null : Number(e.target.value),
+              );
+            }}
           />
         </div>
 
@@ -165,6 +198,12 @@ export const RecipeInputPopup = ({
             name="totalTime"
             placeholder="e.g. 45"
             className="w-full px-3 py-2 border border-gray-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-base"
+            value={totalTime ?? ""}
+            onChange={(e) =>
+              setTotalTime(
+                e.target.value === "" ? null : Number(e.target.value),
+              )
+            }
           />
         </div>
 
@@ -178,6 +217,10 @@ export const RecipeInputPopup = ({
             name="url"
             placeholder="https://example.com/recipe"
             className="w-full px-3 py-2 border border-gray-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-base"
+            value={url ?? ""}
+            onChange={(e) =>
+              setUrl(e.target.value === "" ? null : e.target.value)
+            }
           />
         </div>
 
@@ -193,6 +236,10 @@ export const RecipeInputPopup = ({
             name="notes"
             rows={3}
             className="w-full px-3 py-2 border border-gray-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-base"
+            value={notes ?? ""}
+            onChange={(e) =>
+              setNotes(e.target.value === "" ? null : e.target.value)
+            }
           />
         </div>
 
@@ -220,7 +267,7 @@ export const RecipeInputPopup = ({
             type="submit"
             className="w-full sm:w-auto sm:px-6 py-3 rounded-lg bg-blue-600 font-semibold text-white hover:bg-blue-500 active:bg-blue-700 shadow-md hover:shadow-lg transition text-center"
           >
-            Add Recipe
+            {initialData ? "Save Changes" : "Add Recipe"}
           </button>
           <button
             type="button"

@@ -2,21 +2,19 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
-import { getRecipes } from "@/actions/recipes";
+import { deleteRecipe, getRecipes } from "@/actions/recipes";
 import { Modal } from "@/components/templates/modal";
 
 import { AddToShoppingListPopup } from "@/components/recipes/popups/add-to-list";
 import { RecipeInputPopup } from "@/components/recipes/popups/add-recipe";
+import { Recipe } from "@/types/recipe";
 import {
   NotesPopup,
   IngredientPopup,
 } from "@/components/recipes/popups/metadata";
 
-import {
-  SettingsIcon,
-  ShoppingBasketIcon,
-  NotepadTextIcon,
-} from "lucide-react";
+import { SettingsIcon, ShoppingBasketIcon } from "lucide-react";
+import { refresh } from "next/cache";
 
 export const RecipeTable = () => {
   const [recipes, setRecipes] = useState([]);
@@ -25,7 +23,8 @@ export const RecipeTable = () => {
   const [selectedIngredients, setSelectedIngredients] = useState(null);
   const [selectedNotes, setSelectedNotes] = useState(null);
   const [selectedShoppingList, setSelectedShoppingList] = useState(false);
-  const [openContextMenu, setOpenContextMenu] = useState<string | null>(null);
+  const [isContextOpen, setIsContextOpen] = useState<string | null>(null);
+  const [selectedEdit, setSelectedEdit] = useState(null);
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -33,7 +32,6 @@ export const RecipeTable = () => {
         const data = await getRecipes();
         setRecipes(data);
         setLoading(false);
-        console.log(data);
       } catch (error) {
         console.error("Error fetching recipes:", error);
         setLoading(false);
@@ -48,8 +46,14 @@ export const RecipeTable = () => {
     setRecipes(data);
   };
 
-  const handleEdit = () => {};
-  const handleDelete = () => {};
+  const handleEdit = (recipe: Recipe) => {
+    setSelectedEdit(recipe);
+  };
+
+  const handleDelete = async (recipeId: number) => {
+    await deleteRecipe(recipeId);
+    refreshRecipes();
+  };
 
   if (loading) {
     return <p>Loading Recipes...</p>;
@@ -121,25 +125,29 @@ export const RecipeTable = () => {
                 <button
                   className="bg-gray-400 text-white text-sm font-bold p-1 rounded active:bg-gray-500"
                   onClick={() =>
-                    setOpenContextMenu(
-                      openContextMenu === recipe.id ? null : recipe.id,
+                    setIsContextOpen(
+                      isContextOpen === recipe.id ? null : recipe.id,
                     )
                   }
                 >
                   <SettingsIcon />
                 </button>
-                {openContextMenu === recipe.id && (
+                {isContextOpen === recipe.id && (
                   <div className="absolute top-6 left-0 mt-2 w-40 rounded-md border bg-white shadow-lg">
                     <button
                       className="block w-full px-4 py-2 text-left hover:bg-gray-100 active:bg-gray-200"
-                      onClick={handleEdit}
+                      onClick={() => {
+                        handleEdit(recipe);
+                      }}
                     >
                       Edit
                     </button>
                     <hr />
                     <button
                       className="text-red-600 block w-full px-4 py-2 text-left hover:bg-red-100 active:bg-red-200"
-                      onClick={handleDelete}
+                      onClick={() => {
+                        handleDelete(recipe.id);
+                      }}
                     >
                       Delete
                     </button>
@@ -301,25 +309,29 @@ export const RecipeTable = () => {
                     <button
                       className="bg-gray-400 text-white text-sm font-bold p-1 rounded active:bg-gray-500"
                       onClick={() =>
-                        setOpenContextMenu(
-                          openContextMenu === recipe.id ? null : recipe.id,
+                        setIsContextOpen(
+                          isContextOpen === recipe.id ? null : recipe.id,
                         )
                       }
                     >
                       <SettingsIcon />
                     </button>
-                    {openContextMenu === recipe.id && (
+                    {isContextOpen === recipe.id && (
                       <div className="z-10 absolute top-6 left-0 mt-2 w-40 rounded-md border bg-white shadow-lg">
                         <button
                           className="text-gray-900 block w-full px-4 py-2 text-left hover:bg-gray-100 active:bg-gray-200"
-                          onClick={handleEdit}
+                          onClick={() => {
+                            handleEdit(recipe);
+                          }}
                         >
                           Edit
                         </button>
                         <hr />
                         <button
                           className="text-red-600 block w-full px-4 py-2 text-left hover:bg-red-100 active:bg-red-200"
-                          onClick={handleDelete}
+                          onClick={() => {
+                            handleDelete(recipe.id);
+                          }}
                         >
                           Delete
                         </button>
@@ -361,6 +373,15 @@ export const RecipeTable = () => {
           <AddToShoppingListPopup
             closePopup={() => setSelectedShoppingList(null)}
             recipe={selectedShoppingList}
+          />
+        )}
+      </Modal>
+      <Modal isOpen={selectedEdit} onClose={() => setSelectedEdit(null)}>
+        {selectedEdit && (
+          <RecipeInputPopup
+            closePopup={() => setSelectedEdit(null)}
+            refreshRecipes={refreshRecipes}
+            initialData={selectedEdit}
           />
         )}
       </Modal>
