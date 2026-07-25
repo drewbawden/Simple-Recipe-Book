@@ -1,4 +1,6 @@
 import React from "react";
+import { useState } from "react";
+import Image, { ImageProps } from "next/image";
 
 export const Modal = ({ isOpen, onClose, children, size = "md" }) => {
   if (!isOpen) return null;
@@ -43,5 +45,48 @@ export const Modal = ({ isOpen, onClose, children, size = "md" }) => {
         <div className="mt-2 pb-20 sm:pb-0">{children}</div>
       </div>
     </div>
+  );
+};
+
+type ImageModalProps = ImageProps & {
+  overlayClassName?: string;
+};
+export const ImageModal = ({
+  overlayClassName = "",
+  className = "",
+  ...props
+}: ImageModalProps) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <Image
+        {...props}
+        onClick={() => setOpen(true)}
+        className={`cursor-pointer ${className}`}
+      />
+
+      {open && (
+        <div
+          onClick={() => setOpen(false)}
+          className={`
+            fixed inset-0 z-50
+            flex items-center justify-center
+            bg-black/80 p-8
+            ${overlayClassName}
+          `}
+        >
+          <div className="relative h-[90vh] w-[90vw]">
+            <Image
+              src={props.src}
+              alt={props.alt}
+              fill
+              sizes="90vw"
+              className="object-contain"
+            />
+          </div>
+        </div>
+      )}
+    </>
   );
 };

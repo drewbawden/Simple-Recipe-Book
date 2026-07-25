@@ -1,9 +1,14 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 
 import { deleteRecipe, getRecipes } from "@/actions/recipes";
-import { Modal } from "@/components/templates/modal";
+import { ImageModal, Modal } from "@/components/templates/modal";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/templates/context-menu";
 
 import { AddToShoppingListPopup } from "@/components/recipes/popups/add-to-list";
 import { RecipeInputPopup } from "@/components/recipes/popups/recipe-input";
@@ -13,8 +18,13 @@ import {
   IngredientPopup,
 } from "@/components/recipes/popups/metadata";
 
-import { SettingsIcon, ShoppingBasketIcon } from "lucide-react";
-import { refresh } from "next/cache";
+import {
+  NotepadText,
+  PictureInPictureIcon,
+  SaladIcon,
+  SettingsIcon,
+  ShoppingBasketIcon,
+} from "lucide-react";
 
 export const RecipeTable = () => {
   const [recipes, setRecipes] = useState([]);
@@ -23,7 +33,6 @@ export const RecipeTable = () => {
   const [selectedIngredients, setSelectedIngredients] = useState(null);
   const [selectedNotes, setSelectedNotes] = useState(null);
   const [selectedShoppingList, setSelectedShoppingList] = useState(false);
-  const [isContextOpen, setIsContextOpen] = useState<string | null>(null);
   const [selectedEdit, setSelectedEdit] = useState(null);
 
   useEffect(() => {
@@ -80,16 +89,15 @@ export const RecipeTable = () => {
         </Link>
       </div>
 
-      {/* mobile layout */}
-      <div className="block md:hidden space-y-4 px-4">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-4">
         {recipes.map((recipe) => (
           <div
             key={recipe.id}
-            className="text-gray-900 p-4 border rounded-lg shadow-sm bg-white space-y-2"
+            className="flex flex-row text-gray-900 p-4 border rounded-lg shadow-sm bg-white space-x-4"
           >
             {recipe.imagePath ? (
-              <div className="relative aspect-[16/9] bg-gray-100 overflow-hidden rounded-lg">
-                <Image
+              <div className="w-1/3 relative aspect-[16/9] bg-gray-100 overflow-hidden rounded-lg">
+                <ImageModal
                   src={recipe.imagePath}
                   alt={recipe.name}
                   className="object-cover"
@@ -100,249 +108,134 @@ export const RecipeTable = () => {
                 />
               </div>
             ) : null}
-            <div className="flex justify-between items-start">
-              <Link
-                href={recipe.url || "#"}
-                className={`text-lg ${recipe.url ? "underline font-bold" : ""}`}
-              >
-                {recipe.name}
-              </Link>
-              <span className="text-sm bg-gray-100 px-2 py-1 rounded ml-2">
-                {recipe.types.join(", ") || "---"}
-              </span>
-            </div>
-            <div className="flex gap-4 text-sm text-gray-600">
-              {recipe.servingSize ? (
-                <span>{recipe.servingSize} servings</span>
-              ) : null}
-              {recipe.totalTimeMins ? (
-                <span>{recipe.totalTimeMins} mins</span>
-              ) : null}
-            </div>
-
-            <div className="flex justify-between items-center pt-2 border-t">
-              <div className="relative">
-                <button
-                  className="bg-gray-400 text-white text-sm font-bold p-1 rounded active:bg-gray-500"
-                  onClick={() =>
-                    setIsContextOpen(
-                      isContextOpen === recipe.id ? null : recipe.id,
-                    )
-                  }
-                >
-                  <SettingsIcon />
-                </button>
-                {isContextOpen === recipe.id && (
-                  <div className="absolute top-6 left-0 mt-2 w-40 rounded-md border bg-white shadow-lg">
-                    <button
-                      className="block w-full px-4 py-2 text-left hover:bg-gray-100 active:bg-gray-200"
-                      onClick={() => {
-                        handleEdit(recipe);
-                      }}
+            <div className="w-full space-y-1 flex flex-col justify-between">
+              <div className="flex justify-between items-start">
+                <ContextMenu>
+                  <ContextMenuTrigger className="text-left bg-gray-100 rounded px-2 py-1 block overflow-hidden">
+                    <span
+                      className="line-clamp-3 font-bold"
+                      title={recipe.name}
                     >
+                      {recipe.name}
+                    </span>
+                  </ContextMenuTrigger>
+
+                  <ContextMenuContent className="z-10 w-72">
+                    <div className="p-3">
+                      <p className="font-bold mb-2">{recipe.name}</p>
+
+                      {recipe.url ? (
+                        <Link
+                          href={recipe.url}
+                          target="_blank"
+                          className="text-sm text-blue-600 underline break-all"
+                        >
+                          {recipe.url}
+                        </Link>
+                      ) : (
+                        <p className="text-sm text-gray-500">No URL</p>
+                      )}
+                    </div>
+                  </ContextMenuContent>
+                </ContextMenu>
+                <span className="text-sm bg-gray-100 px-2 py-1 rounded ml-2">
+                  {recipe.types.join(", ") || "---"}
+                </span>
+              </div>
+              <div className="flex gap-4 text-sm text-gray-600">
+                {recipe.servingSize ? (
+                  <span>{recipe.servingSize} servings</span>
+                ) : null}
+                {recipe.totalTimeMins ? (
+                  <span>{recipe.totalTimeMins} mins</span>
+                ) : null}
+              </div>
+              <hr />
+              <div className="flex flex-row justify-between items-center">
+                <ContextMenu>
+                  <ContextMenuTrigger>
+                    <SettingsIcon />
+                  </ContextMenuTrigger>
+                  <ContextMenuContent align="right">
+                    <ContextMenuItem onSelect={() => handleEdit(recipe)}>
                       Edit
-                    </button>
+                    </ContextMenuItem>
                     <hr />
-                    <button
-                      className="text-red-600 block w-full px-4 py-2 text-left hover:bg-red-100 active:bg-red-200"
-                      onClick={() => {
-                        handleDelete(recipe.id);
-                      }}
+                    <ContextMenuItem
+                      onSelect={() => handleDelete(recipe.id)}
+                      className="text-red-600"
                     >
                       Delete
-                    </button>
-                  </div>
-                )}
-              </div>
-              <div>
-                <p className="text-xs text-gray-500">Ingredients</p>
+                    </ContextMenuItem>
+                  </ContextMenuContent>
+                </ContextMenu>
                 {recipe.ingredients.length > 0 ? (
                   <button
                     onClick={() => setSelectedIngredients(recipe)}
                     className="text-blue-500 underline font-bold"
                   >
-                    {recipe.ingredients.length} Items
+                    <SaladIcon />
                   </button>
                 ) : (
-                  "0"
+                  <div className="p-1 relative inline-block">
+                    <SaladIcon />
+                    <svg
+                      className="absolute inset-0 h-full w-full"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                    >
+                      <line
+                        x1="4"
+                        y1="20"
+                        x2="20"
+                        y2="4"
+                        stroke="red"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                  </div>
                 )}
-              </div>
 
-              <div>
-                <p className="text-xs text-gray-500">Notes</p>
                 {recipe.notes ? (
                   <button
                     onClick={() => setSelectedNotes(recipe)}
                     className="text-blue-500 underline font-bold truncate max-w-32"
                   >
-                    View Notes
+                    <NotepadText />
                   </button>
                 ) : (
-                  "---"
+                  <div className="p-1 relative inline-block">
+                    <NotepadText />
+                    <svg
+                      className="absolute inset-0 h-full w-full"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                    >
+                      <line
+                        x1="4"
+                        y1="20"
+                        x2="20"
+                        y2="4"
+                        stroke="red"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                  </div>
                 )}
-              </div>
-              <button
-                title="Add to shopping list"
-                className="bg-blue-500 text-white text-base font-bold py-2 px-2 rounded"
-                onClick={() => setSelectedShoppingList(recipe)}
-                type="button"
-              >
-                <ShoppingBasketIcon />
-              </button>
+                <button
+                  title="Add to shopping list"
+                  className="bg-blue-500 text-white text-base font-bold py-2 px-2 rounded"
+                  onClick={() => setSelectedShoppingList(recipe)}
+                  type="button"
+                >
+                  <ShoppingBasketIcon />
+                </button>
+              </div>{" "}
             </div>
           </div>
         ))}
-      </div>
-
-      {/* desktop layout */}
-      <div className="hidden md:block w-full overflow-x-auto">
-        <table className="w-full text-center table-fixed">
-          <thead>
-            <tr>
-              <th className="text-center align-middle p-4 border-b border-blue-gray-100 bg-blue-gray-50">
-                Name
-              </th>
-              <th className="text-center align-middle p-4 border-b border-blue-gray-100 bg-blue-gray-50">
-                Type
-              </th>
-              <th className="text-center align-middle p-4 border-b border-blue-gray-100 bg-blue-gray-50">
-                Serving Size
-              </th>
-              <th className="text-center align-middle p-4 border-b border-blue-gray-100 bg-blue-gray-50">
-                Time to make (mins)
-              </th>
-              <th className="text-center align-middle p-4 border-b border-blue-gray-100 bg-blue-gray-50">
-                Ingredients
-              </th>
-              <th className="text-center align-middle p-4 border-b border-blue-gray-100 bg-blue-gray-50">
-                Notes
-              </th>
-              <th className="text-center align-middle p-4 border-b border-blue-gray-100 bg-blue-gray-50">
-                Add to shopping list
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {recipes.map((recipe) => (
-              <tr key={recipe.id} value={recipe.id}>
-                <td
-                  className={`text-center align-middle p-4 border-b border-blue-gray-50 ${
-                    recipe.url ? "underline font-bold" : ""
-                  }`}
-                >
-                  {recipe.imagePath ? (
-                    <div className="relative w-48 h-32 mx-auto">
-                      <Image
-                        src={recipe.imagePath}
-                        alt="Recipe Image"
-                        fill
-                        className="object-cover rounded"
-                        sizes="(max-width: 768px) 100vw,
-                               (max-width: 1200px) 50vw,
-                               33vw"
-                      />
-                      <p className="absolute inset-0 flex items-center justify-center z-10 text-white font-bold text-lg bg-black/30">
-                        <Link href={recipe.url || "#"}>{recipe.name}</Link>
-                      </p>
-                    </div>
-                  ) : (
-                    <p title="Recipe name">
-                      <Link href={recipe.url || "#"}>{recipe.name}</Link>
-                    </p>
-                  )}
-                </td>
-                <td className="text-center align-middle p-4 border-b border-blue-gray-50">
-                  <p title="Recipe Type(s)">
-                    {recipe.types.join(", ") || "---"}
-                  </p>
-                </td>
-                <td className="text-centerName align-middle p-4 border-b border-blue-gray-50">
-                  <p title="Serving Size">
-                    {recipe.servingSize
-                      ? recipe.servingSize + " serves"
-                      : "---"}
-                  </p>
-                </td>
-                <td className="text-center align-middle p-4 border-b border-blue-gray-50">
-                  <p title="Time to make (mins)">
-                    {recipe.totalTimeMins
-                      ? recipe.totalTimeMins + " mins"
-                      : "---"}
-                  </p>
-                </td>
-                <td className="text-center align-middle p-4 border-b border-blue-gray-50">
-                  {recipe.ingredients.length > 0 ? (
-                    <button
-                      onClick={() => setSelectedIngredients(recipe)}
-                      className="border-1 hover:bg-gray-900 active:bg-gray-800 text-white font-bold py-2 px-4 rounded"
-                      title="View ingredients"
-                    >
-                      {recipe.ingredients.length} Items
-                    </button>
-                  ) : (
-                    <p title="Ingredients">0</p>
-                  )}
-                </td>
-                <td className="text-center align-middle p-4 border-b border-blue-gray-50 max-w-40 max-h-8">
-                  {recipe.notes ? (
-                    <button
-                      onClick={() => setSelectedNotes(recipe)}
-                      className="max-w-80 border-1 hover:bg-gray-900 active:bg-gray-800 text-white font-bold py-2 px-4 rounded"
-                      title="View notes"
-                    >
-                      View Notes
-                    </button>
-                  ) : (
-                    <p title="Notes">---</p>
-                  )}
-                </td>
-                <td className="space-x-3 justify-center text-center align-middle p-4 border-b border-blue-gray-50">
-                  <button
-                    title="Add to shopping list"
-                    className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded"
-                    onClick={() => setSelectedShoppingList(recipe)}
-                    type="button"
-                  >
-                    Add
-                  </button>
-                  <div className="relative inline">
-                    <button
-                      className="bg-gray-400 text-white text-sm font-bold p-1 rounded active:bg-gray-500"
-                      onClick={() =>
-                        setIsContextOpen(
-                          isContextOpen === recipe.id ? null : recipe.id,
-                        )
-                      }
-                    >
-                      <SettingsIcon />
-                    </button>
-                    {isContextOpen === recipe.id && (
-                      <div className="z-10 absolute top-6 left-0 mt-2 w-40 rounded-md border bg-white shadow-lg">
-                        <button
-                          className="text-gray-900 block w-full px-4 py-2 text-left hover:bg-gray-100 active:bg-gray-200"
-                          onClick={() => {
-                            handleEdit(recipe);
-                          }}
-                        >
-                          Edit
-                        </button>
-                        <hr />
-                        <button
-                          className="text-red-600 block w-full px-4 py-2 text-left hover:bg-red-100 active:bg-red-200"
-                          onClick={() => {
-                            handleDelete(recipe.id);
-                          }}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
       </div>
       <Modal
         isOpen={selectedIngredients !== null}
