@@ -6,7 +6,7 @@ import { deleteRecipe, getRecipes } from "@/actions/recipes";
 import { Modal } from "@/components/templates/modal";
 
 import { AddToShoppingListPopup } from "@/components/recipes/popups/add-to-list";
-import { RecipeInputPopup } from "@/components/recipes/popups/add-recipe";
+import { RecipeInputPopup } from "@/components/recipes/popups/recipe-input";
 import { Recipe } from "@/types/recipe";
 import {
   NotesPopup,
