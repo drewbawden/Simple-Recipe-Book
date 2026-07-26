@@ -1,0 +1,13 @@
+services:
+  Simple-Recipe-Book:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nextjs-standalone-image
+    container_name: Simple-Recipe-Book
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+    ports:
+      - "4912:3000"
+    restart: unless-stopped
