@@ -20,7 +20,6 @@ import {
 
 import {
   NotepadText,
-  PictureInPictureIcon,
   SaladIcon,
   SettingsIcon,
   ShoppingBasketIcon,
