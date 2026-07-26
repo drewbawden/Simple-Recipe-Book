@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     image: nextjs-standalone-image
-    container_name: Simple-Recipe-Book
+    container_name: simple-recipe-book
     environment:
       NODE_ENV: production
       PORT: "3000"
@@ -17,11 +17,11 @@ services:
 
   SRB-Postgres:
     image: postgres
-    container_name: postgresql
+    container_name: srb-postgresql
     restart: always
     shm_size: 128mb
     volumes:
-      - ./postgres-data:/var/lib/postgresql
+      - ./postgres-data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
