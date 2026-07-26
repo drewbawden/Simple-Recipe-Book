@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, FormEvent } from "react";
 import { insertNewRecipe, updateRecipe } from "@/actions/recipes";
 import { EnumOptions } from "@/components/templates/enums";
 import imageCompression from "browser-image-compression";
@@ -6,11 +6,11 @@ import Form from "next/form";
 import { Modal } from "@/components/templates/modal";
 import Image from "next/image";
 import { AddIngredientsPopup } from "@/components/recipes/popups/add-ingredients";
-import { Recipe } from "@/types/recipe";
+import { Recipe, RecipeIngredientInput } from "@/types/recipe";
 
-interface RecipeInputPopupProp {
-  closePopup: () => {};
-  refreshRecipes: () => {};
+interface RecipeInputPopupProps {
+  closePopup: () => void;
+  refreshRecipes: () => void;
   initialData?: Recipe;
 }
 
@@ -18,9 +18,11 @@ export const RecipeInputPopup = ({
   closePopup,
   refreshRecipes,
   initialData,
-}: RecipeInputPopupProp) => {
+}: RecipeInputPopupProps) => {
   const [isIngredientsOpen, setIsIngredientsOpen] = useState(false);
-  const [ingredientsList, setIngredientsList] = useState(
+  const [ingredientsList, setIngredientsList] = useState<
+    RecipeIngredientInput[]
+  >(
     initialData
       ? initialData.ingredients.map((ingredient) => ({
           name: ingredient.item.name,
@@ -67,7 +69,7 @@ export const RecipeInputPopup = ({
     };
   }, [imagePreview]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     const checked = e.currentTarget.querySelectorAll(
       'input[name="recipeType"]:checked',
     );

@@ -2,7 +2,21 @@ import React from "react";
 import { useState } from "react";
 import Image, { ImageProps } from "next/image";
 
-export const Modal = ({ isOpen, onClose, children, size = "md" }) => {
+type ModalSize = "sm" | "md" | "lg";
+
+interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  children: React.ReactNode;
+  size?: ModalSize;
+}
+
+export const Modal = ({
+  isOpen,
+  onClose,
+  children,
+  size = "md",
+}: ModalProps) => {
   if (!isOpen) return null;
 
   const sizes = {

@@ -4,9 +4,10 @@ import { useState } from "react";
 import { BarcodeScanner } from "@/components/inventory/barcode-scanner";
 import { ProductCard } from "@/components/inventory/product-card";
 import { getProductAction } from "@/actions/inventory";
+import { Product } from "@/types/inventory";
 
 export default function InventoryPage() {
-  const [product, setProduct] = useState(null);
+  const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleScan = async (barcode: string) => {

@@ -26,19 +26,22 @@ import {
 } from "lucide-react";
 
 export const RecipeTable = () => {
-  const [recipes, setRecipes] = useState([]);
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAddRecipeOpen, setIsAddRecipeOpen] = useState(false);
-  const [selectedIngredients, setSelectedIngredients] = useState(null);
-  const [selectedNotes, setSelectedNotes] = useState(null);
-  const [selectedShoppingList, setSelectedShoppingList] = useState(false);
-  const [selectedEdit, setSelectedEdit] = useState(null);
+  const [selectedIngredients, setSelectedIngredients] = useState<Recipe | null>(
+    null,
+  );
+  const [selectedNotes, setSelectedNotes] = useState<Recipe | null>(null);
+  const [selectedShoppingList, setSelectedShoppingList] =
+    useState<Recipe | null>(null);
+  const [selectedEdit, setSelectedEdit] = useState<Recipe | null>(null);
 
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-        const data = await getRecipes();
-        setRecipes(data);
+        const recipes = await getRecipes();
+        setRecipes(recipes);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching recipes:", error);
@@ -249,7 +252,9 @@ export const RecipeTable = () => {
         isOpen={selectedNotes !== null}
         onClose={() => setSelectedNotes(null)}
       >
-        {selectedNotes && <NotesPopup notes={selectedNotes.notes} />}
+        {selectedNotes && (
+          <NotesPopup notes={selectedNotes.notes ?? "No notes"} />
+        )}
       </Modal>
       <Modal isOpen={isAddRecipeOpen} onClose={() => setIsAddRecipeOpen(false)}>
         <RecipeInputPopup
@@ -258,7 +263,7 @@ export const RecipeTable = () => {
         />
       </Modal>
       <Modal
-        isOpen={selectedShoppingList}
+        isOpen={selectedShoppingList !== null}
         onClose={() => setSelectedShoppingList(null)}
       >
         {selectedShoppingList && (
@@ -268,7 +273,10 @@ export const RecipeTable = () => {
           />
         )}
       </Modal>
-      <Modal isOpen={selectedEdit} onClose={() => setSelectedEdit(null)}>
+      <Modal
+        isOpen={selectedEdit !== null}
+        onClose={() => setSelectedEdit(null)}
+      >
         {selectedEdit && (
           <RecipeInputPopup
             closePopup={() => setSelectedEdit(null)}

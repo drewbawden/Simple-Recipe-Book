@@ -15,14 +15,14 @@ const prisma = new PrismaClient({
 
 export async function addNewProduct(productData: Product) {
   try {
-    const data: Prisma.ProductsCreateInput = {
+    const data: Prisma.StoreProductCreateInput = {
       name: productData.name,
       barcode: productData.barcode,
       brand: productData.brand,
       imageUrl: productData.imageUrl,
     };
 
-    const newProduct = await prisma.products.create({
+    const newProduct = await prisma.storeProduct.create({
       data: data,
     });
 

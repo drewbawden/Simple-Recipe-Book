@@ -10,13 +10,18 @@ type EnumOptionsProps = {
   onChange?: (selected: string[]) => void;
 } & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange">;
 
+type enumItem = {
+  id: string;
+  name: string;
+};
+
 export const EnumOptions = ({
   enumType,
   selected,
   onChange,
   ...inputProps
 }: EnumOptionsProps) => {
-  const [enums, setEnums] = useState([]);
+  const [enums, setEnums] = useState<enumItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

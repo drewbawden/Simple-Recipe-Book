@@ -4,8 +4,13 @@ import { useState, useEffect } from "react";
 
 import { getCategories } from "@/actions/dropdowns";
 
+type dropdownItem = {
+  id: number;
+  name: string;
+};
+
 export const CategoryDropdown = () => {
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<dropdownItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

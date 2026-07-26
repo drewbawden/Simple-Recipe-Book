@@ -11,6 +11,7 @@ import { parseQuantity } from "@/lib/quantity";
 import { writeFile } from "fs/promises";
 import path from "path";
 import { randomUUID } from "crypto";
+import { Recipe, RecipeFormData } from "@/types/recipe";
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
@@ -21,33 +22,28 @@ const prisma = new PrismaClient({
 });
 
 export async function getRecipes() {
-  try {
-    const recipes = await prisma.recipes.findMany({
-      include: {
-        ingredients: {
-          include: {
-            item: true,
-          },
+  const recipes = await prisma.recipes.findMany({
+    include: {
+      ingredients: {
+        include: {
+          item: true,
         },
       },
-    });
+    },
+  });
 
-    return recipes.map((recipe) => ({
-      ...recipe,
-      ingredients: recipe.ingredients.map((ingredient) => ({
-        ...ingredient,
-        normalQuantity: ingredient.normalQuantity
-          ? Number(ingredient.normalQuantity)
-          : null,
-        standardQuantity: ingredient.standardQuantity
-          ? Number(ingredient.standardQuantity)
-          : null,
-      })),
-    }));
-  } catch (error) {
-    console.error("Database Error:", error);
-    return { success: false, error: "Failed to fetch recipes" };
-  }
+  return recipes.map((recipe) => ({
+    ...recipe,
+    ingredients: recipe.ingredients.map((ingredient) => ({
+      ...ingredient,
+      normalQuantity: ingredient.normalQuantity
+        ? Number(ingredient.normalQuantity)
+        : null,
+      standardQuantity: ingredient.standardQuantity
+        ? Number(ingredient.standardQuantity)
+        : null,
+    })),
+  }));
 }
 
 async function parseFormData(formData: FormData) {
@@ -90,7 +86,7 @@ async function parseFormData(formData: FormData) {
 }
 
 export async function updateRecipe(recipeId: number, formData: FormData) {
-  const data = await parseFormData(formData);
+  const data: RecipeFormData = await parseFormData(formData);
   console.log(data);
   await prisma.$transaction(async (tx) => {
     await tx.recipes.update({
@@ -111,6 +107,12 @@ export async function updateRecipe(recipeId: number, formData: FormData) {
           create: await Promise.all(
             data.ingredients.map(async (ingredient) => {
               const parsed = parseQuantity(ingredient.quantity);
+
+              if (parsed.quantity === null) {
+                throw new Error(
+                  `Invalid quantity for ingredient: ${ingredient.name}`,
+                );
+              }
 
               let item;
               item = await tx.item.upsert({
@@ -163,7 +165,7 @@ async function cleanUpShoppingList() {
 }
 
 export async function insertNewRecipe(formData: FormData) {
-  const data = await parseFormData(formData);
+  const data: RecipeFormData = await parseFormData(formData);
 
   await prisma.$transaction(async (tx) => {
     const recipe = await tx.recipes.create({
@@ -180,6 +182,12 @@ export async function insertNewRecipe(formData: FormData) {
           create: await Promise.all(
             data.ingredients.map(async (ingredient) => {
               const parsed = parseQuantity(ingredient.quantity);
+
+              if (parsed.quantity === null) {
+                throw new Error(
+                  `Invalid quantity for ingredient: ${ingredient.name}`,
+                );
+              }
 
               let item;
               item = await tx.item.upsert({

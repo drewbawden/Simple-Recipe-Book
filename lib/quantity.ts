@@ -124,9 +124,6 @@ export function tryNormaliseQuantity(input: string | number): number | null {
     return 1;
   }
 
-  // convert unicode fractions
-  value = replaceUnicodeFractions(value);
-
   // normalise punctuation
   value = value.replace(/-/g, " ").replace(/\s+/g, " ").trim();
 
@@ -193,9 +190,9 @@ export function tryNormaliseQuantity(input: string | number): number | null {
 }
 
 export function parseQuantity(input: string) {
-  const formattedInput = input.replace(
-    /(\d+(?:\.\d+)?)([a-zA-Z\u½-⅞]+)/g,
-    "$1 $2",
+  const formattedInput = replaceUnicodeFractions(input).replace(
+    /(\d+(?:\.\d+)?|\d+\/\d+)(?=[a-zA-Z])/g,
+    "$1 ",
   );
 
   const tokens = formattedInput.trim().replace(/\s+/g, " ").split(" ");

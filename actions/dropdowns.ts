@@ -17,6 +17,6 @@ export async function getCategories() {
     return await prisma.category.findMany();
   } catch (error) {
     console.error("Database Error:", error);
-    return { success: false, error: "Failed to fetch categories" };
+    throw new Error("Failed to fetch categories");
   }
 }

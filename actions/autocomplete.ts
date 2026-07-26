@@ -39,7 +39,7 @@ const autocompleteMap: Record<
     enumMaps.normalUnits.filter((u) => u.name.includes(q.toLowerCase())),
   standardUnits: async (q) =>
     enumMaps.standardUnits.filter((u) => u.name.includes(q.toLowerCase())),
-  recipeType: async (q) =>
+  recipeTypes: async (q) =>
     enumMaps.recipeType.filter((rt) => rt.name.includes(q.toLowerCase())),
   locations: async (q) =>
     enumMaps.locations.filter((l) => l.name.includes(q.toLowerCase())),
@@ -50,13 +50,13 @@ const autocompleteMap: Record<
       take: 8,
       select: { id: true, name: true },
     }),
-  foods: async (q) =>
+  items: async (q) =>
     prisma.item.findMany({
       where: { name: { contains: q, mode: "insensitive" } },
       take: 8,
       select: { id: true, name: true },
     }),
-  products: async (q) =>
+  storeProducts: async (q) =>
     prisma.storeProduct.findMany({
       where: { name: { contains: q, mode: "insensitive" } },
       take: 8,
@@ -74,7 +74,7 @@ export type AutocompleteType =
   | "normalUnits"
   | "standardUnits"
   | "locations"
-  | "recipeType"
+  | "recipeTypes"
   | "recipes"
   | "items"
   | "storeProducts"
