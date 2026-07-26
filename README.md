@@ -18,4 +18,6 @@
 
 `cd Simple-Recipe-Book`
 
+Rename `.env.example` to `.env` and edit the password where is says `change-me`
+
 `docker compose up --build -d`
