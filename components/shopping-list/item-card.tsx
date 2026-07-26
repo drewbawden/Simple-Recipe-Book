@@ -1,5 +1,23 @@
 import { useState, useEffect, useRef } from "react";
 import { ChevronDown } from "lucide-react";
+import { getShoppingList } from "@/actions/shopping-lists";
+
+type ShoppingList = NonNullable<Awaited<ReturnType<typeof getShoppingList>>>;
+
+type ListItem = ShoppingList["items"][number];
+
+type Sources = ListItem["shoppingListItemSources"];
+
+interface ListItemCardProps {
+  listItem: ListItem;
+  totalQuantity: number;
+  totalUnit: string;
+  sources: Sources;
+  handleItemChecked: (
+    id: number,
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => Promise<void>;
+}
 
 export const ListItemCard = ({
   listItem,
@@ -7,7 +25,7 @@ export const ListItemCard = ({
   totalUnit,
   sources,
   handleItemChecked,
-}) => {
+}: ListItemCardProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (

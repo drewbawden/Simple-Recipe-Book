@@ -1,16 +1,10 @@
 import { NormalUnit } from "@/app/generated/prisma/enums";
+import { Ingredient } from "@/types/recipe";
 
-type IngredientsPopupProps = {
-  ingredients: {
-    id: number;
-    name: string;
-    quantity: string;
-    unit?: string;
-    normalQuantity?: number;
-    normalUnit?: NormalUnit;
-  }[];
-};
-export const IngredientPopup = ({ ingredients }: IngredientsPopupProps[]) => {
+interface IngredientPopupProps {
+  ingredients: Ingredient[];
+}
+export const IngredientPopup = ({ ingredients }: IngredientPopupProps) => {
   return (
     <div className="text-gray-900 ">
       <h1 className="text-2xl p-2 pb-4">Ingredients</h1>

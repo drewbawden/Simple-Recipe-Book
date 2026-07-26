@@ -3,11 +3,19 @@ import { isValidQuantity } from "@/lib/quantity";
 import AutocompleteInput from "@/components/templates/autocomplete";
 import Form from "next/form";
 import { Trash2 } from "lucide-react";
+import { Ingredient, RecipeIngredientInput } from "@/types/recipe";
+import { AutocompleteType } from "@/actions/autocomplete";
 
+interface AddIngredientsPopupProps {
+  ingredientsList: RecipeIngredientInput[];
+  setIngredientsList: React.Dispatch<
+    React.SetStateAction<RecipeIngredientInput[]>
+  >;
+}
 export const AddIngredientsPopup = ({
   ingredientsList,
   setIngredientsList,
-}) => {
+}: AddIngredientsPopupProps) => {
   const [name, setName] = useState("");
   const [quantity, setQuantity] = useState("");
 
@@ -42,7 +50,7 @@ export const AddIngredientsPopup = ({
               Ingredient
             </label>
             <AutocompleteInput
-              modelType="foods"
+              modelType="items"
               placeholder="Enter ingredient..."
               value={name}
               onChange={(value) => setName(value)}

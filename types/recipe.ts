@@ -1,3 +1,5 @@
+import { RecipeType } from "@/app/generated/prisma/enums";
+
 export interface ItemDetails {
   id: number;
   name: string;
@@ -9,11 +11,11 @@ export interface Ingredient {
   recipeId: number;
   itemId: number;
   quantity: string;
-  unit: string;
-  standardQuantity: number;
-  standardUnit: string;
-  normalQuantity: number;
-  normalUnit: string;
+  unit: string | null;
+  standardQuantity: number | null;
+  standardUnit: string | null;
+  normalQuantity: number | null;
+  normalUnit: string | null;
   item: ItemDetails;
 }
 
@@ -21,10 +23,26 @@ export interface Recipe {
   id: number;
   name: string;
   types: string[];
-  notes: string;
-  url: string;
-  totalTimeMins: number;
-  servingSize: number;
+  notes: string | null;
+  url: string | null;
+  totalTimeMins: number | null;
+  servingSize: number | null;
   imagePath: string | null;
   ingredients: Ingredient[];
+}
+
+export interface RecipeIngredientInput {
+  name: string;
+  quantity: string;
+}
+
+export interface RecipeFormData {
+  name: string;
+  recipeTypes: RecipeType[];
+  url: string | null;
+  notes: string | null;
+  servingSize: number | null;
+  totalTimeMins: number | null;
+  imagePath: string | null;
+  ingredients: RecipeIngredientInput[];
 }

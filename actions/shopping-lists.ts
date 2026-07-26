@@ -61,7 +61,7 @@ export async function getShoppingList() {
     };
   } catch (error) {
     console.error("Database Error:", error);
-    return { success: false, error: "Failed to fetch recipes" };
+    throw new Error("Failed to fetch shopping list");
   }
 }
 

@@ -2,8 +2,17 @@ import { useEffect, useState } from "react";
 import Form from "next/form";
 import { addRecipeToShoppingList } from "@/actions/shopping-lists";
 import { redirect, RedirectType } from "next/navigation";
+import { Recipe } from "@/types/recipe";
 
-export const AddToShoppingListPopup = ({ closePopup, recipe }) => {
+interface AddToShoppingListPopupProps {
+  closePopup: () => void;
+  recipe: Recipe;
+}
+
+export const AddToShoppingListPopup = ({
+  closePopup,
+  recipe,
+}: AddToShoppingListPopupProps) => {
   const ingredients = recipe.ingredients;
 
   const [selectedIngredientIds, setSelectedIngredientIds] = useState(
@@ -37,7 +46,7 @@ export const AddToShoppingListPopup = ({ closePopup, recipe }) => {
     setAllSelected(true);
   };
 
-  const toggleIngredient = (id) => {
+  const toggleIngredient = (id: number) => {
     setSelectedIngredientIds((prev) => {
       const next = new Set(prev);
       if (next.has(id)) {

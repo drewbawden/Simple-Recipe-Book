@@ -3,35 +3,16 @@ import {
   setItemCompleted,
   deleteItem,
 } from "@/actions/shopping-lists";
-import { Prisma } from "@/app/generated/prisma/client";
 import { NormalUnit } from "@/app/generated/prisma/enums";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { ListItemCard } from "@/components/shopping-list/item-card";
 
-type ShoppingListWithItems = Prisma.ShoppingListGetPayload<{
-  include: {
-    items: {
-      include: {
-        item: true;
-        shoppingListItemSources: {
-          include: {
-            recipeIngredient: {
-              include: {
-                recipe: true;
-              };
-            };
-          };
-        };
-      };
-    };
-  };
-}>;
-
 export const ShoppingList = () => {
   const [loading, setLoading] = useState(true);
-  const [list, setList] = useState<ShoppingListWithItems | null>(null);
-  const deleteTimers = useRef<Record<number, NodeJS.Timeout>>({});
+  const [list, setList] =
+    useState<Awaited<ReturnType<typeof getShoppingList>>>(null);
+  const deleteTimers = useRef<Record<number, NodeJS.Timeout | undefined>>({});
 
   useEffect(() => {
     const fetchList = async () => {
@@ -119,9 +100,9 @@ export const ShoppingList = () => {
           let totalNormalQuantity = 0.0;
           let totalStandardQuantity = 0.0;
           let totalQuantity = 0.0;
-          let standardUnits = new Set();
-          let normalUnits = new Set();
-          let stringUnits = new Set();
+          let standardUnits = new Set<string>();
+          let normalUnits = new Set<string>();
+          let stringUnits = new Set<string>();
           for (let i = 0; i < sources.length; i++) {
             const standardQuantity = sources[i].recipeIngredient
               .standardQuantity
@@ -130,11 +111,25 @@ export const ShoppingList = () => {
             const normalQuantity = sources[i].recipeIngredient.normalQuantity
               ? Number(sources[i].recipeIngredient.normalQuantity)
               : null;
-            totalStandardQuantity += standardQuantity;
-            totalNormalQuantity += normalQuantity;
-            standardUnits.add(sources[i].recipeIngredient.standardUnit);
-            normalUnits.add(sources[i].recipeIngredient.normalUnit);
-            stringUnits.add(sources[i].recipeIngredient.unit);
+            if (standardQuantity) {
+              totalStandardQuantity += standardQuantity;
+            }
+            if (normalQuantity) {
+              totalNormalQuantity += normalQuantity;
+            }
+
+            const standardUnit = sources[i].recipeIngredient.standardUnit;
+            const normalUnit = sources[i].recipeIngredient.normalUnit;
+            const unit = sources[i].recipeIngredient.unit;
+            if (standardUnit) {
+              standardUnits.add(standardUnit);
+            }
+            if (normalUnit) {
+              normalUnits.add(normalUnit);
+            }
+            if (unit) {
+              stringUnits.add(unit);
+            }
           }
           let totalUnit = "";
           const firstNormal = Array.from(normalUnits)[0];
