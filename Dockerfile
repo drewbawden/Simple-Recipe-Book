@@ -98,10 +98,16 @@ RUN chown node:node .next
 COPY --from=builder --chown=node:node /app/.next/standalone ./
 COPY --from=builder --chown=node:node /app/.next/static ./.next/static
 COPY --from=builder --chown=node:node /app/prisma ./prisma
+COPY --from=builder --chown=node:node /app/prisma.config.ts ./prisma.config.ts
+COPY --from=builder --chown=node:node /app/node_modules ./node_modules
 
 # If you want to persist the fetch cache generated during the build so that
 # cached responses are available immediately on startup, uncomment this line:
 # COPY --from=builder --chown=node:node /app/.next/cache ./.next/cache
+
+# Install OpenSSL so Prisma can run in the runtime image
+USER root
+RUN apt-get update && apt-get install -y openssl ca-certificates && rm -rf /var/lib/apt/lists/*
 
 # Switch to non-root user for security best practices
 USER node
@@ -109,5 +115,5 @@ USER node
 # Expose port 3000 to allow HTTP traffic
 EXPOSE 3000
 
-# Start Next.js standalone server
-CMD ["node", "server.js"]
+# Run Prisma migrations before starting the standalone server
+CMD ["sh", "-c", "./node_modules/.bin/prisma migrate deploy --config prisma.config.ts --schema prisma/schema.prisma && node server.js"]
