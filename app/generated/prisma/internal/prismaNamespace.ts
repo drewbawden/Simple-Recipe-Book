@@ -391,6 +391,7 @@ export const ModelName = {
   Nutrition: 'Nutrition',
   Recipes: 'Recipes',
   RecipeIngredient: 'RecipeIngredient',
+  RecipeInstructionStep: 'RecipeInstructionStep',
   ShoppingList: 'ShoppingList',
   ShoppingListItem: 'ShoppingListItem',
   ShoppingListItemSource: 'ShoppingListItemSource'
@@ -409,7 +410,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "storeProduct" | "category" | "item" | "inventory" | "nutrition" | "recipes" | "recipeIngredient" | "shoppingList" | "shoppingListItem" | "shoppingListItemSource"
+    modelProps: "storeProduct" | "category" | "item" | "inventory" | "nutrition" | "recipes" | "recipeIngredient" | "recipeInstructionStep" | "shoppingList" | "shoppingListItem" | "shoppingListItemSource"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -931,6 +932,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    RecipeInstructionStep: {
+      payload: Prisma.$RecipeInstructionStepPayload<ExtArgs>
+      fields: Prisma.RecipeInstructionStepFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.RecipeInstructionStepFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecipeInstructionStepPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.RecipeInstructionStepFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecipeInstructionStepPayload>
+        }
+        findFirst: {
+          args: Prisma.RecipeInstructionStepFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecipeInstructionStepPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.RecipeInstructionStepFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecipeInstructionStepPayload>
+        }
+        findMany: {
+          args: Prisma.RecipeInstructionStepFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecipeInstructionStepPayload>[]
+        }
+        create: {
+          args: Prisma.RecipeInstructionStepCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecipeInstructionStepPayload>
+        }
+        createMany: {
+          args: Prisma.RecipeInstructionStepCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.RecipeInstructionStepCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecipeInstructionStepPayload>[]
+        }
+        delete: {
+          args: Prisma.RecipeInstructionStepDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecipeInstructionStepPayload>
+        }
+        update: {
+          args: Prisma.RecipeInstructionStepUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecipeInstructionStepPayload>
+        }
+        deleteMany: {
+          args: Prisma.RecipeInstructionStepDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.RecipeInstructionStepUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.RecipeInstructionStepUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecipeInstructionStepPayload>[]
+        }
+        upsert: {
+          args: Prisma.RecipeInstructionStepUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecipeInstructionStepPayload>
+        }
+        aggregate: {
+          args: Prisma.RecipeInstructionStepAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateRecipeInstructionStep>
+        }
+        groupBy: {
+          args: Prisma.RecipeInstructionStepGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RecipeInstructionStepGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.RecipeInstructionStepCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RecipeInstructionStepCountAggregateOutputType> | number
+        }
+      }
+    }
     ShoppingList: {
       payload: Prisma.$ShoppingListPayload<ExtArgs>
       fields: Prisma.ShoppingListFieldRefs
@@ -1293,6 +1368,16 @@ export const RecipeIngredientScalarFieldEnum = {
 export type RecipeIngredientScalarFieldEnum = (typeof RecipeIngredientScalarFieldEnum)[keyof typeof RecipeIngredientScalarFieldEnum]
 
 
+export const RecipeInstructionStepScalarFieldEnum = {
+  id: 'id',
+  recipeId: 'recipeId',
+  stepNumber: 'stepNumber',
+  method: 'method'
+} as const
+
+export type RecipeInstructionStepScalarFieldEnum = (typeof RecipeInstructionStepScalarFieldEnum)[keyof typeof RecipeInstructionStepScalarFieldEnum]
+
+
 export const ShoppingListScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -1602,6 +1687,7 @@ export type GlobalOmitConfig = {
   nutrition?: Prisma.NutritionOmit
   recipes?: Prisma.RecipesOmit
   recipeIngredient?: Prisma.RecipeIngredientOmit
+  recipeInstructionStep?: Prisma.RecipeInstructionStepOmit
   shoppingList?: Prisma.ShoppingListOmit
   shoppingListItem?: Prisma.ShoppingListItemOmit
   shoppingListItemSource?: Prisma.ShoppingListItemSourceOmit

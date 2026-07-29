@@ -87,15 +87,16 @@ model Nutrition {
 }
 
 model Recipes {
-  id            Int                @id @default(autoincrement())
+  id            Int                     @id @default(autoincrement())
   name          String
   types         RecipeType[]
   notes         String?
   url           String?
   totalTimeMins Int?
   servingSize   Int?
-  ingredients   RecipeIngredient[]
   imagePath     String?
+  ingredients   RecipeIngredient[]
+  instructions  RecipeInstructionStep[]
 }
 
 model RecipeIngredient {
@@ -113,6 +114,16 @@ model RecipeIngredient {
   normalUnit       NormalUnit?
 
   shoppingListItemSources ShoppingListItemSource[]
+}
+
+model RecipeInstructionStep {
+  id Int @id @default(autoincrement())
+
+  recipe   Recipes @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipeId Int
+
+  stepNumber Int
+  method     String
 }
 
 model ShoppingList {
