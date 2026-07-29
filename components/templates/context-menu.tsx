@@ -3,25 +3,37 @@ import {
   ReactNode,
   useContext,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from "react";
+import { createPortal } from "react-dom";
 
 type ContextMenuContextType = {
   open: boolean;
   toggle: () => void;
   close: () => void;
+  triggerRect: DOMRect | null;
+  setTriggerRect: (rect: DOMRect | null) => void;
+  menuElement: HTMLDivElement | null;
+  setMenuElement: (node: HTMLDivElement | null) => void;
 };
 
 const ContextMenuContext = createContext<ContextMenuContextType | null>(null);
 
 export const ContextMenu = ({ children }: { children: ReactNode }) => {
   const [open, setOpen] = useState(false);
+  const [triggerRect, setTriggerRect] = useState<DOMRect | null>(null);
+  const [menuElement, setMenuElement] = useState<HTMLDivElement | null>(null);
   const rootRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
-      if (rootRef.current && !rootRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+      const insideRoot = rootRef.current?.contains(target);
+      const insideMenu = menuElement?.contains(target);
+
+      if (!insideRoot && !insideMenu) {
         setOpen(false);
       }
     };
@@ -39,7 +51,7 @@ export const ContextMenu = ({ children }: { children: ReactNode }) => {
       document.removeEventListener("mousedown", handleOutsideClick);
       document.removeEventListener("keydown", handleEsc);
     };
-  }, []);
+  }, [menuElement]);
 
   return (
     <ContextMenuContext.Provider
@@ -47,9 +59,13 @@ export const ContextMenu = ({ children }: { children: ReactNode }) => {
         open,
         toggle: () => setOpen((current) => !current),
         close: () => setOpen(false),
+        triggerRect,
+        setTriggerRect,
+        menuElement,
+        setMenuElement,
       }}
     >
-      <div ref={rootRef} className="relative inline-block text-left">
+      <div ref={rootRef} className="inline-block text-left">
         {children}
       </div>
     </ContextMenuContext.Provider>
@@ -64,16 +80,25 @@ export const ContextMenuTrigger = ({
   className?: string;
 }) => {
   const context = useContext(ContextMenuContext);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
 
   if (!context) {
     throw new Error("ContextMenuTrigger must be used inside a ContextMenu.");
   }
 
+  const handleClick = () => {
+    if (triggerRef.current) {
+      context.setTriggerRect(triggerRef.current.getBoundingClientRect());
+    }
+    context.toggle();
+  };
+
   return (
     <button
+      ref={triggerRef}
       type="button"
       className={className}
-      onClick={context.toggle}
+      onClick={handleClick}
       aria-haspopup="menu"
       aria-expanded={context.open}
     >
@@ -92,24 +117,64 @@ export const ContextMenuContent = ({
   className?: string;
 }) => {
   const context = useContext(ContextMenuContext);
+  const contentRef = useRef<HTMLDivElement | null>(null);
+  const [position, setPosition] = useState({ top: 0, left: 0 });
 
   if (!context) {
     throw new Error("ContextMenuContent must be used inside a ContextMenu.");
   }
 
-  if (!context.open) {
+  useEffect(() => {
+    context.setMenuElement(contentRef.current);
+    return () => {
+      context.setMenuElement(null);
+    };
+  }, [context]);
+
+  useLayoutEffect(() => {
+    if (!context.open || !context.triggerRect || !contentRef.current) {
+      return;
+    }
+
+    const offset = 8;
+    const menuRect = contentRef.current.getBoundingClientRect();
+    const top = Math.min(
+      Math.max(context.triggerRect.bottom + offset, offset),
+      window.innerHeight - menuRect.height - offset,
+    );
+
+    let left =
+      align === "right"
+        ? context.triggerRect.right - menuRect.width
+        : context.triggerRect.left;
+
+    left = Math.max(
+      offset,
+      Math.min(left, window.innerWidth - menuRect.width - offset),
+    );
+
+    setPosition({ top, left });
+  }, [context.open, context.triggerRect, align, children]);
+
+  if (!context.open || typeof document === "undefined") {
     return null;
   }
 
-  const alignmentClass = align === "right" ? "right-0 left-auto" : "left-0";
-
-  return (
+  return createPortal(
     <div
-      className={`absolute top-full mt-2 w-40 rounded-md border bg-white shadow-lg ${alignmentClass} ${className}`}
+      ref={contentRef}
+      style={{
+        position: "fixed",
+        top: position.top,
+        left: position.left,
+        zIndex: 9999,
+      }}
+      className={`w-40 max-w-[calc(100vw-2rem)] rounded-md border bg-white shadow-lg ${className}`}
       role="menu"
     >
       {children}
-    </div>
+    </div>,
+    document.body,
   );
 };
 

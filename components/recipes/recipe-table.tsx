@@ -95,14 +95,14 @@ export const RecipeTable = () => {
         {recipes.map((recipe) => (
           <div
             key={recipe.id}
-            className="flex flex-row text-gray-900 p-4 border rounded-lg shadow-sm bg-white space-x-4"
+            className="overflow-visible flex flex-row text-gray-900 p-4 border rounded-lg shadow-sm bg-white space-x-4"
           >
             {recipe.imagePath ? (
               <div className="w-1/3 relative aspect-[16/9] bg-gray-100 overflow-hidden rounded-lg">
                 <ImageModal
                   src={recipe.imagePath}
                   alt={recipe.name}
-                  className="object-cover"
+                  className="z-5 object-cover"
                   fill
                   sizes="(max-width: 768px) 100vw,
                          (max-width: 1200px) 50vw,
@@ -110,7 +110,7 @@ export const RecipeTable = () => {
                 />
               </div>
             ) : null}
-            <div className="w-full space-y-1 flex flex-col justify-between">
+            <div className="relative w-full space-y-1 flex flex-col justify-between">
               <div className="flex justify-between items-start">
                 <ContextMenu>
                   <ContextMenuTrigger className="text-left bg-gray-100 rounded px-2 py-1 block overflow-hidden">
@@ -122,9 +122,11 @@ export const RecipeTable = () => {
                     </span>
                   </ContextMenuTrigger>
 
-                  <ContextMenuContent className="z-10 w-72">
+                  <ContextMenuContent className="z-50 w-72">
                     <div className="p-3">
-                      <p className="font-bold mb-2">{recipe.name}</p>
+                      <p className="font-bold mb-2 text-gray-900">
+                        {recipe.name}
+                      </p>
 
                       {recipe.url ? (
                         <Link
@@ -158,7 +160,7 @@ export const RecipeTable = () => {
                   <ContextMenuTrigger>
                     <SettingsIcon />
                   </ContextMenuTrigger>
-                  <ContextMenuContent align="right">
+                  <ContextMenuContent align="right" className="text-gray-900">
                     <ContextMenuItem onSelect={() => handleEdit(recipe)}>
                       Edit
                     </ContextMenuItem>
