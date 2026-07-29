@@ -1,5 +1,5 @@
 import { NormalUnit } from "@/app/generated/prisma/enums";
-import { Ingredient } from "@/types/recipe";
+import { Ingredient, RecipeInstructionStep } from "@/types/recipe";
 
 interface IngredientPopupProps {
   ingredients: Ingredient[];
@@ -37,6 +37,33 @@ export const NotesPopup = ({ notes }: NotesPopupProps) => {
       <h1 className="text-2xl p-2 pb-4">Notes</h1>
       <hr className="h-0.5 bg-black" />
       <p className="p-4 break-all">{notes}</p>
+    </div>
+  );
+};
+
+interface InstructionsPopupProps {
+  instructions: RecipeInstructionStep[];
+}
+export const InstructionPopup = ({ instructions }: InstructionsPopupProps) => {
+  return (
+    <div className="text-gray-900 ">
+      <h1 className="text-2xl p-2 pb-4">Instructions</h1>
+      <hr className="h-0.5 bg-black" />
+      <ul className="mt-4 divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
+        {instructions.map((instruction) => (
+          <li
+            key={instruction.id}
+            className="flex space-x-3.5 items-center p-3.5 hover:bg-gray-50 transition"
+          >
+            <span className="bg-gray-100 text-gray-700 text-sm font-semibold px-3 py-1 rounded-md border border-gray-200">
+              {instruction.stepNumber}
+            </span>
+            <span className="font-medium text-gray-900">
+              {instruction.method}
+            </span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
