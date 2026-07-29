@@ -18,6 +18,10 @@ export interface Ingredient {
   normalUnit: string | null;
   item: ItemDetails;
 }
+export interface RecipeIngredientInput {
+  name: string;
+  quantity: string;
+}
 
 export interface Recipe {
   id: number;
@@ -29,11 +33,7 @@ export interface Recipe {
   servingSize: number | null;
   imagePath: string | null;
   ingredients: Ingredient[];
-}
-
-export interface RecipeIngredientInput {
-  name: string;
-  quantity: string;
+  instructions: RecipeInstructionStep[];
 }
 
 export interface RecipeFormData {
@@ -45,4 +45,16 @@ export interface RecipeFormData {
   totalTimeMins: number | null;
   imagePath: string | null;
   ingredients: RecipeIngredientInput[];
+  instructions: RecipeInstructionInput[];
+}
+
+export interface RecipeInstructionStep {
+  id: number;
+  recipeId: number;
+  stepNumber: number;
+  method: string;
+}
+export interface RecipeInstructionInput {
+  stepNumber: number;
+  method: string;
 }
