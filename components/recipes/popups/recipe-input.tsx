@@ -86,7 +86,10 @@ export const RecipeInputPopup = ({
         action={async (formData) => {
           if (imageFile) {
             formData.set("recipeImage", imageFile);
+          } else if (initialData?.imagePath) {
+            formData.set("existingImagePath", initialData.imagePath);
           }
+
           if (initialData) {
             await updateRecipe(initialData.id, formData);
           } else {

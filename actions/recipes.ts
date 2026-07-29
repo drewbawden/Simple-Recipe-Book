@@ -55,13 +55,14 @@ async function parseFormData(formData: FormData) {
   const totalTimeMinsValue = formData.get("totalTime");
   const ingredients = JSON.parse(formData.get("ingredients") as string);
   const image = formData.get("recipeImage") as File;
+  const existingImagePath = formData.get("existingImagePath") as string;
 
   const servingSize =
     servingSizeValue === null ? null : Number(servingSizeValue);
   const totalTimeMins =
     totalTimeMinsValue === null ? null : Number(totalTimeMinsValue);
 
-  let imagePath = null;
+  let imagePath = existingImagePath || null;
   if (image && image.size > 0) {
     const bytes = await image.arrayBuffer();
     const buffer = Buffer.from(bytes);
@@ -87,7 +88,6 @@ async function parseFormData(formData: FormData) {
 
 export async function updateRecipe(recipeId: number, formData: FormData) {
   const data: RecipeFormData = await parseFormData(formData);
-  console.log(data);
   await prisma.$transaction(async (tx) => {
     await tx.recipes.update({
       where: {
