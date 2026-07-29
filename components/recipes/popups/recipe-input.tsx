@@ -297,8 +297,8 @@ export const RecipeInputPopup = ({
           </button>
           <input
             type="hidden"
-            name="ingredients"
-            value={JSON.stringify(ingredientsList)}
+            name="instructions"
+            value={JSON.stringify(instructionList)}
           />
         </div>
 

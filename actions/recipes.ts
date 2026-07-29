@@ -29,6 +29,7 @@ export async function getRecipes() {
           item: true,
         },
       },
+      instructions: true,
     },
   });
 
@@ -54,6 +55,7 @@ async function parseFormData(formData: FormData) {
   const servingSizeValue = formData.get("servingSize");
   const totalTimeMinsValue = formData.get("totalTime");
   const ingredients = JSON.parse(formData.get("ingredients") as string);
+  const instructions = JSON.parse(formData.get("instructions") as string);
   const image = formData.get("recipeImage") as File;
   const existingImagePath = formData.get("existingImagePath") as string;
 
@@ -81,8 +83,9 @@ async function parseFormData(formData: FormData) {
     url,
     servingSize,
     totalTimeMins,
-    ingredients,
     imagePath,
+    ingredients,
+    instructions,
   };
 }
 
@@ -138,6 +141,18 @@ export async function updateRecipe(recipeId: number, formData: FormData) {
             }),
           ),
         },
+
+        instructions: {
+          deleteMany: {},
+          create: await Promise.all(
+            data.instructions.map(async (instruction) => {
+              return {
+                stepNumber: instruction.stepNumber,
+                method: instruction.method,
+              };
+            }),
+          ),
+        },
       },
     });
   });
@@ -168,7 +183,7 @@ export async function insertNewRecipe(formData: FormData) {
   const data: RecipeFormData = await parseFormData(formData);
 
   await prisma.$transaction(async (tx) => {
-    const recipe = await tx.recipes.create({
+    await tx.recipes.create({
       data: {
         name: data.name,
         types: data.recipeTypes as RecipeType[],
@@ -209,6 +224,17 @@ export async function insertNewRecipe(formData: FormData) {
                 standardUnit: parsed.standardisedUnit,
                 normalQuantity: parsed.normalisedQuantity,
                 normalUnit: parsed.normalisedUnit,
+              };
+            }),
+          ),
+        },
+
+        instructions: {
+          create: await Promise.all(
+            data.instructions.map(async (instruction) => {
+              return {
+                stepNumber: instruction.stepNumber,
+                method: instruction.method,
               };
             }),
           ),
