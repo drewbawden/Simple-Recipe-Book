@@ -117,7 +117,7 @@ export const RecipeInputPopup = ({
             htmlFor="recipeImage"
             className="absolute inset-0 z-10 flex cursor-pointer items-center justify-center text-3xl font-semibold text-white"
           >
-            {imageFile ? "Change Image" : "+ Add Image"}
+            {initialData?.imagePath ? "Change Image" : "+ Add Image"}
           </label>
           <input
             id="recipeImage"
