@@ -1,9 +1,26 @@
 import { parseQuantity, tryNormaliseQuantity } from "./quantity";
 import { tryStandardiseUnit } from "./units";
 
-export const parseExternalTotalTime = (timeVal: string) => {
-  const timeStr = timeVal.substring(0, timeVal.length - 1).split("T")[1];
-  return Number(timeStr);
+export const parseExternalTotalTime = (
+  totalTime: string,
+  prepTime: string,
+  cookTime: string,
+) => {
+  const total =
+    totalTime?.substring(0, totalTime.length - 1).split("T")[1] || null;
+  const prep =
+    prepTime?.substring(0, prepTime.length - 1).split("T")[1] || null;
+  const cook =
+    cookTime?.substring(0, cookTime.length - 1).split("T")[1] || null;
+
+  if (total) {
+    return Number(total);
+  } else if (prep && cook) {
+    return Number(prep) + Number(cook);
+  } else if (prep) {
+    return Number(prep);
+  }
+  return Number(cook);
 };
 
 export const parseExternalIngredients = (ingredientsVal: string[]) => {
@@ -16,14 +33,12 @@ export const parseExternalIngredients = (ingredientsVal: string[]) => {
     // Normalise separators
     ingredient = ingredient.replace(/\s+/g, " ").trim();
 
-    // Remove alternate measurements:
     // 340g/12oz -> 340g
     ingredient = ingredient.replace(
       /(\d+(?:\.\d+)?)\s*(kg|g|ml|l|oz|lbs?|lb)\s*\/\s*\d+(?:\.\d+)?\s*(kg|g|ml|l|oz|lbs?|lb)\b/gi,
       "$1$2",
     );
 
-    // Keep first ingredient name option:
     // flour / all-purpose flour -> flour
     ingredient = ingredient
       .split(/\s+\/\s+/)[0]
@@ -54,8 +69,7 @@ function extractIngredientPrefix(value: string) {
 
   let quantityEnd = 0;
 
-  // Only search the first few tokens for quantity
-  // Ingredients shouldn't have a quantity 10 words in.
+  // Ingredients shouldn't have a quantity 10 words in
   for (let i = 1; i <= Math.min(4, tokens.length); i++) {
     const candidate = tokens.slice(0, i).join(" ");
 
@@ -95,7 +109,6 @@ function extractIngredientPrefix(value: string) {
     };
   }
 
-  // Quantity exists but no unit
   return {
     quantity: tokens.slice(0, quantityEnd).join(" "),
     name: remaining.join(" "),

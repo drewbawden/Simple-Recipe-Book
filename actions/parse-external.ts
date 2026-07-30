@@ -96,20 +96,15 @@ export const fetchExternalSite = async (url: string) => {
 
   let name = recipe.name || null;
   let totalTime = recipe.totalTime || null;
+  let prepTime = recipe.prepTime || null;
+  let cookTime = recipe.cookTime || null;
   let ingredients = recipe.recipeIngredient || null;
   let instructions = recipe.recipeInstructions || null;
   let servings = recipe.recipeYield || null;
   let image = recipe.image || null;
 
-  console.log(name);
-  console.log(totalTime);
-  console.log(ingredients);
-  console.log(instructions);
-  console.log(servings);
-  console.log(image);
-
-  if (totalTime !== null) {
-    totalTime = parseExternalTotalTime(totalTime);
+  if (totalTime || prepTime || cookTime) {
+    totalTime = parseExternalTotalTime(totalTime, prepTime, cookTime);
   }
   if (ingredients !== null) {
     ingredients = parseExternalIngredients(ingredients);
@@ -124,12 +119,12 @@ export const fetchExternalSite = async (url: string) => {
     image = parseExternalImages(image);
   }
 
-  console.log(name);
-  console.log(totalTime);
-  console.log(ingredients);
-  console.log(instructions);
-  console.log(servings);
-  console.log(image);
+  // console.log(name);
+  // console.log(totalTime);
+  // console.log(ingredients);
+  // console.log(instructions);
+  // console.log(servings);
+  // console.log(image);
 
   return {
     name,
