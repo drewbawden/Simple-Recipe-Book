@@ -16,10 +16,13 @@ import { Recipe } from "@/types/recipe";
 import {
   NotesPopup,
   IngredientPopup,
+  InstructionPopup,
 } from "@/components/recipes/popups/metadata";
 
 import {
-  NotepadText,
+  Info,
+  InfoIcon,
+  NotepadTextIcon,
   SaladIcon,
   SettingsIcon,
   ShoppingBasketIcon,
@@ -36,6 +39,8 @@ export const RecipeTable = () => {
   const [selectedShoppingList, setSelectedShoppingList] =
     useState<Recipe | null>(null);
   const [selectedEdit, setSelectedEdit] = useState<Recipe | null>(null);
+  const [selectedInstructions, setSelectedInstructions] =
+    useState<Recipe | null>(null);
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -201,16 +206,16 @@ export const RecipeTable = () => {
                   </div>
                 )}
 
-                {recipe.notes ? (
+                {recipe.instructions.length > 0 ? (
                   <button
-                    onClick={() => setSelectedNotes(recipe)}
+                    onClick={() => setSelectedInstructions(recipe)}
                     className="text-blue-500 underline font-bold truncate max-w-32"
                   >
-                    <NotepadText />
+                    <NotepadTextIcon />
                   </button>
                 ) : (
                   <div className="p-1 relative inline-block">
-                    <NotepadText />
+                    <NotepadTextIcon />
                     <svg
                       className="absolute inset-0 h-full w-full"
                       viewBox="0 0 24 24"
@@ -228,6 +233,35 @@ export const RecipeTable = () => {
                     </svg>
                   </div>
                 )}
+
+                {recipe.notes ? (
+                  <button
+                    onClick={() => setSelectedNotes(recipe)}
+                    className="text-blue-500 underline font-bold truncate max-w-32"
+                  >
+                    <InfoIcon />
+                  </button>
+                ) : (
+                  <div className="p-1 relative inline-block">
+                    <InfoIcon />
+                    <svg
+                      className="absolute inset-0 h-full w-full"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                    >
+                      <line
+                        x1="4"
+                        y1="20"
+                        x2="20"
+                        y2="4"
+                        stroke="red"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                  </div>
+                )}
+
                 <button
                   title="Add to shopping list"
                   className="bg-blue-500 text-white text-base font-bold py-2 px-2 rounded"
@@ -248,6 +282,15 @@ export const RecipeTable = () => {
       >
         {selectedIngredients && (
           <IngredientPopup ingredients={selectedIngredients.ingredients} />
+        )}
+      </Modal>
+      <Modal
+        isOpen={selectedInstructions !== null}
+        onClose={() => setSelectedInstructions(null)}
+        size="lg"
+      >
+        {selectedInstructions && (
+          <InstructionPopup instructions={selectedInstructions.instructions} />
         )}
       </Modal>
       <Modal

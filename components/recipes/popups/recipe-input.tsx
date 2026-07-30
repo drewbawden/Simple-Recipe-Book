@@ -6,7 +6,12 @@ import Form from "next/form";
 import { Modal } from "@/components/templates/modal";
 import Image from "next/image";
 import { AddIngredientsPopup } from "@/components/recipes/popups/add-ingredients";
-import { Recipe, RecipeIngredientInput } from "@/types/recipe";
+import {
+  Recipe,
+  RecipeIngredientInput,
+  RecipeInstructionInput,
+} from "@/types/recipe";
+import { AddInstructionsPopup } from "./add-instructions";
 
 interface RecipeInputPopupProps {
   closePopup: () => void;
@@ -20,6 +25,7 @@ export const RecipeInputPopup = ({
   initialData,
 }: RecipeInputPopupProps) => {
   const [isIngredientsOpen, setIsIngredientsOpen] = useState(false);
+  const [isInstructionsOpen, setIsInstructionsOpen] = useState(false);
   const [ingredientsList, setIngredientsList] = useState<
     RecipeIngredientInput[]
   >(
@@ -27,6 +33,16 @@ export const RecipeInputPopup = ({
       ? initialData.ingredients.map((ingredient) => ({
           name: ingredient.item.name,
           quantity: `${ingredient.quantity} ${ingredient.unit ?? ""}`,
+        }))
+      : [],
+  );
+  const [instructionList, setInstructionList] = useState<
+    RecipeInstructionInput[]
+  >(
+    initialData
+      ? initialData.instructions.map((instruction) => ({
+          stepNumber: instruction.stepNumber,
+          method: instruction.method,
         }))
       : [],
   );
@@ -267,6 +283,25 @@ export const RecipeInputPopup = ({
           />
         </div>
 
+        <div className="pt-2">
+          <button
+            type="button"
+            onClick={() => setIsInstructionsOpen(true)}
+            className="w-full flex items-center justify-between border border-gray-400 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 text-gray-700 font-medium py-2.5 px-4 rounded-lg transition shadow-sm"
+          >
+            <span className="text-sm font-semibold">Instructions</span>
+            <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-1 rounded-full">
+              {instructionList.length}{" "}
+              {instructionList.length === 1 ? "instruction" : "instructions"}
+            </span>
+          </button>
+          <input
+            type="hidden"
+            name="instructions"
+            value={JSON.stringify(instructionList)}
+          />
+        </div>
+
         <div className="sticky bottom-0 bg-white pt-4 border-t border-gray-200 flex flex-col sm:flex-row-reverse gap-3 mt-6 pb-1">
           <button
             type="submit"
@@ -291,6 +326,16 @@ export const RecipeInputPopup = ({
         <AddIngredientsPopup
           ingredientsList={ingredientsList}
           setIngredientsList={setIngredientsList}
+        />
+      </Modal>
+      <Modal
+        isOpen={isInstructionsOpen}
+        onClose={() => setIsInstructionsOpen(false)}
+        size="lg"
+      >
+        <AddInstructionsPopup
+          instructionList={instructionList}
+          setInstructionList={setInstructionList}
         />
       </Modal>
     </div>

@@ -58,6 +58,7 @@ export const ModelName = {
   Nutrition: 'Nutrition',
   Recipes: 'Recipes',
   RecipeIngredient: 'RecipeIngredient',
+  RecipeInstructionStep: 'RecipeInstructionStep',
   ShoppingList: 'ShoppingList',
   ShoppingListItem: 'ShoppingListItem',
   ShoppingListItemSource: 'ShoppingListItemSource'
@@ -178,6 +179,16 @@ export const RecipeIngredientScalarFieldEnum = {
 } as const
 
 export type RecipeIngredientScalarFieldEnum = (typeof RecipeIngredientScalarFieldEnum)[keyof typeof RecipeIngredientScalarFieldEnum]
+
+
+export const RecipeInstructionStepScalarFieldEnum = {
+  id: 'id',
+  recipeId: 'recipeId',
+  stepNumber: 'stepNumber',
+  method: 'method'
+} as const
+
+export type RecipeInstructionStepScalarFieldEnum = (typeof RecipeInstructionStepScalarFieldEnum)[keyof typeof RecipeInstructionStepScalarFieldEnum]
 
 
 export const ShoppingListScalarFieldEnum = {
