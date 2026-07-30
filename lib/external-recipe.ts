@@ -1,5 +1,5 @@
-import { parseQuantity, tryNormaliseQuantity } from "./quantity";
-import { tryStandardiseUnit } from "./units";
+import { tryNormaliseQuantity } from "./quantity";
+import { tryStandardiseUnit, UNIT_REGEX } from "./units";
 
 export const parseExternalTotalTime = (
   totalTime: string,
@@ -34,10 +34,12 @@ export const parseExternalIngredients = (ingredientsVal: string[]) => {
     ingredient = ingredient.replace(/\s+/g, " ").trim();
 
     // 340g/12oz -> 340g
-    ingredient = ingredient.replace(
-      /(\d+(?:\.\d+)?)\s*(kg|g|ml|l|oz|lbs?|lb)\s*\/\s*\d+(?:\.\d+)?\s*(kg|g|ml|l|oz|lbs?|lb)\b/gi,
-      "$1$2",
+    const alternateMeasurementRegex = new RegExp(
+      `(\\d+(?:\\.\\d+)?(?:\\/\\d+)?)\\s*${UNIT_REGEX.source}\\s*\\/\\s*\\d+(?:\\.\\d+)?\\s*${UNIT_REGEX.source}\\b`,
+      "gi",
     );
+
+    ingredient = ingredient.replace(alternateMeasurementRegex, "$1$2");
 
     // flour / all-purpose flour -> flour
     ingredient = ingredient
@@ -130,6 +132,7 @@ export const parseExternalInstructions = (instructionsVal) => {
   const howToSteps = instructionsVal.filter(
     (item) => item["@type"] === "HowToStep",
   );
+  console.log(howToSteps);
 
   let stepNumber = 0;
   const instructions = howToSteps.map((step) => {

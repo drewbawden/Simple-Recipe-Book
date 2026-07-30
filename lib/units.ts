@@ -252,6 +252,11 @@ const UNIT_MAP: Record<string, StandardUnit> = {
   tube: StandardUnit.INDIVIDUAL,
   tubes: StandardUnit.INDIVIDUAL,
 };
+const unitPattern = Object.keys(UNIT_MAP)
+  .sort((a, b) => b.length - a.length) // longest first
+  .map((u) => u.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+  .join("|");
+export const UNIT_REGEX = new RegExp(`(${unitPattern})`, "i");
 
 const UNIT_MULTIPLIERS: Record<StandardUnit, number> = {
   // millilitre

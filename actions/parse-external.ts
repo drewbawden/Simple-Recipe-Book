@@ -119,12 +119,12 @@ export const fetchExternalSite = async (url: string) => {
     image = parseExternalImages(image);
   }
 
-  // console.log(name);
-  // console.log(totalTime);
-  // console.log(ingredients);
-  // console.log(instructions);
-  // console.log(servings);
-  // console.log(image);
+  console.log(name);
+  console.log(totalTime);
+  console.log(ingredients);
+  console.log(instructions);
+  console.log(servings);
+  console.log(image);
 
   return {
     name,
