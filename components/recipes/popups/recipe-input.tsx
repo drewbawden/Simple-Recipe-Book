@@ -12,6 +12,7 @@ import {
   RecipeInstructionInput,
 } from "@/types/recipe";
 import { AddInstructionsPopup } from "./add-instructions";
+import { fetchExternalSite } from "@/actions/parse-external";
 
 interface RecipeInputPopupProps {
   closePopup: () => void;
@@ -243,6 +244,15 @@ export const RecipeInputPopup = ({
               setUrl(e.target.value === "" ? null : e.target.value)
             }
           />
+          <button
+            onClick={() => {
+              fetchExternalSite(
+                "https://www.recipetineats.com/slow-cooked-shredded-beef-ragu-pasta/",
+              );
+            }}
+          >
+            check
+          </button>
         </div>
 
         <div className="flex flex-col space-y-1.5">
