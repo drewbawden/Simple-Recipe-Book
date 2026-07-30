@@ -9,7 +9,6 @@ import {
 } from "@/lib/external-recipe";
 import * as cheerio from "cheerio";
 import { NextResponse } from "next/server";
-import { serialize } from "v8";
 
 export const fetchExternalSite = async (url: string) => {
   const response = await fetch(url, {
