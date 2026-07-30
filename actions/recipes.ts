@@ -11,6 +11,7 @@ import { parseQuantity } from "@/lib/quantity";
 import { writeFile } from "fs/promises";
 import path from "path";
 import { randomUUID } from "crypto";
+import { downloadExternalRecipeImage } from "@/actions/parse-external";
 import { Recipe, RecipeFormData } from "@/types/recipe";
 
 const adapter = new PrismaPg({
@@ -57,6 +58,7 @@ async function parseFormData(formData: FormData) {
   const ingredients = JSON.parse(formData.get("ingredients") as string);
   const instructions = JSON.parse(formData.get("instructions") as string);
   const image = formData.get("recipeImage") as File;
+  const externalImageUrl = (formData.get("externalImageUrl") as string) || null;
   const existingImagePath = formData.get("existingImagePath") as string;
 
   const servingSize =
@@ -74,6 +76,8 @@ async function parseFormData(formData: FormData) {
 
     await writeFile(path.join(uploadDir, filename), buffer);
     imagePath = `/recipe-pictures/${filename}`;
+  } else if (!imagePath && externalImageUrl) {
+    imagePath = await downloadExternalRecipeImage(externalImageUrl);
   }
 
   return {

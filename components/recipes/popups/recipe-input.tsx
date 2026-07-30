@@ -1,4 +1,6 @@
-import { useState, useEffect, FormEvent } from "react";
+"use client";
+
+import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { insertNewRecipe, updateRecipe } from "@/actions/recipes";
 import { EnumOptions } from "@/components/templates/enums";
 import imageCompression from "browser-image-compression";
@@ -20,46 +22,122 @@ interface RecipeInputPopupProps {
   initialData?: Recipe;
 }
 
+const placeholderImagePath = "/recipe-pictures/placeholder.png";
+
+type RecipeFormState = {
+  name: string;
+  types: string[];
+  notes: string | null;
+  url: string | null;
+  totalTime: number | null;
+  servings: number | null;
+  ingredientsList: RecipeIngredientInput[];
+  instructionList: RecipeInstructionInput[];
+  imagePreview: string;
+};
+
+const getRecipeFormState = (recipe?: Recipe): RecipeFormState => ({
+  name: recipe?.name ?? "",
+  types: recipe?.types ?? [],
+  notes: recipe?.notes ?? null,
+  url: recipe?.url ?? null,
+  totalTime: recipe?.totalTimeMins ?? null,
+  servings: recipe?.servingSize ?? null,
+  ingredientsList: (recipe?.ingredients ?? []).map((ingredient) => ({
+    name: ingredient.item.name,
+    quantity: `${ingredient.quantity} ${ingredient.unit ?? ""}`,
+  })),
+  instructionList: (recipe?.instructions ?? []).map((instruction) => ({
+    stepNumber: instruction.stepNumber,
+    method: instruction.method,
+  })),
+  imagePreview: recipe?.imagePath ?? placeholderImagePath,
+});
+
+const parseExternalNumber = (value: unknown): number | null => {
+  if (value == null) return null;
+  const parsed =
+    typeof value === "string"
+      ? Number(value)
+      : typeof value === "number"
+        ? value
+        : NaN;
+  return Number.isFinite(parsed) ? parsed : null;
+};
+
+const normalizeExternalIngredients = (
+  raw: unknown,
+): RecipeIngredientInput[] => {
+  if (!Array.isArray(raw)) return [];
+  return raw.map((item) => {
+    if (typeof item === "string") {
+      return { name: item, quantity: "" } as RecipeIngredientInput;
+    }
+
+    const external = item as any;
+    return {
+      name: external.name ?? external.text ?? "",
+      quantity: external.quantity
+        ? `${external.quantity} ${external.unit ?? ""}`
+        : (external.text ?? ""),
+    } as RecipeIngredientInput;
+  });
+};
+
+const normalizeExternalInstructions = (
+  raw: unknown,
+): RecipeInstructionInput[] => {
+  if (!Array.isArray(raw)) return [];
+  return raw.map((item, idx) => {
+    if (typeof item === "string") {
+      return {
+        stepNumber: idx + 1,
+        method: item,
+      } as RecipeInstructionInput;
+    }
+
+    const external = item as any;
+    return {
+      stepNumber: external.stepNumber ?? idx + 1,
+      method: external.method ?? external.text ?? "",
+    } as RecipeInstructionInput;
+  });
+};
+
+const getExternalImageUrl = (image: unknown): string | null => {
+  if (!image) return null;
+  if (typeof image === "string") return image;
+  if (Array.isArray(image)) return image[0] ?? null;
+  if (typeof image === "object" && image !== null) {
+    return (image as any).url ?? null;
+  }
+  return null;
+};
+
 export const RecipeInputPopup = ({
   closePopup,
   refreshRecipes,
   initialData,
 }: RecipeInputPopupProps) => {
+  const formState = getRecipeFormState(initialData);
   const [isIngredientsOpen, setIsIngredientsOpen] = useState(false);
   const [isInstructionsOpen, setIsInstructionsOpen] = useState(false);
   const [ingredientsList, setIngredientsList] = useState<
     RecipeIngredientInput[]
-  >(
-    initialData
-      ? initialData.ingredients.map((ingredient) => ({
-          name: ingredient.item.name,
-          quantity: `${ingredient.quantity} ${ingredient.unit ?? ""}`,
-        }))
-      : [],
-  );
+  >(formState.ingredientsList);
   const [instructionList, setInstructionList] = useState<
     RecipeInstructionInput[]
-  >(
-    initialData
-      ? initialData.instructions.map((instruction) => ({
-          stepNumber: instruction.stepNumber,
-          method: instruction.method,
-        }))
-      : [],
-  );
+  >(formState.instructionList);
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState(
-    initialData?.imagePath ?? "/recipe-pictures/placeholder.png",
-  );
+  const [imagePreview, setImagePreview] = useState(formState.imagePreview);
+  const [externalImageUrl, setExternalImageUrl] = useState<string | null>(null);
 
-  const [name, setName] = useState(initialData?.name || "");
-  const [types, setTypes] = useState<string[]>(initialData?.types ?? []);
-  const [notes, setNotes] = useState(initialData?.notes || null);
-  const [url, setUrl] = useState(initialData?.url || null);
-  const [totalTime, setTotalTime] = useState(
-    initialData?.totalTimeMins || null,
-  );
-  const [servings, setServings] = useState(initialData?.servingSize || null);
+  const [name, setName] = useState(formState.name);
+  const [types, setTypes] = useState<string[]>(formState.types);
+  const [notes, setNotes] = useState(formState.notes);
+  const [url, setUrl] = useState(formState.url);
+  const [totalTime, setTotalTime] = useState(formState.totalTime);
+  const [servings, setServings] = useState(formState.servings);
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -76,6 +154,7 @@ export const RecipeInputPopup = ({
     });
 
     setImageFile(compressed);
+    setExternalImageUrl(null);
     setImagePreview(URL.createObjectURL(compressed));
   };
   useEffect(() => {
@@ -85,6 +164,86 @@ export const RecipeInputPopup = ({
       }
     };
   }, [imagePreview]);
+
+  // Sync local state when `initialData` changes (parent can fetch and pass parsed recipe)
+  useEffect(() => {
+    const nextState = getRecipeFormState(initialData);
+
+    setName(nextState.name);
+    setTypes(nextState.types);
+    setNotes(nextState.notes);
+    setUrl(nextState.url);
+    setTotalTime(nextState.totalTime);
+    setServings(nextState.servings);
+    setIngredientsList(nextState.ingredientsList);
+    setInstructionList(nextState.instructionList);
+    setImageFile(null);
+    setExternalImageUrl(null);
+    setImagePreview(nextState.imagePreview);
+  }, [initialData]);
+
+  const [isFetchingExternal, setIsFetchingExternal] = useState(false);
+  const handleFetchExternal = async () => {
+    if (!url) {
+      alert("Please enter a recipe URL first.");
+      return;
+    }
+    setIsFetchingExternal(true);
+    try {
+      const data = await fetchExternalSite(url);
+      if (!data) {
+        alert("Failed to fetch external recipe");
+        return;
+      }
+
+      if (data.name) setName(data.name);
+
+      if (data.totalTime != null) {
+        setTotalTime(parseExternalNumber(data.totalTime));
+      }
+
+      if (data.servings != null) {
+        setServings(parseExternalNumber(data.servings));
+      }
+
+      if (data.ingredients) {
+        setIngredientsList(normalizeExternalIngredients(data.ingredients));
+      }
+
+      if (data.instructions) {
+        setInstructionList(normalizeExternalInstructions(data.instructions));
+      }
+
+      const imageUrl = getExternalImageUrl(data.image);
+      if (imageUrl) {
+        try {
+          const imgRes = await fetch(imageUrl);
+          if (imgRes.ok) {
+            const blob = await imgRes.blob();
+            const ext = (blob.type?.split("/")[1] ?? "jpg").split("+")[0];
+            const file = new File([blob], `external-image.${ext}`, {
+              type: blob.type || "image/jpeg",
+            });
+            setImageFile(file);
+            setExternalImageUrl(null);
+            if (imagePreview.startsWith("blob:"))
+              URL.revokeObjectURL(imagePreview);
+            setImagePreview(URL.createObjectURL(blob));
+          } else {
+            setImageFile(null);
+            setExternalImageUrl(imageUrl);
+            setImagePreview(imageUrl);
+          }
+        } catch (err) {
+          setImageFile(null);
+          setExternalImageUrl(imageUrl);
+          setImagePreview(imageUrl);
+        }
+      }
+    } finally {
+      setIsFetchingExternal(false);
+    }
+  };
 
   const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     const checked = e.currentTarget.querySelectorAll(
@@ -103,6 +262,8 @@ export const RecipeInputPopup = ({
         action={async (formData) => {
           if (imageFile) {
             formData.set("recipeImage", imageFile);
+          } else if (externalImageUrl) {
+            formData.set("externalImageUrl", externalImageUrl);
           } else if (initialData?.imagePath) {
             formData.set("existingImagePath", initialData.imagePath);
           }
@@ -124,6 +285,7 @@ export const RecipeInputPopup = ({
             src={imagePreview}
             alt="Recipe"
             fill
+            unoptimized
             className="object-cover"
             sizes="(max-width: 768px) 100vw,
                    (max-width: 1200px) 50vw,
@@ -134,7 +296,7 @@ export const RecipeInputPopup = ({
             htmlFor="recipeImage"
             className="absolute inset-0 z-10 flex cursor-pointer items-center justify-center text-3xl font-semibold text-white"
           >
-            {initialData?.imagePath ? "Change Image" : "+ Add Image"}
+            {imagePreview ? "Change Image" : "+ Add Image"}
           </label>
           <input
             id="recipeImage"
@@ -143,6 +305,11 @@ export const RecipeInputPopup = ({
             accept="image/*"
             className="hidden"
             onChange={handleImageChange}
+          />
+          <input
+            type="hidden"
+            name="externalImageUrl"
+            value={externalImageUrl ?? ""}
           />
         </div>
         <hr className="h-0.5 bg-black" />
@@ -245,13 +412,12 @@ export const RecipeInputPopup = ({
             }
           />
           <button
-            onClick={() => {
-              fetchExternalSite(
-                "https://www.recipetineats.com/slow-cooked-shredded-beef-ragu-pasta/",
-              );
-            }}
+            type="button"
+            onClick={handleFetchExternal}
+            disabled={isFetchingExternal}
+            className="mt-2 inline-flex items-center px-3 py-1.5 rounded bg-blue-600 text-white hover:bg-blue-500 disabled:opacity-60"
           >
-            check
+            {isFetchingExternal ? "Fetching…" : "Fetch from URL"}
           </button>
         </div>
 

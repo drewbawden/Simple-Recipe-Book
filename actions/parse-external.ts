@@ -9,6 +9,46 @@ import {
 } from "@/lib/external-recipe";
 import * as cheerio from "cheerio";
 import { NextResponse } from "next/server";
+import { writeFile } from "fs/promises";
+import path from "path";
+import { randomUUID } from "crypto";
+
+const getExternalImageUrl = (image: unknown): string | null => {
+  if (!image) return null;
+  if (typeof image === "string") return image;
+  if (Array.isArray(image)) return image[0] ?? null;
+  if (typeof image === "object" && image !== null) {
+    return (image as any).url ?? null;
+  }
+  return null;
+};
+
+export const downloadExternalRecipeImage = async (
+  image: unknown,
+): Promise<string | null> => {
+  const imageUrl = getExternalImageUrl(image);
+  if (!imageUrl) return null;
+
+  const response = await fetch(imageUrl, {
+    headers: {
+      "User-Agent": "Mozilla/5.0",
+    },
+  });
+  if (!response.ok) return null;
+
+  const buffer = Buffer.from(await response.arrayBuffer());
+  const extension = imageUrl
+    .split(".")
+    .pop()
+    ?.split(/[#?]/)[0]
+    ?.toLowerCase()
+    .replace(/[^a-z0-9]/g, "") || "jpg";
+  const filename = `${randomUUID()}.${extension}`;
+  const uploadDir = path.join(process.cwd(), "public", "recipe-pictures");
+
+  await writeFile(path.join(uploadDir, filename), buffer);
+  return `/recipe-pictures/${filename}`;
+};
 
 export const fetchExternalSite = async (url: string) => {
   const response = await fetch(url, {
@@ -50,7 +90,7 @@ export const fetchExternalSite = async (url: string) => {
   let ingredients = recipe.recipeIngredient || null;
   let instructions = recipe.recipeInstructions || null;
   let servings = recipe.recipeYield || null;
-  let images = recipe.image || null;
+  let image = recipe.image || null;
 
   if (totalTime !== null) {
     totalTime = parseExternalTotalTime(totalTime);
@@ -64,8 +104,8 @@ export const fetchExternalSite = async (url: string) => {
   if (servings !== null) {
     servings = parseExternalServings(servings);
   }
-  if (images !== null) {
-    images = parseExternalImages(images);
+  if (image !== null) {
+    image = parseExternalImages(image);
   }
 
   console.log(name);
@@ -73,5 +113,14 @@ export const fetchExternalSite = async (url: string) => {
   console.log(ingredients);
   console.log(instructions);
   console.log(servings);
-  console.log(images);
+  console.log(image);
+
+  return {
+    name,
+    totalTime,
+    ingredients,
+    instructions,
+    servings,
+    image,
+  };
 };

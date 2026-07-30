@@ -103,13 +103,19 @@ export const parseExternalIngredients = (ingredientsVal: string[]) => {
   return ingredients;
 };
 
+// TODO: handle HowToSteps inside array of HowToSections (cake, icing, etc.)
 export const parseExternalInstructions = (instructionsVal) => {
   const howToSteps = instructionsVal.filter(
     (item) => item["@type"] === "HowToStep",
   );
 
+  let stepNumber = 0;
   const instructions = howToSteps.map((step) => {
-    return step.text;
+    stepNumber += 1;
+    return {
+      stepNumber,
+      method: step.text,
+    };
   });
 
   return instructions;
