@@ -37,12 +37,13 @@ export const downloadExternalRecipeImage = async (
   if (!response.ok) return null;
 
   const buffer = Buffer.from(await response.arrayBuffer());
-  const extension = imageUrl
-    .split(".")
-    .pop()
-    ?.split(/[#?]/)[0]
-    ?.toLowerCase()
-    .replace(/[^a-z0-9]/g, "") || "jpg";
+  const extension =
+    imageUrl
+      .split(".")
+      .pop()
+      ?.split(/[#?]/)[0]
+      ?.toLowerCase()
+      .replace(/[^a-z0-9]/g, "") || "jpg";
   const filename = `${randomUUID()}.${extension}`;
   const uploadDir = path.join(process.cwd(), "public", "recipe-pictures");
 
@@ -81,9 +82,17 @@ export const fetchExternalSite = async (url: string) => {
     .get()
     .filter(Boolean);
 
+  if (!linkedData) {
+    return null;
+  }
+
   const recipe = linkedData
     .flatMap((item) => item["@graph"] ?? [item])
     .find((item) => item["@type"] === "Recipe");
+
+  if (!recipe) {
+    return null;
+  }
 
   let name = recipe.name || null;
   let totalTime = recipe.totalTime || null;
@@ -91,6 +100,13 @@ export const fetchExternalSite = async (url: string) => {
   let instructions = recipe.recipeInstructions || null;
   let servings = recipe.recipeYield || null;
   let image = recipe.image || null;
+
+  console.log(name);
+  console.log(totalTime);
+  console.log(ingredients);
+  console.log(instructions);
+  console.log(servings);
+  console.log(image);
 
   if (totalTime !== null) {
     totalTime = parseExternalTotalTime(totalTime);

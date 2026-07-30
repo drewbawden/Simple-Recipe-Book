@@ -7,101 +7,110 @@ export const parseExternalTotalTime = (timeVal: string) => {
 };
 
 export const parseExternalIngredients = (ingredientsVal: string[]) => {
-  const ingredients = ingredientsVal.map((ingredient) => {
-    // convert to lower case
-    ingredient = ingredient.toLowerCase();
+  return ingredientsVal.map((raw) => {
+    let ingredient = raw.toLowerCase();
 
-    // remove context
-    while (/\([^()]*\)/.test(ingredient)) {
-      ingredient = ingredient.replace(/\([^()]*\)/g, "");
-    }
+    // Remove brackets/notes
+    ingredient = removeParentheses(ingredient);
 
-    // remove alternate options
-    ingredient = ingredient.split(" or ")[0];
+    // Normalise separators
+    ingredient = ingredient.replace(/\s+/g, " ").trim();
 
-    // differentiate between 1lb/500g and 3/4 cups, remove alternate unit option
+    // Remove alternate measurements:
+    // 340g/12oz -> 340g
+    ingredient = ingredient.replace(
+      /(\d+(?:\.\d+)?)\s*(kg|g|ml|l|oz|lbs?|lb)\s*\/\s*\d+(?:\.\d+)?\s*(kg|g|ml|l|oz|lbs?|lb)\b/gi,
+      "$1$2",
+    );
+
+    // Keep first ingredient name option:
+    // flour / all-purpose flour -> flour
     ingredient = ingredient
-      .replace(/\s*\/\s*[\d./]+\s*[a-zA-Z]+\b/g, "") // remove "/ 250ml", "/ 2.5 lb", etc.
-      .replace(/\s+/g, " ")
+      .split(/\s+\/\s+/)[0]
+      .split(/\s+or\s+/)[0]
       .trim();
 
-    // try to split into quantity+unit and name
-    const formatted = ingredient
-      .replace(/(\d+(?:\.\d+)?|\d+\/\d+)(?=[a-zA-Z])/g, "$1 ")
-      .trim();
-    const tokens = formatted.replace(/\s+/g, " ").split(" ");
+    // Normalise "1 x 340g can"
+    ingredient = ingredient.replace(
+      /^(\d+)\s*x\s*(\d+(?:\.\d+)?)(g|kg|ml|l|oz|lb|lbs)\b/,
+      "$1 $2$3",
+    );
 
-    // find quantity cutoff (same as parseQuantity)
-    let quantityCutoff = 0;
-    for (let i = 0; i < tokens.length; i++) {
-      const tokensCutOff = tokens.slice(0, tokens.length - i);
-      const standardQuantity = tryNormaliseQuantity(tokensCutOff.join(" "));
-      if (standardQuantity !== null) {
-        quantityCutoff = tokens.length - i;
-        break;
-      }
-    }
-
-    let quantityForParse = "";
-    let name = formatted;
-
-    if (quantityCutoff > 0) {
-      let unitLen = 0;
-      let foundUnit = null as string | null;
-      const maxUnitTokens = Math.min(3, tokens.length - quantityCutoff);
-
-      for (let len = 1; len <= maxUnitTokens; len++) {
-        const candidate = tokens
-          .slice(quantityCutoff, quantityCutoff + len)
-          .join(" ");
-        if (tryStandardiseUnit(candidate) !== null) {
-          unitLen = len;
-          foundUnit = candidate;
-          break;
-        }
-      }
-
-      if (foundUnit) {
-        quantityForParse = tokens.slice(0, quantityCutoff + unitLen).join(" ");
-        name = tokens.slice(quantityCutoff + unitLen).join(" ");
-      } else {
-        // append generic individual unit
-        const trailing = tokens.slice(quantityCutoff).join(" ");
-        if (trailing) {
-          quantityForParse =
-            tokens.slice(0, quantityCutoff).join(" ") + " piece";
-          name = trailing;
-        } else {
-          quantityForParse = tokens.slice(0, quantityCutoff).join(" ");
-          name = "";
-        }
-      }
-    } else {
-      // no quantity detected — treat full string as name
-      quantityForParse = "";
-      name = formatted;
-    }
-
-    name = name.replace(/\s+/g, " ").trim();
-    quantityForParse = quantityForParse.trim();
-
-    try {
-      if (quantityForParse) {
-        parseQuantity(quantityForParse);
-      }
-    } catch (e) {
-      console.warn("parseQuantity failed on:", quantityForParse, e);
-    }
+    const { quantity, name } = extractIngredientPrefix(ingredient);
 
     return {
       name,
-      quantity: quantityForParse,
+      quantity,
       raw: ingredient,
     };
   });
-
-  return ingredients;
 };
+
+function extractIngredientPrefix(value: string) {
+  const tokens = value
+    .replace(/(\d+\/\d+|\d+(?:\.\d+)?)(?=[a-z])/g, "$1 ")
+    .split(/\s+/)
+    .filter(Boolean);
+
+  let quantityEnd = 0;
+
+  // Only search the first few tokens for quantity
+  // Ingredients shouldn't have a quantity 10 words in.
+  for (let i = 1; i <= Math.min(4, tokens.length); i++) {
+    const candidate = tokens.slice(0, i).join(" ");
+
+    if (tryNormaliseQuantity(candidate) !== null) {
+      quantityEnd = i;
+    }
+  }
+
+  if (!quantityEnd) {
+    return {
+      quantity: "1",
+      name: value,
+    };
+  }
+
+  const remaining = tokens.slice(quantityEnd);
+
+  let unitLength = 0;
+
+  // Look immediately after quantity for units
+  for (let i = 1; i <= Math.min(3, remaining.length); i++) {
+    const candidate = remaining.slice(0, i).join(" ");
+
+    if (tryStandardiseUnit(candidate)) {
+      unitLength = i;
+      break;
+    }
+  }
+
+  if (unitLength) {
+    return {
+      quantity: [
+        ...tokens.slice(0, quantityEnd),
+        ...remaining.slice(0, unitLength),
+      ].join(" "),
+      name: remaining.slice(unitLength).join(" "),
+    };
+  }
+
+  // Quantity exists but no unit
+  return {
+    quantity: tokens.slice(0, quantityEnd).join(" "),
+    name: remaining.join(" "),
+  };
+}
+
+function removeParentheses(value: string) {
+  let result = value;
+
+  while (/\([^()]*\)/.test(result)) {
+    result = result.replace(/\([^()]*\)/g, "");
+  }
+
+  return result.replace(/\s+/g, " ").trim();
+}
 
 // TODO: handle HowToSteps inside array of HowToSections (cake, icing, etc.)
 export const parseExternalInstructions = (instructionsVal) => {

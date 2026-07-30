@@ -185,14 +185,14 @@ export const RecipeInputPopup = ({
   const [isFetchingExternal, setIsFetchingExternal] = useState(false);
   const handleFetchExternal = async () => {
     if (!url) {
-      alert("Please enter a recipe URL first.");
+      alert("Please enter a recipe URL first");
       return;
     }
     setIsFetchingExternal(true);
     try {
       const data = await fetchExternalSite(url);
       if (!data) {
-        alert("Failed to fetch external recipe");
+        alert("This recipe is not supported");
         return;
       }
 
