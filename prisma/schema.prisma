@@ -124,6 +124,8 @@ model RecipeInstructionStep {
 
   stepNumber Int
   method     String
+
+  category String?
 }
 
 model ShoppingList {

@@ -1372,7 +1372,8 @@ export const RecipeInstructionStepScalarFieldEnum = {
   id: 'id',
   recipeId: 'recipeId',
   stepNumber: 'stepNumber',
-  method: 'method'
+  method: 'method',
+  category: 'category'
 } as const
 
 export type RecipeInstructionStepScalarFieldEnum = (typeof RecipeInstructionStepScalarFieldEnum)[keyof typeof RecipeInstructionStepScalarFieldEnum]
