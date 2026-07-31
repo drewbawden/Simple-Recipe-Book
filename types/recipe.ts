@@ -60,3 +60,7 @@ export interface RecipeInstructionInput {
   method: string;
   category: string | null;
 }
+
+export type ParsedExternalIngredient = RecipeIngredientInput & {
+  raw: string;
+};

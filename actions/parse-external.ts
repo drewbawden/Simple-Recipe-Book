@@ -8,7 +8,6 @@ import {
   parseExternalTotalTime,
 } from "@/lib/external-recipe";
 import * as cheerio from "cheerio";
-import { NextResponse } from "next/server";
 import { writeFile } from "fs/promises";
 import path from "path";
 import { randomUUID } from "crypto";
@@ -58,10 +57,7 @@ export const fetchExternalSite = async (url: string) => {
     },
   });
   if (!response.ok) {
-    return NextResponse.json(
-      { error: `Failed to fetch: ${response.status}` },
-      { status: 502 },
-    );
+    return null;
   }
 
   const html = await response.text();
@@ -118,13 +114,6 @@ export const fetchExternalSite = async (url: string) => {
   if (image !== null) {
     image = parseExternalImages(image);
   }
-
-  console.log(name);
-  console.log(totalTime);
-  console.log(ingredients);
-  console.log(instructions);
-  console.log(servings);
-  console.log(image);
 
   return {
     name,

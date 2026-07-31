@@ -54,7 +54,7 @@ export const parseExternalIngredients = (ingredientsVal: string[]) => {
     return {
       name,
       quantity,
-      raw: ingredient,
+      raw,
     };
   });
 };

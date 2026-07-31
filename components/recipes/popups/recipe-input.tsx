@@ -9,12 +9,14 @@ import { Modal } from "@/components/templates/modal";
 import Image from "next/image";
 import { AddIngredientsPopup } from "@/components/recipes/popups/add-ingredients";
 import {
+  ParsedExternalIngredient,
   Recipe,
   RecipeIngredientInput,
   RecipeInstructionInput,
 } from "@/types/recipe";
 import { AddInstructionsPopup } from "./add-instructions";
 import { fetchExternalSite } from "@/actions/parse-external";
+import { IngredientsReviewPopup } from "./ingredient-review";
 
 interface RecipeInputPopupProps {
   closePopup: () => void;
@@ -68,20 +70,26 @@ const parseExternalNumber = (value: unknown): number | null => {
 
 const normalizeExternalIngredients = (
   raw: unknown,
-): RecipeIngredientInput[] => {
+): ParsedExternalIngredient[] => {
   if (!Array.isArray(raw)) return [];
   return raw.map((item) => {
     if (typeof item === "string") {
-      return { name: item, quantity: "" } as RecipeIngredientInput;
+      return { name: item, quantity: "", raw: item };
     }
 
     const external = item as any;
+    const rawValue =
+      external.raw ??
+      external.text ??
+      (typeof external === "string" ? external : "");
+
     return {
       name: external.name ?? external.text ?? "",
       quantity: external.quantity
         ? `${external.quantity} ${external.unit ?? ""}`
         : (external.text ?? ""),
-    } as RecipeIngredientInput;
+      raw: rawValue,
+    };
   });
 };
 
@@ -128,6 +136,11 @@ export const RecipeInputPopup = ({
   const [ingredientsList, setIngredientsList] = useState<
     RecipeIngredientInput[]
   >(formState.ingredientsList);
+  const [parsedExternalIngredients, setParsedExternalIngredients] = useState<
+    ParsedExternalIngredient[]
+  >([]);
+  const [isExternalIngredientsReviewOpen, setIsExternalIngredientsReviewOpen] =
+    useState(false);
   const [instructionList, setInstructionList] = useState<
     RecipeInstructionInput[]
   >(formState.instructionList);
@@ -210,7 +223,13 @@ export const RecipeInputPopup = ({
       }
 
       if (data.ingredients) {
-        setIngredientsList(normalizeExternalIngredients(data.ingredients));
+        const parsedIngredients = normalizeExternalIngredients(
+          data.ingredients,
+        );
+        if (parsedIngredients.length > 0) {
+          setParsedExternalIngredients(parsedIngredients);
+          setIsExternalIngredientsReviewOpen(true);
+        }
       }
 
       if (data.instructions) {
@@ -246,6 +265,23 @@ export const RecipeInputPopup = ({
     } finally {
       setIsFetchingExternal(false);
     }
+  };
+
+  const handleConfirmExternalIngredients = () => {
+    setIngredientsList((current) => [
+      ...current,
+      ...parsedExternalIngredients.map(({ name, quantity }) => ({
+        name,
+        quantity,
+      })),
+    ]);
+    setParsedExternalIngredients([]);
+    setIsExternalIngredientsReviewOpen(false);
+  };
+
+  const handleCancelExternalIngredients = () => {
+    setParsedExternalIngredients([]);
+    setIsExternalIngredientsReviewOpen(false);
   };
 
   const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
@@ -515,6 +551,18 @@ export const RecipeInputPopup = ({
         <AddInstructionsPopup
           instructionList={instructionList}
           setInstructionList={setInstructionList}
+        />
+      </Modal>
+      <Modal
+        isOpen={isExternalIngredientsReviewOpen}
+        onClose={handleCancelExternalIngredients}
+        size="lg"
+      >
+        <IngredientsReviewPopup
+          parsedIngredients={parsedExternalIngredients}
+          setParsedIngredients={setParsedExternalIngredients}
+          onCancel={handleCancelExternalIngredients}
+          onConfirm={handleConfirmExternalIngredients}
         />
       </Modal>
     </div>
