@@ -181,7 +181,6 @@ export const RecipeInputPopup = ({
     };
   }, [imagePreview]);
 
-  // Sync local state when `initialData` changes (parent can fetch and pass parsed recipe)
   useEffect(() => {
     const nextState = getRecipeFormState(initialData);
 
@@ -353,6 +352,33 @@ export const RecipeInputPopup = ({
         </div>
         <hr className="h-0.5 bg-black" />
 
+        <div className="flex flex-col space-y-1.5">
+          <label htmlFor="url" className="text-sm font-semibold text-gray-700">
+            Recipe URL
+          </label>
+          <div className="flex flex-row space-x-1 justify-center items-center">
+            <input
+              type="url"
+              id="url"
+              name="url"
+              placeholder="https://example.com/recipe"
+              className="w-4/5 px-3 py-2 border border-gray-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-base"
+              value={url ?? ""}
+              onChange={(e) =>
+                setUrl(e.target.value === "" ? null : e.target.value)
+              }
+            />
+            <button
+              type="button"
+              onClick={handleFetchExternal}
+              disabled={isFetchingExternal}
+              className="w-1/5 justify-center mt-2 inline-flex items-center px-2 py-1 rounded bg-blue-600 text-white hover:bg-blue-500 disabled:opacity-60"
+            >
+              {isFetchingExternal ? "Fetching…" : "Preload?"}
+            </button>
+          </div>
+        </div>
+
         <div className="flex flex-col space-y-1.5 pt-2">
           <label
             htmlFor="name"
@@ -433,31 +459,6 @@ export const RecipeInputPopup = ({
               )
             }
           />
-        </div>
-
-        <div className="flex flex-col space-y-1.5">
-          <label htmlFor="url" className="text-sm font-semibold text-gray-700">
-            Recipe URL
-          </label>
-          <input
-            type="url"
-            id="url"
-            name="url"
-            placeholder="https://example.com/recipe"
-            className="w-full px-3 py-2 border border-gray-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-base"
-            value={url ?? ""}
-            onChange={(e) =>
-              setUrl(e.target.value === "" ? null : e.target.value)
-            }
-          />
-          <button
-            type="button"
-            onClick={handleFetchExternal}
-            disabled={isFetchingExternal}
-            className="mt-2 inline-flex items-center px-3 py-1.5 rounded bg-blue-600 text-white hover:bg-blue-500 disabled:opacity-60"
-          >
-            {isFetchingExternal ? "Fetching…" : "Fetch from URL"}
-          </button>
         </div>
 
         <div className="flex flex-col space-y-1.5">
