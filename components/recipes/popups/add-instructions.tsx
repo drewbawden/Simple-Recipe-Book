@@ -20,15 +20,18 @@ export const AddInstructionsPopup = ({
   setInstructionList,
 }: AddInstructionsPopupProps) => {
   const [newMethod, setNewMethod] = useState("");
+  const [newCategory, setNewCategory] = useState("");
   const [insertIndex, setInsertIndex] = useState<number | null>(null);
   const [insertText, setInsertText] = useState("");
+  const [insertCategory, setInsertCategory] = useState("");
 
   const reindexSteps = (
-    list: { method: string }[],
+    list: { method: string; category?: string | null }[],
   ): RecipeInstructionInput[] => {
     return list.map((item, idx) => ({
       stepNumber: idx + 1,
       method: item.method,
+      category: item.category ?? null,
     }));
   };
 
@@ -38,10 +41,15 @@ export const AddInstructionsPopup = ({
 
     const updated = [
       ...instructionList,
-      { stepNumber: instructionList.length + 1, method: newMethod.trim() },
+      {
+        stepNumber: instructionList.length + 1,
+        method: newMethod.trim(),
+        category: newCategory.trim() || null,
+      },
     ];
     setInstructionList(reindexSteps(updated));
     setNewMethod("");
+    setNewCategory("");
   };
 
   const handleInsertAt = (targetIndex: number) => {
@@ -51,16 +59,27 @@ export const AddInstructionsPopup = ({
     updated.splice(targetIndex, 0, {
       stepNumber: targetIndex + 1,
       method: insertText.trim(),
+      category: insertCategory.trim() || null,
     });
 
     setInstructionList(reindexSteps(updated));
     setInsertIndex(null);
     setInsertText("");
+    setInsertCategory("");
   };
 
   const handleRemove = (index: number) => {
     const updated = instructionList.filter((_, i) => i !== index);
     setInstructionList(reindexSteps(updated));
+  };
+
+  const handleCategoryChange = (index: number, category: string) => {
+    const updated = [...instructionList];
+    updated[index] = {
+      ...updated[index],
+      category: category.trim() || null,
+    };
+    setInstructionList(updated);
   };
 
   const handleMove = (index: number, direction: "up" | "down") => {
@@ -100,6 +119,23 @@ export const AddInstructionsPopup = ({
           />
         </div>
 
+        <div className="flex flex-col space-y-1.5">
+          <label
+            htmlFor="instruction-category"
+            className="text-sm font-semibold text-gray-700"
+          >
+            Category (optional)
+          </label>
+          <input
+            id="instruction-category"
+            type="text"
+            value={newCategory}
+            onChange={(e) => setNewCategory(e.target.value)}
+            placeholder="e.g. Sauce, Pasta, Topping"
+            className="w-full px-3 py-2 border border-gray-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-base"
+          />
+        </div>
+
         <button
           type="submit"
           disabled={!newMethod.trim()}
@@ -125,9 +161,20 @@ export const AddInstructionsPopup = ({
                   {item.stepNumber}
                 </span>
 
-                <span className="flex-1 font-medium text-gray-900 text-sm leading-relaxed pt-1">
-                  {item.method}
-                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-gray-900 text-sm leading-relaxed pt-1">
+                    {item.method}
+                  </p>
+                  <input
+                    type="text"
+                    value={item.category ?? ""}
+                    onChange={(e) =>
+                      handleCategoryChange(index, e.target.value)
+                    }
+                    placeholder="Category (optional)"
+                    className="mt-2 w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
 
                 <div className="flex flex-wrap justify-between items-center gap-1 shrink-0">
                   <div className="flex border border-gray-200 rounded-md overflow-hidden bg-gray-100">
@@ -191,6 +238,14 @@ export const AddInstructionsPopup = ({
                     onChange={(e) => setInsertText(e.target.value)}
                     placeholder="Describe this step..."
                     className="w-full px-3 py-2 border border-gray-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm resize-none"
+                  />
+
+                  <input
+                    type="text"
+                    value={insertCategory}
+                    onChange={(e) => setInsertCategory(e.target.value)}
+                    placeholder="Category (optional)"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
 
                   <div className="flex justify-end gap-2">

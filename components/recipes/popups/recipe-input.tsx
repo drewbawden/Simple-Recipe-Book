@@ -50,6 +50,7 @@ const getRecipeFormState = (recipe?: Recipe): RecipeFormState => ({
   instructionList: (recipe?.instructions ?? []).map((instruction) => ({
     stepNumber: instruction.stepNumber,
     method: instruction.method,
+    category: instruction.category ?? null,
   })),
   imagePreview: recipe?.imagePath ?? placeholderImagePath,
 });
@@ -93,6 +94,7 @@ const normalizeExternalInstructions = (
       return {
         stepNumber: idx + 1,
         method: item,
+        category: null,
       } as RecipeInstructionInput;
     }
 
@@ -100,6 +102,7 @@ const normalizeExternalInstructions = (
     return {
       stepNumber: external.stepNumber ?? idx + 1,
       method: external.method ?? external.text ?? "",
+      category: external.category ?? null,
     } as RecipeInstructionInput;
   });
 };

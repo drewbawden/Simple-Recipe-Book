@@ -1,5 +1,6 @@
 import { tryNormaliseQuantity } from "./quantity";
 import { tryStandardiseUnit, UNIT_MAP } from "./units";
+import { decode } from "he";
 
 export const parseExternalTotalTime = (
   totalTime: string,
@@ -138,19 +139,27 @@ function removeParentheses(value: string) {
 
 // TODO: handle HowToSteps inside array of HowToSections (cake, icing, etc.)
 export const parseExternalInstructions = (instructionsVal) => {
-  const howToSteps = instructionsVal.filter(
-    (item) => item["@type"] === "HowToStep",
+  const howToSections = instructionsVal.filter(
+    (item) => item["@type"] === "HowToSection",
   );
-  console.log(howToSteps);
 
   let stepNumber = 0;
-  const instructions = howToSteps.map((step) => {
-    stepNumber += 1;
-    return {
-      stepNumber,
-      method: step.text,
-    };
-  });
+
+  const instructions =
+    howToSections.length > 0
+      ? howToSections.flatMap((section) =>
+          (section.itemListElement || []).map((step) => ({
+            stepNumber: ++stepNumber,
+            method: decode(step.text),
+            category: section.name,
+          })),
+        )
+      : instructionsVal
+          .filter((item) => item["@type"] === "HowToStep")
+          .map((step) => ({
+            stepNumber: ++stepNumber,
+            method: decode(step.text),
+          }));
 
   return instructions;
 };

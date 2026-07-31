@@ -153,6 +153,7 @@ export async function updateRecipe(recipeId: number, formData: FormData) {
               return {
                 stepNumber: instruction.stepNumber,
                 method: instruction.method,
+                category: instruction.category,
               };
             }),
           ),
@@ -239,6 +240,7 @@ export async function insertNewRecipe(formData: FormData) {
               return {
                 stepNumber: instruction.stepNumber,
                 method: instruction.method,
+                category: instruction.category,
               };
             }),
           ),

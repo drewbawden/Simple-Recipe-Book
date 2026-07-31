@@ -53,8 +53,10 @@ export interface RecipeInstructionStep {
   recipeId: number;
   stepNumber: number;
   method: string;
+  category: string | null;
 }
 export interface RecipeInstructionInput {
   stepNumber: number;
   method: string;
+  category: string | null;
 }

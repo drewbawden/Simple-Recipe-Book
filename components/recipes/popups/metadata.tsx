@@ -45,25 +45,68 @@ interface InstructionsPopupProps {
   instructions: RecipeInstructionStep[];
 }
 export const InstructionPopup = ({ instructions }: InstructionsPopupProps) => {
+  const hasCategories = instructions.some((instruction) =>
+    instruction.category?.trim(),
+  );
+
+  const groupedInstructions = instructions.reduce(
+    (groups, instruction) => {
+      const key = instruction.category?.trim() || "General";
+      if (!groups[key]) {
+        groups[key] = [];
+      }
+      groups[key].push(instruction);
+      return groups;
+    },
+    {} as Record<string, RecipeInstructionStep[]>,
+  );
+
   return (
     <div className="text-gray-900 ">
       <h1 className="text-2xl p-2 pb-4">Instructions</h1>
       <hr className="h-0.5 bg-black" />
-      <ul className="mt-4 divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
-        {instructions.map((instruction) => (
-          <li
-            key={instruction.id}
-            className="flex space-x-3.5 items-center p-3.5 hover:bg-gray-50 transition"
-          >
-            <span className="bg-gray-100 text-gray-700 text-sm font-semibold px-3 py-1 rounded-md border border-gray-200">
-              {instruction.stepNumber}
-            </span>
-            <span className="font-medium text-gray-900">
-              {instruction.method}
-            </span>
-          </li>
-        ))}
-      </ul>
+      {hasCategories ? (
+        <div className="mt-4 space-y-6">
+          {Object.entries(groupedInstructions).map(([category, steps]) => (
+            <div
+              key={category}
+              className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden"
+            >
+              <div className="bg-gray-100 px-4 py-3 border-b border-gray-200">
+                <h2 className="font-bold text-gray-900">{category}</h2>
+              </div>
+              <ol className="list-decimal list-inside divide-y divide-gray-200">
+                {steps.map((instruction) => (
+                  <li
+                    key={instruction.id}
+                    className="px-4 py-3 hover:bg-gray-50 transition"
+                  >
+                    <span className="font-medium text-gray-900">
+                      {instruction.method}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <ul className="mt-4 divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
+          {instructions.map((instruction) => (
+            <li
+              key={instruction.id}
+              className="flex space-x-3.5 items-center p-3.5 hover:bg-gray-50 transition"
+            >
+              <span className="bg-gray-100 text-gray-700 text-sm font-semibold px-3 py-1 rounded-md border border-gray-200">
+                {instruction.stepNumber}
+              </span>
+              <span className="font-medium text-gray-900">
+                {instruction.method}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
