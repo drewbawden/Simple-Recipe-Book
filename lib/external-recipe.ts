@@ -1,18 +1,16 @@
 import { tryNormaliseQuantity } from "./quantity";
 import { tryStandardiseUnit, UNIT_MAP } from "./units";
 import { decode } from "he";
+import { toSeconds, parse } from "iso8601-duration";
 
 export const parseExternalTotalTime = (
   totalTime: string,
   prepTime: string,
   cookTime: string,
 ) => {
-  const total =
-    totalTime?.substring(0, totalTime.length - 1).split("T")[1] || null;
-  const prep =
-    prepTime?.substring(0, prepTime.length - 1).split("T")[1] || null;
-  const cook =
-    cookTime?.substring(0, cookTime.length - 1).split("T")[1] || null;
+  const total = totalTime ? toSeconds(parse(totalTime)) / 60 : null;
+  const prep = prepTime ? toSeconds(parse(prepTime)) / 60 : null;
+  const cook = cookTime ? toSeconds(parse(cookTime)) / 60 : null;
 
   if (total) {
     return Number(total);
