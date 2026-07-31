@@ -1,5 +1,5 @@
 import { tryNormaliseQuantity } from "./quantity";
-import { tryStandardiseUnit, UNIT_REGEX } from "./units";
+import { tryStandardiseUnit, UNIT_MAP } from "./units";
 
 export const parseExternalTotalTime = (
   totalTime: string,
@@ -34,12 +34,7 @@ export const parseExternalIngredients = (ingredientsVal: string[]) => {
     ingredient = ingredient.replace(/\s+/g, " ").trim();
 
     // 340g/12oz -> 340g
-    const alternateMeasurementRegex = new RegExp(
-      `(\\d+(?:\\.\\d+)?(?:\\/\\d+)?)\\s*${UNIT_REGEX.source}\\s*\\/\\s*\\d+(?:\\.\\d+)?\\s*${UNIT_REGEX.source}\\b`,
-      "gi",
-    );
-
-    ingredient = ingredient.replace(alternateMeasurementRegex, "$1$2");
+    ingredient = removeAlternateMeasurements(ingredient);
 
     // flour / all-purpose flour -> flour
     ingredient = ingredient
@@ -62,6 +57,20 @@ export const parseExternalIngredients = (ingredientsVal: string[]) => {
     };
   });
 };
+
+function removeAlternateMeasurements(value: string) {
+  const units = Object.keys(UNIT_MAP)
+    .sort((a, b) => b.length - a.length)
+    .map((u) => u.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+    .join("|");
+
+  const regex = new RegExp(
+    `(\\d+(?:\\.\\d+)?(?:\\/\\d+)?)\\s*(${units})(?:\\s*\\/\\s*\\d+(?:\\.\\d+)?\\s*(${units}))+`,
+    "gi",
+  );
+
+  return value.replace(regex, "$1$2");
+}
 
 function extractIngredientPrefix(value: string) {
   const tokens = value
