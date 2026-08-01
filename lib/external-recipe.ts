@@ -136,7 +136,7 @@ function removeParentheses(value: string) {
 }
 
 // TODO: handle HowToSteps inside array of HowToSections (cake, icing, etc.)
-export const parseExternalInstructions = (instructionsVal) => {
+export const parseExternalInstructions = (instructionsVal: any[]) => {
   const howToSections = instructionsVal.filter(
     (item) => item["@type"] === "HowToSection",
   );
@@ -146,7 +146,7 @@ export const parseExternalInstructions = (instructionsVal) => {
   const instructions =
     howToSections.length > 0
       ? howToSections.flatMap((section) =>
-          (section.itemListElement || []).map((step) => ({
+          (section.itemListElement || []).map((step: any) => ({
             stepNumber: ++stepNumber,
             method: decode(step.text),
             category: section.name,
