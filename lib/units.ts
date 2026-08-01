@@ -1,6 +1,6 @@
 import { StandardUnit, NormalUnit } from "../app/generated/prisma/enums";
 
-const UNIT_MAP: Record<string, StandardUnit> = {
+export const UNIT_MAP: Record<string, StandardUnit> = {
   dl: StandardUnit.DECILITRE,
   dls: StandardUnit.DECILITRE,
   decilitre: StandardUnit.DECILITRE,
