@@ -1,4 +1,5 @@
 import { ParsedExternalIngredient } from "@/types/recipe";
+import { Trash2Icon } from "lucide-react";
 
 interface IngredientsReviewPopupProps {
   parsedIngredients: ParsedExternalIngredient[];
@@ -15,6 +16,10 @@ export const IngredientsReviewPopup = ({
   onCancel,
   onConfirm,
 }: IngredientsReviewPopupProps) => {
+  function removeIngredient(index: number) {
+    setParsedIngredients((prev) => prev.filter((_, i) => i !== index));
+  }
+
   return (
     <div className="space-y-4 text-gray-900 flex flex-col w-full">
       <div className="rounded-xl bg-gray-50 border border-gray-200 p-4">
@@ -68,9 +73,19 @@ export const IngredientsReviewPopup = ({
                   />
                 </div>
               </div>
-              <div className="mt-3 rounded-lg bg-gray-50 border border-gray-200 p-3 text-sm text-gray-600">
-                <div className="font-semibold text-gray-700">Raw text</div>
-                <div>{ingredient.raw}</div>
+              <div className="flex flex-row justify-between items-center space-x-2">
+                <div className="mt-3 rounded-lg bg-gray-50 border border-gray-200 p-3 text-sm text-gray-600">
+                  <div className="font-semibold text-gray-700">Raw text</div>
+                  <div>{ingredient.raw}</div>
+                </div>
+                <button
+                  className="bg-gray-300 p-2 h-min rounded border border-gray-300 shadow-sm active:bg-red-200"
+                  onClick={() => {
+                    removeIngredient(index);
+                  }}
+                >
+                  <Trash2Icon />
+                </button>
               </div>
             </div>
           ))}
