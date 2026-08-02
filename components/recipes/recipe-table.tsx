@@ -316,7 +316,8 @@ export const RecipeTable = () => {
         hideCross
       >
         <RecipeInputPopup
-          closePopup={() => handleAddRecipeCancel()}
+          handleClose={() => handleEditRecipeCancel()}
+          closePopup={() => setIsAddRecipeOpen(false)}
           refreshRecipes={refreshRecipes}
         />
       </Modal>
@@ -339,7 +340,8 @@ export const RecipeTable = () => {
       >
         {selectedEdit && (
           <RecipeInputPopup
-            closePopup={() => handleEditRecipeCancel()}
+            handleClose={() => handleEditRecipeCancel()}
+            closePopup={() => setIsAddRecipeOpen(false)}
             refreshRecipes={refreshRecipes}
             initialData={selectedEdit}
           />

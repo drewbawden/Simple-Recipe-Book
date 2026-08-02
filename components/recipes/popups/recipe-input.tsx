@@ -19,6 +19,7 @@ import { fetchExternalSite } from "@/actions/parse-external";
 import { IngredientsReviewPopup } from "./ingredient-review";
 
 interface RecipeInputPopupProps {
+  handleClose: () => void;
   closePopup: () => void;
   refreshRecipes: () => void;
   initialData?: Recipe;
@@ -126,7 +127,8 @@ const getExternalImageUrl = (image: unknown): string | null => {
 };
 
 export const RecipeInputPopup = ({
-  closePopup,
+  handleClose: handleClose,
+  closePopup: closePopup,
   refreshRecipes,
   initialData,
 }: RecipeInputPopupProps) => {
@@ -524,7 +526,7 @@ export const RecipeInputPopup = ({
           </button>
           <button
             type="button"
-            onClick={closePopup}
+            onClick={handleClose}
             className="w-full sm:w-auto sm:px-6 py-3 rounded-lg bg-gray-100 font-semibold text-gray-700 hover:bg-gray-200 active:bg-gray-300 transition text-center"
           >
             Cancel
