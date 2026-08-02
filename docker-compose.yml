@@ -11,6 +11,8 @@ services:
       DATABASE_URL: ${DATABASE_URL}
     ports:
       - "4912:3000"
+    volumes:
+      - ./public/recipe-pictures:/app/public/recipe-pictures
     restart: unless-stopped
     depends_on:
       - SRB-Postgres

@@ -8,7 +8,7 @@ import {
 import { PrismaPg } from "@prisma/adapter-pg";
 import "dotenv/config";
 import { parseQuantity } from "@/lib/quantity";
-import { writeFile } from "fs/promises";
+import { mkdir, writeFile } from "fs/promises";
 import path from "path";
 import { randomUUID } from "crypto";
 import { downloadExternalRecipeImage } from "@/actions/parse-external";
@@ -73,6 +73,7 @@ async function parseFormData(formData: FormData) {
     const extension = image.name.split(".").pop();
     const filename = `${randomUUID()}.${extension}`;
     const uploadDir = path.join(process.cwd(), "public", "recipe-pictures");
+    await mkdir(uploadDir, { recursive: true });
 
     await writeFile(path.join(uploadDir, filename), buffer);
     imagePath = `/recipe-pictures/${filename}`;

@@ -8,7 +8,7 @@ import {
   parseExternalTotalTime,
 } from "@/lib/external-recipe";
 import * as cheerio from "cheerio";
-import { writeFile } from "fs/promises";
+import { mkdir, writeFile } from "fs/promises";
 import path from "path";
 import { randomUUID } from "crypto";
 
@@ -45,6 +45,7 @@ export const downloadExternalRecipeImage = async (
       .replace(/[^a-z0-9]/g, "") || "jpg";
   const filename = `${randomUUID()}.${extension}`;
   const uploadDir = path.join(process.cwd(), "public", "recipe-pictures");
+  await mkdir(uploadDir, { recursive: true });
 
   await writeFile(path.join(uploadDir, filename), buffer);
   return `/recipe-pictures/${filename}`;

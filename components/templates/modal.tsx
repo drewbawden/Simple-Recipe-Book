@@ -76,6 +76,7 @@ export const ImageModal = ({
     <>
       <Image
         {...props}
+        unoptimized
         onClick={() => setOpen(true)}
         className={`cursor-pointer ${className}`}
       />
