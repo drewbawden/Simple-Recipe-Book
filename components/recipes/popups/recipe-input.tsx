@@ -267,13 +267,7 @@ export const RecipeInputPopup = ({
   };
 
   const handleConfirmExternalIngredients = () => {
-    setIngredientsList((current) => [
-      ...current,
-      ...parsedExternalIngredients.map(({ name, quantity }) => ({
-        name,
-        quantity,
-      })),
-    ]);
+    setIngredientsList(parsedExternalIngredients);
     setParsedExternalIngredients([]);
     setIsExternalIngredientsReviewOpen(false);
   };
