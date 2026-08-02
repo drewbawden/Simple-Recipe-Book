@@ -24,7 +24,7 @@ export const parseExternalTotalTime = (
 
 export const parseExternalIngredients = (ingredientsVal: string[]) => {
   return ingredientsVal.map((raw) => {
-    let ingredient = raw.toLowerCase();
+    let ingredient = decode(raw.toLowerCase());
 
     // Remove brackets/notes
     ingredient = removeParentheses(ingredient);
@@ -47,7 +47,10 @@ export const parseExternalIngredients = (ingredientsVal: string[]) => {
       "$1 $2$3",
     );
 
-    const { quantity, name } = extractIngredientPrefix(ingredient);
+    let { quantity, name } = extractIngredientPrefix(ingredient);
+
+    // remove leading 'of'
+    name = name.replace(/^of\s+/i, "");
 
     return {
       name,
@@ -149,7 +152,7 @@ export const parseExternalInstructions = (instructionsVal: any[]) => {
           (section.itemListElement || []).map((step: any) => ({
             stepNumber: ++stepNumber,
             method: decode(step.text),
-            category: section.name,
+            category: decode(section.name),
           })),
         )
       : instructionsVal
@@ -164,6 +167,10 @@ export const parseExternalInstructions = (instructionsVal: any[]) => {
 
 export const parseExternalServings = (servingsVal: string[]) => {
   // assuming servingsVal is list like ['5', '5 - 6 people']
+  const valType = typeof servingsVal;
+  if (valType == "number") {
+    return servingsVal;
+  }
   return Number(servingsVal[0]);
 };
 

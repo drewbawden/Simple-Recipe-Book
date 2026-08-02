@@ -102,6 +102,9 @@ export const fetchExternalSite = async (url: string) => {
 
   if (totalTime || prepTime || cookTime) {
     totalTime = parseExternalTotalTime(totalTime, prepTime, cookTime);
+    if (totalTime == 0) {
+      totalTime = null;
+    }
   }
   if (ingredients !== null) {
     ingredients = parseExternalIngredients(ingredients);
