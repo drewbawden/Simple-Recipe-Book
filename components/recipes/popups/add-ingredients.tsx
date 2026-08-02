@@ -107,7 +107,7 @@ export const AddIngredientsPopup = ({
           {ingredientsList.map((ingredient, index) => (
             <li
               key={index}
-              className="flex justify-between items-center px-4 py-2 hover:bg-gray-100 transition group"
+              className="flex justify-between items-center px-2 py-2 hover:bg-gray-100 transition group space-x-2"
             >
               <button
                 onClick={() => {

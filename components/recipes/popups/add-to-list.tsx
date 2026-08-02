@@ -68,73 +68,74 @@ export const AddToShoppingListPopup = ({
   }
 
   return (
-    <div className="text-gray-900">
-      <h1 className="text-2xl p-2 pb-4">Add Ingredients to Shopping List</h1>
+    <Form action={handleAdd} className="text-gray-900">
+      <h1 className="rounded-xl bg-gray-50 border border-gray-200 p-4 text-2xl p-2 pb-4 text-center">
+        Add to Shopping List
+      </h1>
       <hr className="h-0.5 bg-black" />
-      <Form action={handleAdd}>
-        <div className="flex p-2 justify-between space-x-2 items-center">
-          <div className="border border-gray-200 rounded-xl p-2 space-x-2">
-            <label htmlFor="selectAllCheck">Select All</label>
-            <input
-              id="selectAllCheck"
-              type="checkbox"
-              checked={allSelected}
-              onChange={toggleSelectAll}
-            />
-          </div>
-          <div className="border border-gray-200 rounded-xl p-2 space-x-2">
-            <label htmlFor="continueToList">Continue to shopping list?</label>
-            <input id="continueToList" name="continueToList" type="checkbox" />
-          </div>
+      <div className="flex p-2 justify-between space-x-2 items-center">
+        <div className="border border-gray-200 rounded-xl p-2 space-x-2">
+          <label htmlFor="selectAllCheck">Select All</label>
+          <input
+            id="selectAllCheck"
+            type="checkbox"
+            checked={allSelected}
+            onChange={toggleSelectAll}
+          />
         </div>
-        <hr className="h-0.5 bg-black" />
-        <ul className="mt-4 divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
-          {ingredients.map((ingredient) => {
-            const ingredientCheckboxId = `ingredient-${ingredient.id}`;
-            const isChecked = selectedIngredientIds.has(ingredient.id);
-
-            return (
-              <li key={ingredient.id}>
-                <label
-                  htmlFor={ingredientCheckboxId}
-                  className="flex justify-between items-center p-3.5 hover:bg-gray-50 transition space-x-2"
-                >
-                  <input
-                    id={ingredientCheckboxId}
-                    name="ingredientIds"
-                    type="checkbox"
-                    value={ingredient.id}
-                    checked={isChecked}
-                    onChange={() => toggleIngredient(ingredient.id)}
-                  />
-                  <span className="font-medium text-gray-900">
-                    {ingredient.item.name}
-                  </span>
-                  <span className="bg-gray-100 text-gray-700 text-sm font-semibold px-3 py-1 rounded-md border border-gray-200">
-                    {ingredient.quantity} {ingredient.unit}
-                  </span>
-                </label>
-              </li>
-            );
-          })}
-        </ul>
-
-        <div className="mt-4 flex flex-wrap justify-end gap-3">
-          <button
-            type="button"
-            onClick={closePopup}
-            className="rounded-lg bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-200 transition"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500 transition"
-          >
-            Add Selected
-          </button>
+        <div className="border border-gray-200 rounded-xl p-2 space-x-2">
+          <label htmlFor="continueToList">Continue to shopping list?</label>
+          <input id="continueToList" name="continueToList" type="checkbox" />
         </div>
-      </Form>
-    </div>
+      </div>
+      <hr className="h-0.5 bg-black" />
+      <ul className="mt-4 divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
+        {ingredients.map((ingredient) => {
+          const ingredientCheckboxId = `ingredient-${ingredient.id}`;
+          const isChecked = selectedIngredientIds.has(ingredient.id);
+
+          return (
+            <li key={ingredient.id}>
+              <label
+                htmlFor={ingredientCheckboxId}
+                className="flex justify-between items-center p-3.5 hover:bg-gray-50 transition space-x-2"
+              >
+                <input
+                  id={ingredientCheckboxId}
+                  name="ingredientIds"
+                  type="checkbox"
+                  value={ingredient.id}
+                  checked={isChecked}
+                  onChange={() => toggleIngredient(ingredient.id)}
+                />
+                <span className="font-medium text-gray-900">
+                  {ingredient.item.name}
+                </span>
+                <span className="bg-gray-100 text-gray-700 text-sm font-semibold px-3 py-1 rounded-md border border-gray-200">
+                  {ingredient.quantity} {ingredient.unit}
+                </span>
+              </label>
+            </li>
+          );
+        })}
+      </ul>
+
+      <div className="sticky bottom-0 mt-4 flex flex-col sm:flex-row-reverse sm:justify-start flex-wrap justify-end gap-3 bg-white p-4">
+        <button
+          type="submit"
+          className="disabled:bg-gray-400 rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-500 transition"
+          disabled={selectedIngredientIds.size < 1}
+        >
+          Add Selected
+        </button>
+        <button
+          type="button"
+          onClick={closePopup}
+          className="rounded-lg bg-gray-100 px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-200 transition"
+        >
+          Cancel
+        </button>
+      </div>
+    </Form>
   );
 };

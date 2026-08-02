@@ -291,7 +291,7 @@ export const RecipeInputPopup = ({
   const isFormValid = name.trim().length > 0 && types.length > 0;
 
   return (
-    <div className="flex flex-col max-h-[80vh] w-full text-gray-900">
+    <div className="flex flex-col w-full text-gray-900">
       <Form
         action={async (formData) => {
           if (imageFile) {
@@ -312,7 +312,7 @@ export const RecipeInputPopup = ({
           closePopup();
         }}
         onSubmit={handleSubmit}
-        className="flex-1 overflow-y-auto pr-1 space-y-5 text-gray-900"
+        className="flex-1 pr-1 space-y-5 text-gray-900"
       >
         <div className="relative h-64 w-full mt-6 mb-2 group overflow-hidden rounded-lg">
           <Image
@@ -514,7 +514,7 @@ export const RecipeInputPopup = ({
           />
         </div>
 
-        <div className="sticky bottom-0 bg-white pt-4 border-t border-gray-200 flex flex-col sm:flex-row-reverse gap-3 mt-6 pb-1">
+        <div className="sticky bottom-0 bg-white pt-4 border-t border-gray-200 flex flex-col sm:flex-row-reverse gap-3 mt-6 pb-4">
           <button
             type="submit"
             className="disabled:bg-gray-400 w-full sm:w-auto sm:px-6 py-3 rounded-lg bg-blue-600 font-semibold text-white hover:bg-blue-500 active:bg-blue-700 shadow-md hover:shadow-lg transition text-center"
@@ -534,7 +534,6 @@ export const RecipeInputPopup = ({
       <Modal
         isOpen={isIngredientsOpen}
         onClose={() => setIsIngredientsOpen(false)}
-        size="sm"
       >
         <AddIngredientsPopup
           ingredientsList={ingredientsList}
@@ -544,7 +543,6 @@ export const RecipeInputPopup = ({
       <Modal
         isOpen={isInstructionsOpen}
         onClose={() => setIsInstructionsOpen(false)}
-        size="lg"
       >
         <AddInstructionsPopup
           instructionList={instructionList}
@@ -554,7 +552,7 @@ export const RecipeInputPopup = ({
       <Modal
         isOpen={isExternalIngredientsReviewOpen}
         onClose={handleCancelExternalIngredients}
-        size="lg"
+        hideCross
       >
         <IngredientsReviewPopup
           parsedIngredients={parsedExternalIngredients}

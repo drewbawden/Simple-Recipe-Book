@@ -72,8 +72,14 @@ export const RecipeTable = () => {
   };
 
   const handleAddRecipeCancel = () => {
-    const confirmation = confirm("Are you sure you want to cancel?");
+    const confirmation = confirm("Are you sure you want to close?");
     setIsAddRecipeOpen(!confirmation);
+  };
+  const handleEditRecipeCancel = () => {
+    const confirmation = confirm("Are you sure you want to close?");
+    if (confirmation) {
+      setSelectedEdit(null);
+    }
   };
 
   if (loading) {
@@ -283,7 +289,6 @@ export const RecipeTable = () => {
       <Modal
         isOpen={selectedIngredients !== null}
         onClose={() => setSelectedIngredients(null)}
-        size="lg"
       >
         {selectedIngredients && (
           <IngredientPopup ingredients={selectedIngredients.ingredients} />
@@ -292,7 +297,6 @@ export const RecipeTable = () => {
       <Modal
         isOpen={selectedInstructions !== null}
         onClose={() => setSelectedInstructions(null)}
-        size="lg"
       >
         {selectedInstructions && (
           <InstructionPopup instructions={selectedInstructions.instructions} />
@@ -306,7 +310,11 @@ export const RecipeTable = () => {
           <NotesPopup notes={selectedNotes.notes ?? "No notes"} />
         )}
       </Modal>
-      <Modal isOpen={isAddRecipeOpen} onClose={() => handleAddRecipeCancel()}>
+      <Modal
+        isOpen={isAddRecipeOpen}
+        onClose={() => handleAddRecipeCancel()}
+        hideCross
+      >
         <RecipeInputPopup
           closePopup={() => handleAddRecipeCancel()}
           refreshRecipes={refreshRecipes}
@@ -315,6 +323,7 @@ export const RecipeTable = () => {
       <Modal
         isOpen={selectedShoppingList !== null}
         onClose={() => setSelectedShoppingList(null)}
+        hideCross
       >
         {selectedShoppingList && (
           <AddToShoppingListPopup
@@ -325,11 +334,12 @@ export const RecipeTable = () => {
       </Modal>
       <Modal
         isOpen={selectedEdit !== null}
-        onClose={() => setSelectedEdit(null)}
+        onClose={() => handleEditRecipeCancel()}
+        hideCross
       >
         {selectedEdit && (
           <RecipeInputPopup
-            closePopup={() => setSelectedEdit(null)}
+            closePopup={() => handleEditRecipeCancel()}
             refreshRecipes={refreshRecipes}
             initialData={selectedEdit}
           />
