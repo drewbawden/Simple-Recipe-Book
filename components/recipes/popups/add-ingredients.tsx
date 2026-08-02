@@ -3,8 +3,7 @@ import { isValidQuantity } from "@/lib/quantity";
 import AutocompleteInput from "@/components/templates/autocomplete";
 import Form from "next/form";
 import { Trash2 } from "lucide-react";
-import { Ingredient, RecipeIngredientInput } from "@/types/recipe";
-import { AutocompleteType } from "@/actions/autocomplete";
+import { RecipeIngredientInput } from "@/types/recipe";
 
 interface AddIngredientsPopupProps {
   ingredientsList: RecipeIngredientInput[];

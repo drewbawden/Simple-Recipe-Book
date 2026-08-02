@@ -52,11 +52,17 @@ export const downloadExternalRecipeImage = async (
 };
 
 export const fetchExternalSite = async (url: string) => {
-  const response = await fetch(url, {
-    headers: {
-      "User-Agent": "Mozilla/5.0",
-    },
-  });
+  let response;
+  try {
+    response = await fetch(url, {
+      headers: {
+        "User-Agent": "Mozilla/5.0",
+      },
+    });
+  } catch {
+    console.error(`Failed to parse URL ${url}`);
+    return null;
+  }
   if (!response.ok) {
     return null;
   }

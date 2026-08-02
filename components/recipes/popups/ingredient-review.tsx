@@ -1,5 +1,7 @@
+import { isValidQuantity } from "@/lib/quantity";
 import { ParsedExternalIngredient } from "@/types/recipe";
 import { Trash2Icon } from "lucide-react";
+import Form from "next/form";
 
 interface IngredientsReviewPopupProps {
   parsedIngredients: ParsedExternalIngredient[];
@@ -30,7 +32,10 @@ export const IngredientsReviewPopup = ({
           Review the ingredients parsed from the external source and confirm
         </p>
       </div>
-      <div className="flex flex-col sm:max-h-[70vh] max-h-[50vh] w-full">
+      <Form
+        action={onConfirm}
+        className="flex flex-col sm:max-h-[70vh] max-h-[50vh] w-full"
+      >
         <div className="flex-1 overflow-y-auto pr-1 space-y-3">
           {parsedIngredients.map((ingredient, index) => (
             <div
@@ -68,6 +73,11 @@ export const IngredientsReviewPopup = ({
                         quantity: e.target.value,
                       };
                       setParsedIngredients(next);
+                      const parsed = isValidQuantity(e.target.value);
+
+                      e.target.setCustomValidity(
+                        !parsed ? "Please enter a valid quantity." : "",
+                      );
                     }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -93,8 +103,7 @@ export const IngredientsReviewPopup = ({
 
         <div className="border-t border-gray-200 bg-white pt-4 flex flex-col sm:flex-row-reverse gap-3">
           <button
-            type="button"
-            onClick={onConfirm}
+            type="submit"
             className="w-full sm:w-auto rounded-lg bg-blue-600 px-5 py-3 text-white font-semibold hover:bg-blue-500"
           >
             Confirm ingredients
@@ -107,7 +116,7 @@ export const IngredientsReviewPopup = ({
             Cancel
           </button>
         </div>
-      </div>
+      </Form>
     </div>
   );
 };
