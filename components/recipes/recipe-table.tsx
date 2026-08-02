@@ -71,6 +71,11 @@ export const RecipeTable = () => {
     refreshRecipes();
   };
 
+  const handleAddRecipeCancel = () => {
+    const confirmation = confirm("Are you sure you want to cancel?");
+    setIsAddRecipeOpen(!confirmation);
+  };
+
   if (loading) {
     return <p>Loading Recipes...</p>;
   }
@@ -301,9 +306,9 @@ export const RecipeTable = () => {
           <NotesPopup notes={selectedNotes.notes ?? "No notes"} />
         )}
       </Modal>
-      <Modal isOpen={isAddRecipeOpen} onClose={() => setIsAddRecipeOpen(false)}>
+      <Modal isOpen={isAddRecipeOpen} onClose={() => handleAddRecipeCancel()}>
         <RecipeInputPopup
-          closePopup={() => setIsAddRecipeOpen(false)}
+          closePopup={() => handleAddRecipeCancel()}
           refreshRecipes={refreshRecipes}
         />
       </Modal>

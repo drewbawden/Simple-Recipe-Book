@@ -37,6 +37,8 @@ export const AddIngredientsPopup = ({
     setIngredientsList((prev) => prev.filter((_, i) => i !== index));
   }
 
+  const isFormValid = name.trim().length > 0 && quantity.trim().length > 0;
+
   return (
     <div className="text-gray-900">
       <Form
@@ -87,7 +89,8 @@ export const AddIngredientsPopup = ({
 
         <button
           type="submit"
-          className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition shadow-sm text-center block sm:inline-block"
+          className="disabled:bg-gray-400 w-full sm:w-auto bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition shadow-sm text-center block sm:inline-block"
+          disabled={!isFormValid}
         >
           Add Ingredient
         </button>

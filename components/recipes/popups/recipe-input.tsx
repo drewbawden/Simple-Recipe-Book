@@ -288,6 +288,8 @@ export const RecipeInputPopup = ({
     }
   };
 
+  const isFormValid = name.trim().length > 0 && types.length > 0;
+
   return (
     <div className="flex flex-col max-h-[80vh] w-full text-gray-900">
       <Form
@@ -365,8 +367,8 @@ export const RecipeInputPopup = ({
             <button
               type="button"
               onClick={handleFetchExternal}
-              disabled={isFetchingExternal}
-              className="w-1/5 justify-center mt-2 inline-flex items-center px-2 py-1 rounded bg-blue-600 text-white hover:bg-blue-500 disabled:opacity-60"
+              disabled={isFetchingExternal || !url?.length}
+              className="disabled:bg-gray-400 w-1/5 justify-center mt-2 inline-flex items-center px-2 py-1 rounded bg-blue-600 text-white hover:bg-blue-500 disabled:opacity-60"
             >
               {isFetchingExternal ? "Fetching…" : "Preload?"}
             </button>
@@ -515,7 +517,8 @@ export const RecipeInputPopup = ({
         <div className="sticky bottom-0 bg-white pt-4 border-t border-gray-200 flex flex-col sm:flex-row-reverse gap-3 mt-6 pb-1">
           <button
             type="submit"
-            className="w-full sm:w-auto sm:px-6 py-3 rounded-lg bg-blue-600 font-semibold text-white hover:bg-blue-500 active:bg-blue-700 shadow-md hover:shadow-lg transition text-center"
+            className="disabled:bg-gray-400 w-full sm:w-auto sm:px-6 py-3 rounded-lg bg-blue-600 font-semibold text-white hover:bg-blue-500 active:bg-blue-700 shadow-md hover:shadow-lg transition text-center"
+            disabled={!isFormValid}
           >
             {initialData ? "Save Changes" : "Add Recipe"}
           </button>
