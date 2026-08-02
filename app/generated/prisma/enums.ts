@@ -53,8 +53,9 @@ export const RecipeType = {
   BREAKFAST: 'BREAKFAST',
   LUNCH: 'LUNCH',
   DINNER: 'DINNER',
+  DESSERT: 'DESSERT',
   SNACK: 'SNACK',
-  DESSERT: 'DESSERT'
+  SIDE: 'SIDE'
 } as const
 
 export type RecipeType = (typeof RecipeType)[keyof typeof RecipeType]

@@ -202,8 +202,9 @@ enum RecipeType {
   BREAKFAST
   LUNCH
   DINNER
-  SNACK
   DESSERT
+  SNACK
+  SIDE
 }
 
 enum ItemType {
