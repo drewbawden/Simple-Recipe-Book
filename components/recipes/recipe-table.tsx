@@ -18,6 +18,7 @@ import {
   IngredientPopup,
   InstructionPopup,
 } from "@/components/recipes/popups/metadata";
+import { MainFilterBar } from "@/components/recipes/filter-bar";
 
 import {
   Info,
@@ -91,6 +92,7 @@ export const RecipeTable = () => {
       <div className="flex flex-row justify-center">
         <h1 className="text-4xl font-bold">Recipes</h1>
       </div>
+      <MainFilterBar />
       <div className="flex flex-row justify-between m-8">
         <button
           className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded "
