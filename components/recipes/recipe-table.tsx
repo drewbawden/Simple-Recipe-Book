@@ -316,7 +316,7 @@ export const RecipeTable = () => {
         hideCross
       >
         <RecipeInputPopup
-          handleClose={() => handleEditRecipeCancel()}
+          handleClose={() => handleAddRecipeCancel()}
           closePopup={() => setIsAddRecipeOpen(false)}
           refreshRecipes={refreshRecipes}
         />
