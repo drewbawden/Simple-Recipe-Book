@@ -12,12 +12,13 @@ import {
 
 import { AddToShoppingListPopup } from "@/components/recipes/popups/add-to-list";
 import { RecipeInputPopup } from "@/components/recipes/popups/recipe-input";
-import { Recipe } from "@/types/recipe";
+import { filterArguments, Recipe } from "@/types/recipe";
 import {
   NotesPopup,
   IngredientPopup,
   InstructionPopup,
 } from "@/components/recipes/popups/metadata";
+import { MainFilterBar } from "@/components/recipes/filter-bar";
 
 import {
   Info,
@@ -57,8 +58,8 @@ export const RecipeTable = () => {
     fetchRecipes();
   }, []);
 
-  const refreshRecipes = async () => {
-    const data = await getRecipes();
+  const refreshRecipes = async (filters?: filterArguments) => {
+    const data = await getRecipes(filters);
     setRecipes(data);
   };
 
@@ -106,6 +107,8 @@ export const RecipeTable = () => {
           Shopping List
         </Link>
       </div>
+
+      <MainFilterBar refreshTable={refreshRecipes} />
 
       <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-4">
         {recipes.map((recipe) => (

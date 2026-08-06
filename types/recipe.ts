@@ -64,3 +64,9 @@ export interface RecipeInstructionInput {
 export type ParsedExternalIngredient = RecipeIngredientInput & {
   raw: string;
 };
+
+export interface filterArguments {
+  name: string | null;
+  types: RecipeType[] | null;
+  ingredients: string[] | null;
+}

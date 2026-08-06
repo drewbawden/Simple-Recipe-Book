@@ -4,6 +4,7 @@ import {
   PrismaClient,
   RecipeType,
   ItemType,
+  Prisma,
 } from "../app/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import "dotenv/config";
@@ -12,7 +13,7 @@ import { mkdir, writeFile } from "fs/promises";
 import path from "path";
 import { randomUUID } from "crypto";
 import { downloadExternalRecipeImage } from "@/actions/parse-external";
-import { Recipe, RecipeFormData } from "@/types/recipe";
+import { filterArguments, RecipeFormData } from "@/types/recipe";
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
@@ -22,8 +23,36 @@ const prisma = new PrismaClient({
   adapter,
 });
 
-export async function getRecipes() {
+export async function getRecipes(filters?: filterArguments) {
+  const where: Prisma.RecipesWhereInput = {};
+
+  if (filters?.name) {
+    where.name = {
+      contains: filters.name,
+      mode: "insensitive",
+    };
+  }
+
+  if (filters?.types?.length) {
+    where.types = {
+      hasSome: filters.types,
+    };
+  }
+
+  if (filters?.ingredients?.length) {
+    where.ingredients = {
+      some: {
+        item: {
+          name: {
+            in: filters.ingredients,
+          },
+        },
+      },
+    };
+  }
+
   const recipes = await prisma.recipes.findMany({
+    where,
     include: {
       ingredients: {
         include: {
