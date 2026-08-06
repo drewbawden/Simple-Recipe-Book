@@ -32,7 +32,7 @@ export const MainFilterBar = ({ refreshTable }: MainFilterBarProps) => {
   }, [types, ingredients, name]);
 
   return (
-    <div className="bg-white p-2 rounded m-4 flex flex-col flex-center items-center">
+    <div className="bg-white p-2 rounded my-4 flex flex-col flex-center items-center">
       <h2 className="text-gray-900 text-2xl font-bold">Filter</h2>
       <form className="w-full grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-2">
         <div className="bg-gray-100 rounded text-gray-900 space-x-2 p-1 shadow-md flex flex-row justify-between">

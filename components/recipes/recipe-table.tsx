@@ -92,7 +92,6 @@ export const RecipeTable = () => {
       <div className="flex flex-row justify-center">
         <h1 className="text-4xl font-bold">Recipes</h1>
       </div>
-      <MainFilterBar refreshTable={refreshRecipes} />
       <div className="flex flex-row justify-between m-8">
         <button
           className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded "
@@ -108,6 +107,8 @@ export const RecipeTable = () => {
           Shopping List
         </Link>
       </div>
+
+      <MainFilterBar refreshTable={refreshRecipes} />
 
       <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-4">
         {recipes.map((recipe) => (
