@@ -20,6 +20,7 @@ interface AutocompleteInputProps {
   id?: string;
   name?: string;
   value?: string;
+  required?: boolean;
 }
 
 export default function AutocompleteInput({
@@ -31,6 +32,7 @@ export default function AutocompleteInput({
   id,
   name,
   value = "",
+  required = false,
 }: AutocompleteInputProps) {
   const [query, setQuery] = useState(value);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
@@ -82,7 +84,7 @@ export default function AutocompleteInput({
       <input type="hidden" name={modelType} value={query} />
 
       <input
-        required
+        required={required}
         type="text"
         value={query}
         onChange={(e: ChangeEvent<HTMLInputElement>) => {

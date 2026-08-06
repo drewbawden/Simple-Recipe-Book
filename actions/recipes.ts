@@ -12,7 +12,7 @@ import { mkdir, writeFile } from "fs/promises";
 import path from "path";
 import { randomUUID } from "crypto";
 import { downloadExternalRecipeImage } from "@/actions/parse-external";
-import { Recipe, RecipeFormData } from "@/types/recipe";
+import { filterArguments, RecipeFormData } from "@/types/recipe";
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
@@ -22,7 +22,8 @@ const prisma = new PrismaClient({
   adapter,
 });
 
-export async function getRecipes() {
+export async function getRecipes(filters?: filterArguments) {
+  console.log(filters);
   const recipes = await prisma.recipes.findMany({
     include: {
       ingredients: {

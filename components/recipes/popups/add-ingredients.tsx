@@ -51,6 +51,7 @@ export const AddIngredientsPopup = ({
               Ingredient
             </label>
             <AutocompleteInput
+              required={true}
               modelType="items"
               placeholder="Enter ingredient..."
               value={name}

@@ -12,7 +12,7 @@ import {
 
 import { AddToShoppingListPopup } from "@/components/recipes/popups/add-to-list";
 import { RecipeInputPopup } from "@/components/recipes/popups/recipe-input";
-import { Recipe } from "@/types/recipe";
+import { filterArguments, Recipe } from "@/types/recipe";
 import {
   NotesPopup,
   IngredientPopup,
@@ -58,8 +58,8 @@ export const RecipeTable = () => {
     fetchRecipes();
   }, []);
 
-  const refreshRecipes = async () => {
-    const data = await getRecipes();
+  const refreshRecipes = async (filters?: filterArguments) => {
+    const data = await getRecipes(filters);
     setRecipes(data);
   };
 
@@ -92,7 +92,7 @@ export const RecipeTable = () => {
       <div className="flex flex-row justify-center">
         <h1 className="text-4xl font-bold">Recipes</h1>
       </div>
-      <MainFilterBar />
+      <MainFilterBar refreshTable={refreshRecipes} />
       <div className="flex flex-row justify-between m-8">
         <button
           className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded "

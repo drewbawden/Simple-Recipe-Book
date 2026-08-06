@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AutocompleteInput from "@/components/templates/autocomplete";
 import { AutocompleteType } from "@/actions/autocomplete";
 
@@ -12,25 +12,27 @@ interface Suggestion {
 interface MultiAutocompleteProps {
   modelType: AutocompleteType;
   placeholder?: string;
-  onSelect?: (item: Suggestion) => void;
-  onChange?: (value: string) => void;
   className?: string;
   id?: string;
   name?: string;
+  setSelectedRef: (names: string[]) => void;
 }
 export default function MultiAutocomplete({
   modelType,
   placeholder,
-  onSelect,
-  onChange,
   className,
   id,
   name,
+  setSelectedRef,
 }: MultiAutocompleteProps) {
   const [selected, setSelected] = useState<Suggestion[]>([]);
   const [value, setValue] = useState("");
 
-  function handleSelect(item: Suggestion) {
+  useEffect(() => {
+    setSelectedRef(selected.map((item) => item.name));
+  }, [selected, setSelectedRef]);
+
+  const handleSelect = (item: Suggestion) => {
     if (selected.some((x) => x.id === item.id)) {
       setValue("");
       return;
@@ -38,11 +40,11 @@ export default function MultiAutocomplete({
 
     setSelected([...selected, item]);
     setValue("");
-  }
+  };
 
-  function removeItem(id: string | number) {
+  const removeItem = (id: string | number) => {
     setSelected(selected.filter((x) => x.id !== id));
-  }
+  };
 
   return (
     <div className="space-y-2">
