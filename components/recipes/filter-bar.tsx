@@ -15,13 +15,16 @@ export const MainFilterBar = ({ refreshTable }: MainFilterBarProps) => {
 
     const formData = new FormData(event.currentTarget);
 
-    formData.append("typeFilter", JSON.stringify(types));
-    formData.append("ingredientFilter", JSON.stringify(ingredients));
+    const recipeTypes = types
+      .map((type) => type.toUpperCase())
+      .filter((type): type is RecipeType =>
+        Object.values(RecipeType).includes(type as RecipeType),
+      );
 
     const formValues = {
       name: formData?.get("nameFilter") as string,
-      types: formData?.getAll("typeFilter") as RecipeType[],
-      ingredients: formData.getAll("ingredientFilter") as string[],
+      types: recipeTypes,
+      ingredients,
     };
     refreshTable(formValues);
   };

@@ -23,8 +23,35 @@ const prisma = new PrismaClient({
 });
 
 export async function getRecipes(filters?: filterArguments) {
-  console.log(filters);
+  const where: Prisma.RecipesWhereInput = {};
+
+  if (filters?.name) {
+    where.name = {
+      contains: filters.name,
+      mode: "insensitive",
+    };
+  }
+
+  if (filters?.types?.length) {
+    where.types = {
+      hasSome: filters.types,
+    };
+  }
+
+  if (filters?.ingredients?.length) {
+    where.ingredients = {
+      some: {
+        item: {
+          name: {
+            in: filters.ingredients,
+          },
+        },
+      },
+    };
+  }
+
   const recipes = await prisma.recipes.findMany({
+    where,
     include: {
       ingredients: {
         include: {
