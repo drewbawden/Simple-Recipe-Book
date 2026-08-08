@@ -67,3 +67,11 @@ export const ItemType = {
 } as const
 
 export type ItemType = (typeof ItemType)[keyof typeof ItemType]
+
+
+export const ItemUsageType = {
+  RECIPE: 'RECIPE',
+  SHOPPING_LIST: 'SHOPPING_LIST'
+} as const
+
+export type ItemUsageType = (typeof ItemUsageType)[keyof typeof ItemUsageType]

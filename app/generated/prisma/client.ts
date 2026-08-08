@@ -57,6 +57,11 @@ export type Category = Prisma.CategoryModel
  */
 export type Item = Prisma.ItemModel
 /**
+ * Model ItemUsage
+ * 
+ */
+export type ItemUsage = Prisma.ItemUsageModel
+/**
  * Model Inventory
  * 
  */
@@ -96,3 +101,8 @@ export type ShoppingListItem = Prisma.ShoppingListItemModel
  * 
  */
 export type ShoppingListItemSource = Prisma.ShoppingListItemSourceModel
+/**
+ * Model ShoppingListCategory
+ * 
+ */
+export type ShoppingListCategory = Prisma.ShoppingListCategoryModel

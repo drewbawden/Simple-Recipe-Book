@@ -46,6 +46,8 @@ export type RecipesMinAggregateOutputType = {
   totalTimeMins: number | null
   servingSize: number | null
   imagePath: string | null
+  createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type RecipesMaxAggregateOutputType = {
@@ -56,6 +58,8 @@ export type RecipesMaxAggregateOutputType = {
   totalTimeMins: number | null
   servingSize: number | null
   imagePath: string | null
+  createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type RecipesCountAggregateOutputType = {
@@ -67,6 +71,8 @@ export type RecipesCountAggregateOutputType = {
   totalTimeMins: number
   servingSize: number
   imagePath: number
+  createdAt: number
+  updatedAt: number
   _all: number
 }
 
@@ -91,6 +97,8 @@ export type RecipesMinAggregateInputType = {
   totalTimeMins?: true
   servingSize?: true
   imagePath?: true
+  createdAt?: true
+  updatedAt?: true
 }
 
 export type RecipesMaxAggregateInputType = {
@@ -101,6 +109,8 @@ export type RecipesMaxAggregateInputType = {
   totalTimeMins?: true
   servingSize?: true
   imagePath?: true
+  createdAt?: true
+  updatedAt?: true
 }
 
 export type RecipesCountAggregateInputType = {
@@ -112,6 +122,8 @@ export type RecipesCountAggregateInputType = {
   totalTimeMins?: true
   servingSize?: true
   imagePath?: true
+  createdAt?: true
+  updatedAt?: true
   _all?: true
 }
 
@@ -210,6 +222,8 @@ export type RecipesGroupByOutputType = {
   totalTimeMins: number | null
   servingSize: number | null
   imagePath: string | null
+  createdAt: Date
+  updatedAt: Date
   _count: RecipesCountAggregateOutputType | null
   _avg: RecipesAvgAggregateOutputType | null
   _sum: RecipesSumAggregateOutputType | null
@@ -244,6 +258,8 @@ export type RecipesWhereInput = {
   totalTimeMins?: Prisma.IntNullableFilter<"Recipes"> | number | null
   servingSize?: Prisma.IntNullableFilter<"Recipes"> | number | null
   imagePath?: Prisma.StringNullableFilter<"Recipes"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"Recipes"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Recipes"> | Date | string
   ingredients?: Prisma.RecipeIngredientListRelationFilter
   instructions?: Prisma.RecipeInstructionStepListRelationFilter
 }
@@ -257,6 +273,8 @@ export type RecipesOrderByWithRelationInput = {
   totalTimeMins?: Prisma.SortOrderInput | Prisma.SortOrder
   servingSize?: Prisma.SortOrderInput | Prisma.SortOrder
   imagePath?: Prisma.SortOrderInput | Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   ingredients?: Prisma.RecipeIngredientOrderByRelationAggregateInput
   instructions?: Prisma.RecipeInstructionStepOrderByRelationAggregateInput
 }
@@ -273,6 +291,8 @@ export type RecipesWhereUniqueInput = Prisma.AtLeast<{
   totalTimeMins?: Prisma.IntNullableFilter<"Recipes"> | number | null
   servingSize?: Prisma.IntNullableFilter<"Recipes"> | number | null
   imagePath?: Prisma.StringNullableFilter<"Recipes"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"Recipes"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Recipes"> | Date | string
   ingredients?: Prisma.RecipeIngredientListRelationFilter
   instructions?: Prisma.RecipeInstructionStepListRelationFilter
 }, "id">
@@ -286,6 +306,8 @@ export type RecipesOrderByWithAggregationInput = {
   totalTimeMins?: Prisma.SortOrderInput | Prisma.SortOrder
   servingSize?: Prisma.SortOrderInput | Prisma.SortOrder
   imagePath?: Prisma.SortOrderInput | Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   _count?: Prisma.RecipesCountOrderByAggregateInput
   _avg?: Prisma.RecipesAvgOrderByAggregateInput
   _max?: Prisma.RecipesMaxOrderByAggregateInput
@@ -305,6 +327,8 @@ export type RecipesScalarWhereWithAggregatesInput = {
   totalTimeMins?: Prisma.IntNullableWithAggregatesFilter<"Recipes"> | number | null
   servingSize?: Prisma.IntNullableWithAggregatesFilter<"Recipes"> | number | null
   imagePath?: Prisma.StringNullableWithAggregatesFilter<"Recipes"> | string | null
+  createdAt?: Prisma.DateTimeWithAggregatesFilter<"Recipes"> | Date | string
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Recipes"> | Date | string
 }
 
 export type RecipesCreateInput = {
@@ -315,6 +339,8 @@ export type RecipesCreateInput = {
   totalTimeMins?: number | null
   servingSize?: number | null
   imagePath?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
   ingredients?: Prisma.RecipeIngredientCreateNestedManyWithoutRecipeInput
   instructions?: Prisma.RecipeInstructionStepCreateNestedManyWithoutRecipeInput
 }
@@ -328,6 +354,8 @@ export type RecipesUncheckedCreateInput = {
   totalTimeMins?: number | null
   servingSize?: number | null
   imagePath?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
   ingredients?: Prisma.RecipeIngredientUncheckedCreateNestedManyWithoutRecipeInput
   instructions?: Prisma.RecipeInstructionStepUncheckedCreateNestedManyWithoutRecipeInput
 }
@@ -340,6 +368,8 @@ export type RecipesUpdateInput = {
   totalTimeMins?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   servingSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   imagePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ingredients?: Prisma.RecipeIngredientUpdateManyWithoutRecipeNestedInput
   instructions?: Prisma.RecipeInstructionStepUpdateManyWithoutRecipeNestedInput
 }
@@ -353,6 +383,8 @@ export type RecipesUncheckedUpdateInput = {
   totalTimeMins?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   servingSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   imagePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ingredients?: Prisma.RecipeIngredientUncheckedUpdateManyWithoutRecipeNestedInput
   instructions?: Prisma.RecipeInstructionStepUncheckedUpdateManyWithoutRecipeNestedInput
 }
@@ -366,6 +398,8 @@ export type RecipesCreateManyInput = {
   totalTimeMins?: number | null
   servingSize?: number | null
   imagePath?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type RecipesUpdateManyMutationInput = {
@@ -376,6 +410,8 @@ export type RecipesUpdateManyMutationInput = {
   totalTimeMins?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   servingSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   imagePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type RecipesUncheckedUpdateManyInput = {
@@ -387,6 +423,8 @@ export type RecipesUncheckedUpdateManyInput = {
   totalTimeMins?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   servingSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   imagePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type EnumRecipeTypeNullableListFilter<$PrismaModel = never> = {
@@ -406,6 +444,8 @@ export type RecipesCountOrderByAggregateInput = {
   totalTimeMins?: Prisma.SortOrder
   servingSize?: Prisma.SortOrder
   imagePath?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type RecipesAvgOrderByAggregateInput = {
@@ -422,6 +462,8 @@ export type RecipesMaxOrderByAggregateInput = {
   totalTimeMins?: Prisma.SortOrder
   servingSize?: Prisma.SortOrder
   imagePath?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type RecipesMinOrderByAggregateInput = {
@@ -432,6 +474,8 @@ export type RecipesMinOrderByAggregateInput = {
   totalTimeMins?: Prisma.SortOrder
   servingSize?: Prisma.SortOrder
   imagePath?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type RecipesSumOrderByAggregateInput = {
@@ -490,6 +534,8 @@ export type RecipesCreateWithoutIngredientsInput = {
   totalTimeMins?: number | null
   servingSize?: number | null
   imagePath?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
   instructions?: Prisma.RecipeInstructionStepCreateNestedManyWithoutRecipeInput
 }
 
@@ -502,6 +548,8 @@ export type RecipesUncheckedCreateWithoutIngredientsInput = {
   totalTimeMins?: number | null
   servingSize?: number | null
   imagePath?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
   instructions?: Prisma.RecipeInstructionStepUncheckedCreateNestedManyWithoutRecipeInput
 }
 
@@ -529,6 +577,8 @@ export type RecipesUpdateWithoutIngredientsInput = {
   totalTimeMins?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   servingSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   imagePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   instructions?: Prisma.RecipeInstructionStepUpdateManyWithoutRecipeNestedInput
 }
 
@@ -541,6 +591,8 @@ export type RecipesUncheckedUpdateWithoutIngredientsInput = {
   totalTimeMins?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   servingSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   imagePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   instructions?: Prisma.RecipeInstructionStepUncheckedUpdateManyWithoutRecipeNestedInput
 }
 
@@ -552,6 +604,8 @@ export type RecipesCreateWithoutInstructionsInput = {
   totalTimeMins?: number | null
   servingSize?: number | null
   imagePath?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
   ingredients?: Prisma.RecipeIngredientCreateNestedManyWithoutRecipeInput
 }
 
@@ -564,6 +618,8 @@ export type RecipesUncheckedCreateWithoutInstructionsInput = {
   totalTimeMins?: number | null
   servingSize?: number | null
   imagePath?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
   ingredients?: Prisma.RecipeIngredientUncheckedCreateNestedManyWithoutRecipeInput
 }
 
@@ -591,6 +647,8 @@ export type RecipesUpdateWithoutInstructionsInput = {
   totalTimeMins?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   servingSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   imagePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ingredients?: Prisma.RecipeIngredientUpdateManyWithoutRecipeNestedInput
 }
 
@@ -603,6 +661,8 @@ export type RecipesUncheckedUpdateWithoutInstructionsInput = {
   totalTimeMins?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   servingSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   imagePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ingredients?: Prisma.RecipeIngredientUncheckedUpdateManyWithoutRecipeNestedInput
 }
 
@@ -655,6 +715,8 @@ export type RecipesSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   totalTimeMins?: boolean
   servingSize?: boolean
   imagePath?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
   ingredients?: boolean | Prisma.Recipes$ingredientsArgs<ExtArgs>
   instructions?: boolean | Prisma.Recipes$instructionsArgs<ExtArgs>
   _count?: boolean | Prisma.RecipesCountOutputTypeDefaultArgs<ExtArgs>
@@ -669,6 +731,8 @@ export type RecipesSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   totalTimeMins?: boolean
   servingSize?: boolean
   imagePath?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
 }, ExtArgs["result"]["recipes"]>
 
 export type RecipesSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -680,6 +744,8 @@ export type RecipesSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   totalTimeMins?: boolean
   servingSize?: boolean
   imagePath?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
 }, ExtArgs["result"]["recipes"]>
 
 export type RecipesSelectScalar = {
@@ -691,9 +757,11 @@ export type RecipesSelectScalar = {
   totalTimeMins?: boolean
   servingSize?: boolean
   imagePath?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
 }
 
-export type RecipesOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "types" | "notes" | "url" | "totalTimeMins" | "servingSize" | "imagePath", ExtArgs["result"]["recipes"]>
+export type RecipesOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "types" | "notes" | "url" | "totalTimeMins" | "servingSize" | "imagePath" | "createdAt" | "updatedAt", ExtArgs["result"]["recipes"]>
 export type RecipesInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   ingredients?: boolean | Prisma.Recipes$ingredientsArgs<ExtArgs>
   instructions?: boolean | Prisma.Recipes$instructionsArgs<ExtArgs>
@@ -717,6 +785,8 @@ export type $RecipesPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     totalTimeMins: number | null
     servingSize: number | null
     imagePath: string | null
+    createdAt: Date
+    updatedAt: Date
   }, ExtArgs["result"]["recipes"]>
   composites: {}
 }
@@ -1150,6 +1220,8 @@ export interface RecipesFieldRefs {
   readonly totalTimeMins: Prisma.FieldRef<"Recipes", 'Int'>
   readonly servingSize: Prisma.FieldRef<"Recipes", 'Int'>
   readonly imagePath: Prisma.FieldRef<"Recipes", 'String'>
+  readonly createdAt: Prisma.FieldRef<"Recipes", 'DateTime'>
+  readonly updatedAt: Prisma.FieldRef<"Recipes", 'DateTime'>
 }
     
 

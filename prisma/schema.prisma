@@ -28,7 +28,7 @@ model StoreProduct {
   packageUnit NormalUnit?
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@unique([brand, name])
 }
@@ -42,12 +42,33 @@ model Category {
 
 // such as "Peanut butter", "Toilet paper"
 model Item {
-  id                Int                @id @default(autoincrement())
-  name              String             @unique
-  type              ItemType
+  id   Int      @id @default(autoincrement())
+  name String   @unique
+  type ItemType
+
   products          StoreProduct[]
   ingredients       RecipeIngredient[]
   shoppingListItems ShoppingListItem[]
+  itemUsages        ItemUsage[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model ItemUsage {
+  id Int @id @default(autoincrement())
+
+  item   Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  itemId Int
+
+  type ItemUsageType
+
+  targetId Int? // id of what the item was added to
+
+  createdAt DateTime @default(now())
+
+  @@index([itemId, createdAt])
+  @@index([itemId, type, createdAt])
 }
 
 // such as "Bega peanut butter, 500g, expires 10/10/2005"
@@ -59,8 +80,9 @@ model Inventory {
   unit       NormalUnit   @default(INDIVIDUAL)
   location   Locations?
   expiryDate DateTime?
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Nutrition {
@@ -87,7 +109,7 @@ model Nutrition {
 }
 
 model Recipes {
-  id            Int                     @id @default(autoincrement())
+  id            Int          @id @default(autoincrement())
   name          String
   types         RecipeType[]
   notes         String?
@@ -95,8 +117,12 @@ model Recipes {
   totalTimeMins Int?
   servingSize   Int?
   imagePath     String?
-  ingredients   RecipeIngredient[]
-  instructions  RecipeInstructionStep[]
+
+  ingredients  RecipeIngredient[]
+  instructions RecipeInstructionStep[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model RecipeIngredient {
@@ -133,22 +159,29 @@ model ShoppingList {
   name      String
   items     ShoppingListItem[]
   createdAt DateTime           @default(now())
-  updatedAt DateTime           @updatedAt
+  updatedAt DateTime           @default(now()) @updatedAt
 }
 
 model ShoppingListItem {
   id Int @id @default(autoincrement())
 
-  item   Item @relation(fields: [itemId], references: [id])
-  itemId Int
-
   shoppingList   ShoppingList @relation(fields: [shoppingListId], references: [id])
   shoppingListId Int
 
+  item   Item? @relation(fields: [itemId], references: [id])
+  itemId Int?
+
   customName String? // temp name for "some random thing in the house", stuff that shouldn't really be stored
 
-  completed               Boolean                  @default(false)
+  completed Boolean @default(false)
+
+  categoryId Int?
+  category   ShoppingListCategory? @relation(fields: [categoryId], references: [id])
+
   shoppingListItemSources ShoppingListItemSource[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model ShoppingListItemSource {
@@ -161,6 +194,12 @@ model ShoppingListItemSource {
   recipeIngredientId Int
 
   dateAdded DateTime @default(now())
+}
+
+model ShoppingListCategory {
+  id        Int                @id @default(autoincrement())
+  name      String
+  listItems ShoppingListItem[]
 }
 
 enum Locations {
@@ -210,4 +249,9 @@ enum RecipeType {
 enum ItemType {
   FOOD
   HOUSEHOLD
+}
+
+enum ItemUsageType {
+  RECIPE
+  SHOPPING_LIST
 }
