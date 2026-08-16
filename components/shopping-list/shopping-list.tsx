@@ -132,6 +132,10 @@ export const ShoppingList = () => {
       <h1 className="mb-6 text-4xl font-bold">{list.name}</h1>
       <hr className="h-0.5 bg-black pb-2" />
       <div className="space-y-2">
+        {/* {list.items.map((listItem) => {
+          const item = listItem.item;
+          return <p>{item.name}</p>;
+        })} */}
         {list.items.map((listItem) => {
           const sources = listItem.shoppingListItemSources;
           if (sources.length === 0) return null;

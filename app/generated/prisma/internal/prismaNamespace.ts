@@ -1616,6 +1616,20 @@ export type ListEnumItemTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$Pri
 
 
 /**
+ * Reference to a field of type 'Category'
+ */
+export type EnumCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Category'>
+    
+
+
+/**
+ * Reference to a field of type 'Category[]'
+ */
+export type ListEnumCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Category[]'>
+    
+
+
+/**
  * Reference to a field of type 'ItemUsageType'
  */
 export type EnumItemUsageTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ItemUsageType'>

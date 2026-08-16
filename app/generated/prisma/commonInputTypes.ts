@@ -225,6 +225,23 @@ export type EnumItemTypeWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumItemTypeFilter<$PrismaModel>
 }
 
+export type EnumCategoryFilter<$PrismaModel = never> = {
+  equals?: $Enums.Category | Prisma.EnumCategoryFieldRefInput<$PrismaModel>
+  in?: $Enums.Category[] | Prisma.ListEnumCategoryFieldRefInput<$PrismaModel>
+  notIn?: $Enums.Category[] | Prisma.ListEnumCategoryFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumCategoryFilter<$PrismaModel> | $Enums.Category
+}
+
+export type EnumCategoryWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.Category | Prisma.EnumCategoryFieldRefInput<$PrismaModel>
+  in?: $Enums.Category[] | Prisma.ListEnumCategoryFieldRefInput<$PrismaModel>
+  notIn?: $Enums.Category[] | Prisma.ListEnumCategoryFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumCategoryWithAggregatesFilter<$PrismaModel> | $Enums.Category
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumCategoryFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumCategoryFilter<$PrismaModel>
+}
+
 export type EnumItemUsageTypeFilter<$PrismaModel = never> = {
   equals?: $Enums.ItemUsageType | Prisma.EnumItemUsageTypeFieldRefInput<$PrismaModel>
   in?: $Enums.ItemUsageType[] | Prisma.ListEnumItemUsageTypeFieldRefInput<$PrismaModel>
@@ -580,6 +597,23 @@ export type NestedEnumItemTypeWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumItemTypeFilter<$PrismaModel>
   _max?: Prisma.NestedEnumItemTypeFilter<$PrismaModel>
+}
+
+export type NestedEnumCategoryFilter<$PrismaModel = never> = {
+  equals?: $Enums.Category | Prisma.EnumCategoryFieldRefInput<$PrismaModel>
+  in?: $Enums.Category[] | Prisma.ListEnumCategoryFieldRefInput<$PrismaModel>
+  notIn?: $Enums.Category[] | Prisma.ListEnumCategoryFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumCategoryFilter<$PrismaModel> | $Enums.Category
+}
+
+export type NestedEnumCategoryWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.Category | Prisma.EnumCategoryFieldRefInput<$PrismaModel>
+  in?: $Enums.Category[] | Prisma.ListEnumCategoryFieldRefInput<$PrismaModel>
+  notIn?: $Enums.Category[] | Prisma.ListEnumCategoryFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumCategoryWithAggregatesFilter<$PrismaModel> | $Enums.Category
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumCategoryFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumCategoryFilter<$PrismaModel>
 }
 
 export type NestedEnumItemUsageTypeFilter<$PrismaModel = never> = {

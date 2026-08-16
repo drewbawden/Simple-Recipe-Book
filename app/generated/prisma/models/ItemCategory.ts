@@ -36,12 +36,12 @@ export type ItemCategorySumAggregateOutputType = {
 
 export type ItemCategoryMinAggregateOutputType = {
   id: number | null
-  name: string | null
+  name: $Enums.Category | null
 }
 
 export type ItemCategoryMaxAggregateOutputType = {
   id: number | null
-  name: string | null
+  name: $Enums.Category | null
 }
 
 export type ItemCategoryCountAggregateOutputType = {
@@ -163,7 +163,7 @@ export type ItemCategoryGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
 
 export type ItemCategoryGroupByOutputType = {
   id: number
-  name: string
+  name: $Enums.Category
   _count: ItemCategoryCountAggregateOutputType | null
   _avg: ItemCategoryAvgAggregateOutputType | null
   _sum: ItemCategorySumAggregateOutputType | null
@@ -191,7 +191,7 @@ export type ItemCategoryWhereInput = {
   OR?: Prisma.ItemCategoryWhereInput[]
   NOT?: Prisma.ItemCategoryWhereInput | Prisma.ItemCategoryWhereInput[]
   id?: Prisma.IntFilter<"ItemCategory"> | number
-  name?: Prisma.StringFilter<"ItemCategory"> | string
+  name?: Prisma.EnumCategoryFilter<"ItemCategory"> | $Enums.Category
   items?: Prisma.ItemListRelationFilter
 }
 
@@ -203,7 +203,7 @@ export type ItemCategoryOrderByWithRelationInput = {
 
 export type ItemCategoryWhereUniqueInput = Prisma.AtLeast<{
   id?: number
-  name?: string
+  name?: $Enums.Category
   AND?: Prisma.ItemCategoryWhereInput | Prisma.ItemCategoryWhereInput[]
   OR?: Prisma.ItemCategoryWhereInput[]
   NOT?: Prisma.ItemCategoryWhereInput | Prisma.ItemCategoryWhereInput[]
@@ -225,43 +225,43 @@ export type ItemCategoryScalarWhereWithAggregatesInput = {
   OR?: Prisma.ItemCategoryScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ItemCategoryScalarWhereWithAggregatesInput | Prisma.ItemCategoryScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"ItemCategory"> | number
-  name?: Prisma.StringWithAggregatesFilter<"ItemCategory"> | string
+  name?: Prisma.EnumCategoryWithAggregatesFilter<"ItemCategory"> | $Enums.Category
 }
 
 export type ItemCategoryCreateInput = {
-  name: string
+  name: $Enums.Category
   items?: Prisma.ItemCreateNestedManyWithoutCategoryInput
 }
 
 export type ItemCategoryUncheckedCreateInput = {
   id?: number
-  name: string
+  name: $Enums.Category
   items?: Prisma.ItemUncheckedCreateNestedManyWithoutCategoryInput
 }
 
 export type ItemCategoryUpdateInput = {
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.EnumCategoryFieldUpdateOperationsInput | $Enums.Category
   items?: Prisma.ItemUpdateManyWithoutCategoryNestedInput
 }
 
 export type ItemCategoryUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.EnumCategoryFieldUpdateOperationsInput | $Enums.Category
   items?: Prisma.ItemUncheckedUpdateManyWithoutCategoryNestedInput
 }
 
 export type ItemCategoryCreateManyInput = {
   id?: number
-  name: string
+  name: $Enums.Category
 }
 
 export type ItemCategoryUpdateManyMutationInput = {
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.EnumCategoryFieldUpdateOperationsInput | $Enums.Category
 }
 
 export type ItemCategoryUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.EnumCategoryFieldUpdateOperationsInput | $Enums.Category
 }
 
 export type ItemCategoryNullableScalarRelationFilter = {
@@ -308,13 +308,17 @@ export type ItemCategoryUpdateOneWithoutItemsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ItemCategoryUpdateToOneWithWhereWithoutItemsInput, Prisma.ItemCategoryUpdateWithoutItemsInput>, Prisma.ItemCategoryUncheckedUpdateWithoutItemsInput>
 }
 
+export type EnumCategoryFieldUpdateOperationsInput = {
+  set?: $Enums.Category
+}
+
 export type ItemCategoryCreateWithoutItemsInput = {
-  name: string
+  name: $Enums.Category
 }
 
 export type ItemCategoryUncheckedCreateWithoutItemsInput = {
   id?: number
-  name: string
+  name: $Enums.Category
 }
 
 export type ItemCategoryCreateOrConnectWithoutItemsInput = {
@@ -334,12 +338,12 @@ export type ItemCategoryUpdateToOneWithWhereWithoutItemsInput = {
 }
 
 export type ItemCategoryUpdateWithoutItemsInput = {
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.EnumCategoryFieldUpdateOperationsInput | $Enums.Category
 }
 
 export type ItemCategoryUncheckedUpdateWithoutItemsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.EnumCategoryFieldUpdateOperationsInput | $Enums.Category
 }
 
 
@@ -410,7 +414,7 @@ export type $ItemCategoryPayload<ExtArgs extends runtime.Types.Extensions.Intern
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
-    name: string
+    name: $Enums.Category
   }, ExtArgs["result"]["itemCategory"]>
   composites: {}
 }
@@ -836,7 +840,7 @@ export interface Prisma__ItemCategoryClient<T, Null = never, ExtArgs extends run
  */
 export interface ItemCategoryFieldRefs {
   readonly id: Prisma.FieldRef<"ItemCategory", 'Int'>
-  readonly name: Prisma.FieldRef<"ItemCategory", 'String'>
+  readonly name: Prisma.FieldRef<"ItemCategory", 'Category'>
 }
     
 

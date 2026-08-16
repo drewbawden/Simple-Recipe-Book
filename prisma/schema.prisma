@@ -49,8 +49,8 @@ model Item {
 }
 
 model ItemCategory {
-  id    Int    @id @default(autoincrement())
-  name  String @unique
+  id    Int      @id @default(autoincrement())
+  name  Category @unique
   items Item[]
 }
 
@@ -243,4 +243,28 @@ enum ItemType {
 enum ItemUsageType {
   RECIPE
   SHOPPING_LIST
+}
+
+enum Category {
+  FROZEN_FOODS
+  DAIRY_EGGS_CHEESE
+  FRUIT_VEG
+  HOUSEHOLD_ITEMS
+  MEAT
+  COFFEE_TEA
+  BEVERAGES
+  BREADS_CEREALS
+  PASTA_RICE_BEANS
+  CANNED_FOODS_SOUPS
+  PERSONAL_CARE_HEALTH
+  PET_CARE
+  BAKING_ITEMS
+  SPICES_SEASONINGS
+  OILS_DRESSINGS
+  WINE_BEER_SPIRITS
+  SAUCES_CONDIMENTS
+  SNACKS_SWEETS
+  DELI
+  SEAFOOD
+  STATIONERY
 }
