@@ -52,8 +52,8 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   StoreProduct: 'StoreProduct',
-  Category: 'Category',
   Item: 'Item',
+  ItemCategory: 'ItemCategory',
   ItemUsage: 'ItemUsage',
   Inventory: 'Inventory',
   Nutrition: 'Nutrition',
@@ -62,8 +62,7 @@ export const ModelName = {
   RecipeInstructionStep: 'RecipeInstructionStep',
   ShoppingList: 'ShoppingList',
   ShoppingListItem: 'ShoppingListItem',
-  ShoppingListItemSource: 'ShoppingListItemSource',
-  ShoppingListCategory: 'ShoppingListCategory'
+  ShoppingListItemSource: 'ShoppingListItemSource'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -88,7 +87,6 @@ export const StoreProductScalarFieldEnum = {
   barcode: 'barcode',
   brand: 'brand',
   imageUrl: 'imageUrl',
-  categoryId: 'categoryId',
   itemId: 'itemId',
   packageSize: 'packageSize',
   packageUnit: 'packageUnit',
@@ -99,23 +97,24 @@ export const StoreProductScalarFieldEnum = {
 export type StoreProductScalarFieldEnum = (typeof StoreProductScalarFieldEnum)[keyof typeof StoreProductScalarFieldEnum]
 
 
-export const CategoryScalarFieldEnum = {
-  id: 'id',
-  name: 'name'
-} as const
-
-export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typeof CategoryScalarFieldEnum]
-
-
 export const ItemScalarFieldEnum = {
   id: 'id',
   name: 'name',
   type: 'type',
+  categoryId: 'categoryId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type ItemScalarFieldEnum = (typeof ItemScalarFieldEnum)[keyof typeof ItemScalarFieldEnum]
+
+
+export const ItemCategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name'
+} as const
+
+export type ItemCategoryScalarFieldEnum = (typeof ItemCategoryScalarFieldEnum)[keyof typeof ItemCategoryScalarFieldEnum]
 
 
 export const ItemUsageScalarFieldEnum = {
@@ -223,9 +222,7 @@ export const ShoppingListItemScalarFieldEnum = {
   id: 'id',
   shoppingListId: 'shoppingListId',
   itemId: 'itemId',
-  customName: 'customName',
   completed: 'completed',
-  categoryId: 'categoryId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -241,14 +238,6 @@ export const ShoppingListItemSourceScalarFieldEnum = {
 } as const
 
 export type ShoppingListItemSourceScalarFieldEnum = (typeof ShoppingListItemSourceScalarFieldEnum)[keyof typeof ShoppingListItemSourceScalarFieldEnum]
-
-
-export const ShoppingListCategoryScalarFieldEnum = {
-  id: 'id',
-  name: 'name'
-} as const
-
-export type ShoppingListCategoryScalarFieldEnum = (typeof ShoppingListCategoryScalarFieldEnum)[keyof typeof ShoppingListCategoryScalarFieldEnum]
 
 
 export const SortOrder = {

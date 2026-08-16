@@ -9,8 +9,8 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/StoreProduct'
-export type * from './models/Category'
 export type * from './models/Item'
+export type * from './models/ItemCategory'
 export type * from './models/ItemUsage'
 export type * from './models/Inventory'
 export type * from './models/Nutrition'
@@ -20,5 +20,4 @@ export type * from './models/RecipeInstructionStep'
 export type * from './models/ShoppingList'
 export type * from './models/ShoppingListItem'
 export type * from './models/ShoppingListItemSource'
-export type * from './models/ShoppingListCategory'
 export type * from './commonInputTypes'

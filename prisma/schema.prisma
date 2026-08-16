@@ -168,10 +168,8 @@ model ShoppingListItem {
   shoppingList   ShoppingList @relation(fields: [shoppingListId], references: [id])
   shoppingListId Int
 
-  item   Item? @relation(fields: [itemId], references: [id])
-  itemId Int?
-
-  customName String? // temp name for "some random thing in the house", stuff that shouldn't really be stored
+  item   Item @relation(fields: [itemId], references: [id])
+  itemId Int
 
   completed Boolean @default(false)
 

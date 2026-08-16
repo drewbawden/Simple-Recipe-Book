@@ -14,36 +14,16 @@ export const ShoppingList = () => {
   const [list, setList] =
     useState<Awaited<ReturnType<typeof getShoppingList>>>(null);
   const deleteTimers = useRef<Record<number, NodeJS.Timeout | undefined>>({});
+  const [inputValue, setInputValue] = useState("");
 
-  const handleCategorise = async () => {
-    // TODO: Should weighting be biased above a certain threshold or linear?
-    const productNames = ["frozen pizza", "milk", "bananas"];
-
-    const goodResults = [];
-    const badResults = [];
-
-    for (const productName of productNames) {
+  const handleInputSubmit = async (productName: string) => {
+    // TODO: Should weighting be biased above a certain threshold (~0.35) or linear?
+    if (productName != "") {
+      setInputValue("");
       const result = await categoriseProduct(productName);
-
-      if (result.confidence >= 0.35) {
-        goodResults.push({
-          productName,
-          confidence: result.confidence,
-          score: result.score,
-          category: result.category,
-        });
-      } else {
-        badResults.push({
-          productName,
-          confidence: result.confidence,
-          score: result.score,
-          category: result.category,
-        });
-      }
+      console.log(result);
+      refreshList();
     }
-
-    console.log(goodResults);
-    console.log(badResults);
   };
 
   useEffect(() => {
@@ -68,6 +48,11 @@ export const ShoppingList = () => {
   if (!list) {
     return <p>No shopping list found</p>;
   }
+
+  const refreshList = async () => {
+    const data = await getShoppingList();
+    setList(data);
+  };
 
   const sleep = (ms: number) =>
     new Promise((resolve) => setTimeout(resolve, ms));
@@ -116,9 +101,28 @@ export const ShoppingList = () => {
 
   return (
     <div className="mx-auto max-w-xl p-6 flex flex-col text-center space-y-1">
-      <button onClick={handleCategorise} className="bg-red-500 p-5 my-4">
-        TEST
-      </button>
+      <form
+        action={async (formData) => {
+          const productName = formData.get("productName") as string;
+          handleInputSubmit(productName);
+        }}
+      >
+        <input
+          type="text"
+          name="productName"
+          id="productName"
+          className="bg-gray-500 m-5 p-1"
+          placeholder="enter item"
+          value={inputValue}
+          onChange={(e) => {
+            setInputValue(e.target.value);
+          }}
+          onBlur={(e) => {
+            handleInputSubmit(e.target.value);
+          }}
+        />
+        <input type="submit" hidden />
+      </form>
       <Link
         href="/"
         className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded mb-4"

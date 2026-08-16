@@ -23,15 +23,15 @@ export * from './enums';
  */
 export type StoreProduct = Prisma.StoreProductModel
 /**
- * Model Category
- * 
- */
-export type Category = Prisma.CategoryModel
-/**
  * Model Item
  * 
  */
 export type Item = Prisma.ItemModel
+/**
+ * Model ItemCategory
+ * 
+ */
+export type ItemCategory = Prisma.ItemCategoryModel
 /**
  * Model ItemUsage
  * 
@@ -77,8 +77,3 @@ export type ShoppingListItem = Prisma.ShoppingListItemModel
  * 
  */
 export type ShoppingListItemSource = Prisma.ShoppingListItemSourceModel
-/**
- * Model ShoppingListCategory
- * 
- */
-export type ShoppingListCategory = Prisma.ShoppingListCategoryModel
