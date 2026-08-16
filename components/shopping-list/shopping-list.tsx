@@ -7,12 +7,44 @@ import { NormalUnit } from "@/app/generated/prisma/enums";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { ListItemCard } from "@/components/shopping-list/item-card";
+import { categoriseProduct } from "@/actions/product-classification";
 
 export const ShoppingList = () => {
   const [loading, setLoading] = useState(true);
   const [list, setList] =
     useState<Awaited<ReturnType<typeof getShoppingList>>>(null);
   const deleteTimers = useRef<Record<number, NodeJS.Timeout | undefined>>({});
+
+  const handleCategorise = async () => {
+    // TODO: Should weighting be biased above a certain threshold or linear?
+    const productNames = ["frozen pizza", "milk", "bananas"];
+
+    const goodResults = [];
+    const badResults = [];
+
+    for (const productName of productNames) {
+      const result = await categoriseProduct(productName);
+
+      if (result.confidence >= 0.35) {
+        goodResults.push({
+          productName,
+          confidence: result.confidence,
+          score: result.score,
+          category: result.category,
+        });
+      } else {
+        badResults.push({
+          productName,
+          confidence: result.confidence,
+          score: result.score,
+          category: result.category,
+        });
+      }
+    }
+
+    console.log(goodResults);
+    console.log(badResults);
+  };
 
   useEffect(() => {
     const fetchList = async () => {
@@ -84,6 +116,9 @@ export const ShoppingList = () => {
 
   return (
     <div className="mx-auto max-w-xl p-6 flex flex-col text-center space-y-1">
+      <button onClick={handleCategorise} className="bg-red-500 p-5 my-4">
+        TEST
+      </button>
       <Link
         href="/"
         className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded mb-4"

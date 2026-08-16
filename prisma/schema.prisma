@@ -18,9 +18,6 @@ model StoreProduct {
 
   nutrition Nutrition?
 
-  category   Category? @relation(fields: [categoryId], references: [id])
-  categoryId Int?
-
   item   Item? @relation(fields: [itemId], references: [id])
   itemId Int?
 
@@ -33,18 +30,14 @@ model StoreProduct {
   @@unique([brand, name])
 }
 
-// such as "spreads", "sauces"
-model Category {
-  id       Int            @id @default(autoincrement())
-  name     String         @unique
-  products StoreProduct[]
-}
-
 // such as "Peanut butter", "Toilet paper"
 model Item {
   id   Int      @id @default(autoincrement())
   name String   @unique
   type ItemType
+
+  category   ItemCategory? @relation(fields: [categoryId], references: [id])
+  categoryId Int?
 
   products          StoreProduct[]
   ingredients       RecipeIngredient[]
@@ -55,6 +48,13 @@ model Item {
   updatedAt DateTime @default(now()) @updatedAt
 }
 
+model ItemCategory {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  items Item[]
+}
+
+// for autosuggest weighting
 model ItemUsage {
   id Int @id @default(autoincrement())
 
@@ -175,9 +175,6 @@ model ShoppingListItem {
 
   completed Boolean @default(false)
 
-  categoryId Int?
-  category   ShoppingListCategory? @relation(fields: [categoryId], references: [id])
-
   shoppingListItemSources ShoppingListItemSource[]
 
   createdAt DateTime @default(now())
@@ -194,12 +191,6 @@ model ShoppingListItemSource {
   recipeIngredientId Int
 
   dateAdded DateTime @default(now())
-}
-
-model ShoppingListCategory {
-  id        Int                @id @default(autoincrement())
-  name      String
-  listItems ShoppingListItem[]
 }
 
 enum Locations {
