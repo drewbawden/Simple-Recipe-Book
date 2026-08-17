@@ -24,7 +24,6 @@ export const getShoppingListCategories = async () => {
 
     if (!categories) return null;
 
-    console.log(categories);
     return categories;
   } catch (error) {
     console.error("Database Error:", error);
