@@ -1,6 +1,6 @@
 "use server";
 
-export async function categoriseProduct(productName: string) {
+export async function zslCategorise(productName: string) {
   const response = await fetch("http://127.0.0.1:8000/classify", {
     method: "POST",
     headers: {

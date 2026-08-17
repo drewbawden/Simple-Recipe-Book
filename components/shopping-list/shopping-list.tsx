@@ -2,12 +2,14 @@ import {
   getShoppingList,
   setItemCompleted,
   deleteItem,
+  getShoppingListCategories,
+  addItemToList,
 } from "@/actions/shopping-lists";
 import { NormalUnit } from "@/app/generated/prisma/enums";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { ListItemCard } from "@/components/shopping-list/item-card";
-import { categoriseProduct } from "@/actions/product-classification";
+import { categoryEnumToName, computeCategory } from "@/lib/category";
 
 export const ShoppingList = () => {
   const [loading, setLoading] = useState(true);
@@ -15,14 +17,16 @@ export const ShoppingList = () => {
     useState<Awaited<ReturnType<typeof getShoppingList>>>(null);
   const deleteTimers = useRef<Record<number, NodeJS.Timeout | undefined>>({});
   const [inputValue, setInputValue] = useState("");
+  const [categories, setCategories] =
+    useState<Awaited<ReturnType<typeof getShoppingListCategories>>>(null);
 
   const handleInputSubmit = async (productName: string) => {
     // TODO: Should weighting be biased above a certain threshold (~0.35) or linear?
     if (productName != "") {
       setInputValue("");
-      const result = await categoriseProduct(productName);
-      console.log(result);
-      refreshList();
+      const category = await computeCategory(productName);
+      addItemToList(productName, category);
+      refreshData();
     }
   };
 
@@ -31,6 +35,19 @@ export const ShoppingList = () => {
       try {
         const data = await getShoppingList();
         setList(data);
+      } catch (error) {
+        console.error("Error fetching shopping list items:", error);
+      }
+    };
+
+    fetchList();
+  }, []);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await getShoppingListCategories();
+        setCategories(data);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching shopping list items:", error);
@@ -38,7 +55,7 @@ export const ShoppingList = () => {
       }
     };
 
-    fetchList();
+    fetchCategories();
   }, []);
 
   if (loading) {
@@ -49,9 +66,11 @@ export const ShoppingList = () => {
     return <p>No shopping list found</p>;
   }
 
-  const refreshList = async () => {
-    const data = await getShoppingList();
-    setList(data);
+  const refreshData = async () => {
+    const list = await getShoppingList();
+    const categories = await getShoppingListCategories();
+    setList(list);
+    setCategories(categories);
   };
 
   const sleep = (ms: number) =>
@@ -132,10 +151,16 @@ export const ShoppingList = () => {
       <h1 className="mb-6 text-4xl font-bold">{list.name}</h1>
       <hr className="h-0.5 bg-black pb-2" />
       <div className="space-y-2">
-        {/* {list.items.map((listItem) => {
-          const item = listItem.item;
-          return <p>{item.name}</p>;
-        })} */}
+        {categories.map((category) => {
+          return (
+            <ul>
+              <h1 className="text-2xl">{categoryEnumToName(category.name)}</h1>
+              {category.items.map((item) => {
+                return <li>{item.name}</li>;
+              })}
+            </ul>
+          );
+        })}
         {list.items.map((listItem) => {
           const sources = listItem.shoppingListItemSources;
           if (sources.length === 0) return null;
@@ -143,9 +168,9 @@ export const ShoppingList = () => {
           let totalNormalQuantity = 0.0;
           let totalStandardQuantity = 0.0;
           let totalQuantity = 0.0;
-          let standardUnits = new Set<string>();
-          let normalUnits = new Set<string>();
-          let stringUnits = new Set<string>();
+          const standardUnits = new Set<string>();
+          const normalUnits = new Set<string>();
+          const stringUnits = new Set<string>();
           for (let i = 0; i < sources.length; i++) {
             const standardQuantity = sources[i].recipeIngredient
               .standardQuantity

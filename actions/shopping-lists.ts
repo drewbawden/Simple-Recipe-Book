@@ -4,6 +4,7 @@ import { ShoppingList } from "@/components/shopping-list/shopping-list";
 import { PrismaClient } from "../app/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import "dotenv/config";
+import { Category, ItemType } from "../app/generated/prisma/enums";
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
@@ -13,7 +14,25 @@ const prisma = new PrismaClient({
   adapter,
 });
 
-export async function getShoppingList() {
+export const getShoppingListCategories = async () => {
+  try {
+    const categories = await prisma.itemCategory.findMany({
+      include: {
+        items: true,
+      },
+    });
+
+    if (!categories) return null;
+
+    console.log(categories);
+    return categories;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch item categories");
+  }
+};
+
+export const getShoppingList = async () => {
   try {
     const shoppingList = await prisma.shoppingList.findUnique({
       where: {
@@ -63,9 +82,57 @@ export async function getShoppingList() {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch shopping list");
   }
-}
+};
 
-export async function setItemCompleted(listItemId: number, completed: boolean) {
+export const addItemToList = async (
+  itemName: string,
+  categoryName: Category,
+  shoppingListId = 1,
+  itemType = ItemType.FOOD,
+) => {
+  const category = await prisma.itemCategory.upsert({
+    where: {
+      name: categoryName,
+    },
+    update: {},
+    create: {
+      name: categoryName,
+    },
+  });
+  const item = await prisma.item.upsert({
+    where: {
+      name: itemName,
+    },
+    update: {
+      categoryId: category.id,
+    },
+    create: {
+      name: itemName,
+      type: itemType,
+      categoryId: category.id,
+    },
+  });
+
+  const shoppingListItem = await prisma.shoppingListItem.create({
+    data: {
+      shoppingListId,
+      itemId: item.id,
+      completed: false,
+    },
+    include: {
+      item: {
+        include: {
+          category: true,
+        },
+      },
+    },
+  });
+};
+
+export const setItemCompleted = async (
+  listItemId: number,
+  completed: boolean,
+) => {
   await prisma.shoppingListItem.updateMany({
     where: {
       id: listItemId,
@@ -74,17 +141,17 @@ export async function setItemCompleted(listItemId: number, completed: boolean) {
       completed,
     },
   });
-}
+};
 
-export async function deleteItem(listItemId: number) {
+export const deleteItem = async (listItemId: number) => {
   await prisma.shoppingListItem.delete({
     where: {
       id: listItemId,
     },
   });
-}
+};
 
-export async function addRecipeToShoppingList(formData: FormData) {
+export const addRecipeToShoppingList = async (formData: FormData) => {
   const ingredientIds = formData.getAll("ingredientIds").map(Number);
 
   return prisma.$transaction(async (tx) => {
@@ -141,4 +208,4 @@ export async function addRecipeToShoppingList(formData: FormData) {
 
     return shoppingList;
   });
-}
+};

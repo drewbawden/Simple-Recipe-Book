@@ -267,4 +267,5 @@ enum Category {
   DELI
   SEAFOOD
   STATIONERY
+  OTHER
 }

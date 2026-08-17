@@ -98,7 +98,8 @@ export const Category = {
   SNACKS_SWEETS: 'SNACKS_SWEETS',
   DELI: 'DELI',
   SEAFOOD: 'SEAFOOD',
-  STATIONERY: 'STATIONERY'
+  STATIONERY: 'STATIONERY',
+  OTHER: 'OTHER'
 } as const
 
 export type Category = (typeof Category)[keyof typeof Category]
