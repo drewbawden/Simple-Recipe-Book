@@ -2,10 +2,9 @@ import {
   getShoppingList,
   setItemCompleted,
   deleteItem,
-  getShoppingListCategories,
   addItemToList,
+  getShoppingListGroupedByCategory,
 } from "@/actions/shopping-lists";
-import { NormalUnit } from "@/app/generated/prisma/enums";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { ListItemCard } from "@/components/shopping-list/item-card";
@@ -14,81 +13,106 @@ import { computeQuantity } from "@/lib/list-item";
 
 export const ShoppingList = () => {
   const [loading, setLoading] = useState(true);
-  const [list, setList] =
+  const [shoppingList, setShoppingList] =
     useState<Awaited<ReturnType<typeof getShoppingList>>>(null);
+  const [groupedList, setGroupedList] = useState<
+    Awaited<ReturnType<typeof getShoppingListGroupedByCategory>>
+  >([]);
   const deleteTimers = useRef<Record<number, NodeJS.Timeout | undefined>>({});
   const [inputValue, setInputValue] = useState("");
-  const [categories, setCategories] =
-    useState<Awaited<ReturnType<typeof getShoppingListCategories>>>(null);
+
+  const refreshData = async () => {
+    const [nextList, nextGroupedList] = await Promise.all([
+      getShoppingList(),
+      getShoppingListGroupedByCategory(),
+    ]);
+
+    setShoppingList(nextList);
+    setGroupedList(nextGroupedList);
+  };
 
   const handleInputSubmit = async (productName: string) => {
     // TODO: Should weighting be biased above a certain threshold (~0.35) or linear?
     if (productName != "") {
       setInputValue("");
       const category = await computeCategory(productName);
-      addItemToList(productName, category);
-      refreshData();
+      await addItemToList(productName, category);
+      await refreshData();
     }
   };
 
   useEffect(() => {
     const fetchList = async () => {
       try {
-        const data = await getShoppingList();
-        setList(data);
+        const [nextList, nextGroupedList] = await Promise.all([
+          getShoppingList(),
+          getShoppingListGroupedByCategory(),
+        ]);
+
+        setShoppingList(nextList);
+        setGroupedList(nextGroupedList);
       } catch (error) {
         console.error("Error fetching shopping list items:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchList();
   }, []);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const data = await getShoppingListCategories();
-        setCategories(data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching shopping list items:", error);
-        setLoading(false);
-      }
-    };
-
-    fetchCategories();
-  }, []);
-
   if (loading) {
     return <p>Loading Items...</p>;
   }
 
-  if (!list) {
+  if (!shoppingList) {
     return <p>No shopping list found</p>;
   }
 
-  const refreshData = async () => {
-    const list = await getShoppingList();
-    const categories = await getShoppingListCategories();
-    setList(list);
-    setCategories(categories);
-  };
-
-  const sleep = (ms: number) =>
-    new Promise((resolve) => setTimeout(resolve, ms));
-
-  async function handleItemChecked(
-    id: number,
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) {
-    const completed = e.target.checked;
-
-    if (!completed && deleteTimers.current[id]) {
+  const cancelPendingDelete = (id: number) => {
+    if (deleteTimers.current[id]) {
       clearTimeout(deleteTimers.current[id]);
       deleteTimers.current[id] = undefined;
     }
+  };
 
-    setList((prev) => {
+  const handleItemDeleted = async (id: number) => {
+    cancelPendingDelete(id);
+
+    await deleteItem(id);
+
+    setShoppingList((prev) => {
+      if (!prev) return prev;
+
+      return {
+        ...prev,
+        items: prev.items.filter((item) => item.id !== id),
+      };
+    });
+
+    setGroupedList((prev) =>
+      prev
+        .map((category) => ({
+          ...category,
+          items: category.items.filter((item) => item.id !== id),
+        }))
+        .filter((category) => category.items.length > 0),
+    );
+
+    await refreshData();
+  };
+
+  const handleItemChecked = async (
+    id: number,
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const completed = e.target.checked;
+
+    if (!completed) {
+      cancelPendingDelete(id);
+    }
+
+    setShoppingList((prev) => {
       if (!prev) return prev;
 
       return {
@@ -99,25 +123,45 @@ export const ShoppingList = () => {
       };
     });
 
+    setGroupedList((prev) =>
+      prev.map((category) => ({
+        ...category,
+        items: category.items.map((item) =>
+          item.id === id ? { ...item, completed } : item,
+        ),
+      })),
+    );
+
     await setItemCompleted(id, completed);
 
     if (completed) {
       deleteTimers.current[id] = setTimeout(async () => {
-        await deleteItem(id);
+        try {
+          await deleteItem(id);
+        } finally {
+          setShoppingList((prev) => {
+            if (!prev) return prev;
 
-        setList((prev) => {
-          if (!prev) return prev;
+            return {
+              ...prev,
+              items: prev.items.filter((item) => item.id !== id),
+            };
+          });
 
-          return {
-            ...prev,
-            items: prev.items.filter((item) => item.id !== id),
-          };
-        });
+          setGroupedList((prev) =>
+            prev
+              .map((category) => ({
+                ...category,
+                items: category.items.filter((item) => item.id !== id),
+              }))
+              .filter((category) => category.items.length > 0),
+          );
 
-        deleteTimers.current[id] = undefined;
+          deleteTimers.current[id] = undefined;
+        }
       }, 1500);
     }
-  }
+  };
 
   return (
     <div className="mx-auto max-w-xl p-6 flex flex-col text-center space-y-1">
@@ -149,36 +193,35 @@ export const ShoppingList = () => {
       >
         Recipes
       </Link>
-      <h1 className="mb-6 text-4xl font-bold">{list.name}</h1>
+      <h1 className="mb-6 text-4xl font-bold">{shoppingList.name}</h1>
       <hr className="h-0.5 bg-black pb-2" />
       <div className="space-y-2">
-        {categories.map((category) => {
-          return (
-            <ul key={category.id}>
-              <h1 className="text-2xl">{categoryEnumToName(category.name)}</h1>
-              {category.items.map((item) => {
-                return <li key={item.id}>{item.name}</li>;
-              })}
-            </ul>
-          );
-        })}
-        {list.items.map((listItem) => {
-          const sources = listItem.shoppingListItemSources;
-          if (sources.length === 0) return null;
-
-          const collatedQuantity = computeQuantity(sources);
-
-          return (
-            <ListItemCard
-              key={listItem.id}
-              listItem={listItem}
-              totalQuantity={collatedQuantity.totalQuantity}
-              totalUnit={collatedQuantity.totalUnit}
-              sources={sources}
-              handleItemChecked={handleItemChecked}
-            />
-          );
-        })}
+        {groupedList.map((category) => (
+          <ul key={category.name} className="bg-gray-800 p-2 rounded space-y-2">
+            <div className="flex">
+              <h1 className="text-2xl text-left font-bold bg-black p-1 rounded">
+                {categoryEnumToName(category.name)}
+              </h1>
+            </div>
+            {category.items.map((listItem) => (
+              <li key={listItem.id}>
+                <ListItemCard
+                  listItem={listItem}
+                  totalQuantity={
+                    computeQuantity(listItem.shoppingListItemSources)
+                      .totalQuantity
+                  }
+                  totalUnit={
+                    computeQuantity(listItem.shoppingListItemSources).totalUnit
+                  }
+                  sources={listItem.shoppingListItemSources}
+                  handleItemChecked={handleItemChecked}
+                  handleItemDeleted={handleItemDeleted}
+                />
+              </li>
+            ))}
+          </ul>
+        ))}
       </div>
     </div>
   );

@@ -1,6 +1,5 @@
 "use server";
 
-import { ShoppingList } from "@/components/shopping-list/shopping-list";
 import { PrismaClient } from "../app/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import "dotenv/config";
@@ -14,20 +13,74 @@ const prisma = new PrismaClient({
   adapter,
 });
 
-export const getShoppingListCategories = async () => {
+export const getShoppingListGroupedByCategory = async () => {
   try {
-    const categories = await prisma.itemCategory.findMany({
+    const shoppingList = await prisma.shoppingList.findUnique({
+      where: { id: 1 },
       include: {
-        items: true,
+        items: {
+          include: {
+            item: {
+              include: {
+                category: true,
+              },
+            },
+            shoppingListItemSources: {
+              include: {
+                recipeIngredient: {
+                  include: {
+                    recipe: true,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     });
 
-    if (!categories) return null;
+    if (!shoppingList) return [];
 
-    return categories;
+    return Object.values(Category)
+      .map((categoryName) => {
+        const items = shoppingList.items.filter(
+          (listItem) => listItem.item.category?.name === categoryName,
+        );
+
+        if (items.length === 0) return null;
+
+        return {
+          name: categoryName,
+          items: items.map((item) => ({
+            ...item,
+            shoppingListItemSources: item.shoppingListItemSources.map(
+              (source) => ({
+                ...source,
+                recipeIngredient: {
+                  ...source.recipeIngredient,
+                  normalQuantity:
+                    source.recipeIngredient.normalQuantity == null
+                      ? null
+                      : Number(source.recipeIngredient.normalQuantity),
+                  standardQuantity:
+                    source.recipeIngredient.standardQuantity == null
+                      ? null
+                      : Number(source.recipeIngredient.standardQuantity),
+                },
+              }),
+            ),
+          })),
+        };
+      })
+      .filter(
+        (
+          group,
+        ): group is { name: Category; items: typeof shoppingList.items } =>
+          group !== null,
+      );
   } catch (error) {
     console.error("Database Error:", error);
-    throw new Error("Failed to fetch item categories");
+    throw new Error("Failed to fetch grouped shopping list");
   }
 };
 
@@ -143,10 +196,18 @@ export const setItemCompleted = async (
 };
 
 export const deleteItem = async (listItemId: number) => {
-  await prisma.shoppingListItem.delete({
-    where: {
-      id: listItemId,
-    },
+  await prisma.$transaction(async (tx) => {
+    await tx.shoppingListItemSource.deleteMany({
+      where: {
+        shoppingListItemId: listItemId,
+      },
+    });
+
+    await tx.shoppingListItem.delete({
+      where: {
+        id: listItemId,
+      },
+    });
   });
 };
 
