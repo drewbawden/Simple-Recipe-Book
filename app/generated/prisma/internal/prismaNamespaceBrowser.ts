@@ -124,7 +124,7 @@ export const CategoryKeywordScalarFieldEnum = {
   id: 'id',
   keyword: 'keyword',
   weight: 'weight',
-  itemCategoryId: 'itemCategoryId'
+  categoryId: 'categoryId'
 } as const
 
 export type CategoryKeywordScalarFieldEnum = (typeof CategoryKeywordScalarFieldEnum)[keyof typeof CategoryKeywordScalarFieldEnum]

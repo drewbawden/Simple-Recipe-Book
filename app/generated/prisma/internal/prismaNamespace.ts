@@ -1459,7 +1459,7 @@ export const CategoryKeywordScalarFieldEnum = {
   id: 'id',
   keyword: 'keyword',
   weight: 'weight',
-  itemCategoryId: 'itemCategoryId'
+  categoryId: 'categoryId'
 } as const
 
 export type CategoryKeywordScalarFieldEnum = (typeof CategoryKeywordScalarFieldEnum)[keyof typeof CategoryKeywordScalarFieldEnum]
@@ -1706,20 +1706,6 @@ export type ListEnumItemTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$Pri
  * Reference to a field of type 'Boolean'
  */
 export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
-    
-
-
-/**
- * Reference to a field of type 'Category'
- */
-export type EnumCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Category'>
-    
-
-
-/**
- * Reference to a field of type 'Category[]'
- */
-export type ListEnumCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Category[]'>
     
 
 

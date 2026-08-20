@@ -3,7 +3,7 @@
 import { PrismaClient } from "../app/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import "dotenv/config";
-import { Category, ItemType } from "../app/generated/prisma/enums";
+import { ItemType } from "../app/generated/prisma/enums";
 import { normaliseItemName } from "@/lib/items";
 
 const adapter = new PrismaPg({
@@ -42,49 +42,55 @@ export const getShoppingListGroupedByCategory = async () => {
 
     if (!shoppingList) return [];
 
-    return Object.values(Category)
-      .map((categoryName) => {
-        const items = shoppingList.items.filter(
-          (listItem) => listItem.item.category?.name === categoryName,
-        );
+    const categories = new Map<
+      number,
+      {
+        id: number;
+        name: string;
+        items: typeof shoppingList.items;
+      }
+    >();
 
-        if (items.length === 0) return null;
+    for (const item of shoppingList.items) {
+      const category = item.item.category;
 
-        const categoryId = items[0]?.item.category?.id ?? null;
+      if (!category) continue;
 
-        return {
-          id: categoryId,
-          name: categoryName,
-          items: items.map((item) => ({
-            ...item,
-            shoppingListItemSources: item.shoppingListItemSources.map(
-              (source) => ({
-                ...source,
-                recipeIngredient: {
-                  ...source.recipeIngredient,
-                  normalQuantity:
-                    source.recipeIngredient.normalQuantity == null
-                      ? null
-                      : Number(source.recipeIngredient.normalQuantity),
-                  standardQuantity:
-                    source.recipeIngredient.standardQuantity == null
-                      ? null
-                      : Number(source.recipeIngredient.standardQuantity),
-                },
-              }),
-            ),
-          })),
-        };
-      })
-      .filter(
-        (
-          group,
-        ): group is {
-          id: number | null;
-          name: Category;
-          items: typeof shoppingList.items;
-        } => group !== null,
-      );
+      const existing = categories.get(category.id);
+
+      if (existing) {
+        existing.items.push(item);
+      } else {
+        categories.set(category.id, {
+          id: category.id,
+          name: category.name,
+          items: [item],
+        });
+      }
+    }
+
+    return Array.from(categories.values()).map((category) => ({
+      ...category,
+      items: category.items.map((item) => ({
+        ...item,
+        shoppingListItemSources: item.shoppingListItemSources.map(
+          (source) => ({
+            ...source,
+            recipeIngredient: {
+              ...source.recipeIngredient,
+              normalQuantity:
+                source.recipeIngredient.normalQuantity == null
+                  ? null
+                  : Number(source.recipeIngredient.normalQuantity),
+              standardQuantity:
+                source.recipeIngredient.standardQuantity == null
+                  ? null
+                  : Number(source.recipeIngredient.standardQuantity),
+            },
+          }),
+        ),
+      })),
+    }));
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch grouped shopping list");
@@ -159,7 +165,7 @@ export const getCategories = async () => {
 
 export const addItemToList = async (
   itemName: string,
-  categoryName: Category,
+  categoryName: string,
   manuallyAdded?: boolean,
   shoppingListId = 1,
   itemType = ItemType.FOOD,

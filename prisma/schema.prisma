@@ -51,18 +51,21 @@ model Item {
 
 model ItemCategory {
   id          Int               @id @default(autoincrement())
-  name        Category          @unique
+  name        String            @unique
   items       Item[]
   userCreated Boolean           @default(false)
   keywords    CategoryKeyword[]
 }
 
 model CategoryKeyword {
-  id             Int           @id @default(autoincrement())
-  keyword        String
-  weight         Int           @default(1) // -2-2
-  itemCategory   ItemCategory? @relation(fields: [itemCategoryId], references: [id])
-  itemCategoryId Int?
+  id         Int           @id @default(autoincrement())
+  keyword    String
+  weight     Int           @default(1) // -2-2
+  category   ItemCategory? @relation(fields: [categoryId], references: [id])
+  categoryId Int?
+
+  @@unique([keyword, categoryId])
+  @@index([categoryId])
 }
 
 // for autosuggest weighting
@@ -254,29 +257,4 @@ enum ItemType {
 enum ItemUsageType {
   RECIPE
   SHOPPING_LIST
-}
-
-enum Category {
-  FROZEN_FOODS
-  DAIRY_EGGS_CHEESE
-  FRUIT_VEG
-  HOUSEHOLD_ITEMS
-  MEAT
-  COFFEE_TEA
-  BEVERAGES
-  BREADS_CEREALS
-  PASTA_RICE_BEANS
-  CANNED_FOODS_SOUPS
-  PERSONAL_CARE_HEALTH
-  PET_CARE
-  BAKING_ITEMS
-  SPICES_SEASONINGS
-  OILS_DRESSINGS
-  WINE_BEER_SPIRITS
-  SAUCES_CONDIMENTS
-  SNACKS_SWEETS
-  DELI
-  SEAFOOD
-  STATIONERY
-  OTHER
 }

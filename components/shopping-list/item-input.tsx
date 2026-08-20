@@ -1,7 +1,6 @@
 "use client";
 
 import { addItemToList } from "@/actions/shopping-lists";
-import { Category } from "@/app/generated/prisma/enums";
 import { computeCategory } from "@/lib/category";
 import { useState } from "react";
 import AutocompleteInput from "../templates/autocomplete";
@@ -9,7 +8,7 @@ import AutocompleteInput from "../templates/autocomplete";
 interface ShoppingListItemInputProps {
   refreshData: () => void;
   onEnter?: () => void;
-  categoryName?: Category | null;
+  categoryName?: string | null;
   autoFocus?: boolean;
 }
 export const ShoppingListItemInput = ({
