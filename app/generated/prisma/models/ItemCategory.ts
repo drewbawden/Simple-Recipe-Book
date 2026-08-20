@@ -37,16 +37,19 @@ export type ItemCategorySumAggregateOutputType = {
 export type ItemCategoryMinAggregateOutputType = {
   id: number | null
   name: $Enums.Category | null
+  userCreated: boolean | null
 }
 
 export type ItemCategoryMaxAggregateOutputType = {
   id: number | null
   name: $Enums.Category | null
+  userCreated: boolean | null
 }
 
 export type ItemCategoryCountAggregateOutputType = {
   id: number
   name: number
+  userCreated: number
   _all: number
 }
 
@@ -62,16 +65,19 @@ export type ItemCategorySumAggregateInputType = {
 export type ItemCategoryMinAggregateInputType = {
   id?: true
   name?: true
+  userCreated?: true
 }
 
 export type ItemCategoryMaxAggregateInputType = {
   id?: true
   name?: true
+  userCreated?: true
 }
 
 export type ItemCategoryCountAggregateInputType = {
   id?: true
   name?: true
+  userCreated?: true
   _all?: true
 }
 
@@ -164,6 +170,7 @@ export type ItemCategoryGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
 export type ItemCategoryGroupByOutputType = {
   id: number
   name: $Enums.Category
+  userCreated: boolean
   _count: ItemCategoryCountAggregateOutputType | null
   _avg: ItemCategoryAvgAggregateOutputType | null
   _sum: ItemCategorySumAggregateOutputType | null
@@ -192,13 +199,17 @@ export type ItemCategoryWhereInput = {
   NOT?: Prisma.ItemCategoryWhereInput | Prisma.ItemCategoryWhereInput[]
   id?: Prisma.IntFilter<"ItemCategory"> | number
   name?: Prisma.EnumCategoryFilter<"ItemCategory"> | $Enums.Category
+  userCreated?: Prisma.BoolFilter<"ItemCategory"> | boolean
   items?: Prisma.ItemListRelationFilter
+  keywords?: Prisma.CategoryKeywordListRelationFilter
 }
 
 export type ItemCategoryOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  userCreated?: Prisma.SortOrder
   items?: Prisma.ItemOrderByRelationAggregateInput
+  keywords?: Prisma.CategoryKeywordOrderByRelationAggregateInput
 }
 
 export type ItemCategoryWhereUniqueInput = Prisma.AtLeast<{
@@ -207,12 +218,15 @@ export type ItemCategoryWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.ItemCategoryWhereInput | Prisma.ItemCategoryWhereInput[]
   OR?: Prisma.ItemCategoryWhereInput[]
   NOT?: Prisma.ItemCategoryWhereInput | Prisma.ItemCategoryWhereInput[]
+  userCreated?: Prisma.BoolFilter<"ItemCategory"> | boolean
   items?: Prisma.ItemListRelationFilter
+  keywords?: Prisma.CategoryKeywordListRelationFilter
 }, "id" | "name">
 
 export type ItemCategoryOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  userCreated?: Prisma.SortOrder
   _count?: Prisma.ItemCategoryCountOrderByAggregateInput
   _avg?: Prisma.ItemCategoryAvgOrderByAggregateInput
   _max?: Prisma.ItemCategoryMaxOrderByAggregateInput
@@ -226,42 +240,54 @@ export type ItemCategoryScalarWhereWithAggregatesInput = {
   NOT?: Prisma.ItemCategoryScalarWhereWithAggregatesInput | Prisma.ItemCategoryScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"ItemCategory"> | number
   name?: Prisma.EnumCategoryWithAggregatesFilter<"ItemCategory"> | $Enums.Category
+  userCreated?: Prisma.BoolWithAggregatesFilter<"ItemCategory"> | boolean
 }
 
 export type ItemCategoryCreateInput = {
   name: $Enums.Category
+  userCreated?: boolean
   items?: Prisma.ItemCreateNestedManyWithoutCategoryInput
+  keywords?: Prisma.CategoryKeywordCreateNestedManyWithoutItemCategoryInput
 }
 
 export type ItemCategoryUncheckedCreateInput = {
   id?: number
   name: $Enums.Category
+  userCreated?: boolean
   items?: Prisma.ItemUncheckedCreateNestedManyWithoutCategoryInput
+  keywords?: Prisma.CategoryKeywordUncheckedCreateNestedManyWithoutItemCategoryInput
 }
 
 export type ItemCategoryUpdateInput = {
   name?: Prisma.EnumCategoryFieldUpdateOperationsInput | $Enums.Category
+  userCreated?: Prisma.BoolFieldUpdateOperationsInput | boolean
   items?: Prisma.ItemUpdateManyWithoutCategoryNestedInput
+  keywords?: Prisma.CategoryKeywordUpdateManyWithoutItemCategoryNestedInput
 }
 
 export type ItemCategoryUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.EnumCategoryFieldUpdateOperationsInput | $Enums.Category
+  userCreated?: Prisma.BoolFieldUpdateOperationsInput | boolean
   items?: Prisma.ItemUncheckedUpdateManyWithoutCategoryNestedInput
+  keywords?: Prisma.CategoryKeywordUncheckedUpdateManyWithoutItemCategoryNestedInput
 }
 
 export type ItemCategoryCreateManyInput = {
   id?: number
   name: $Enums.Category
+  userCreated?: boolean
 }
 
 export type ItemCategoryUpdateManyMutationInput = {
   name?: Prisma.EnumCategoryFieldUpdateOperationsInput | $Enums.Category
+  userCreated?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type ItemCategoryUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.EnumCategoryFieldUpdateOperationsInput | $Enums.Category
+  userCreated?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type ItemCategoryNullableScalarRelationFilter = {
@@ -272,6 +298,7 @@ export type ItemCategoryNullableScalarRelationFilter = {
 export type ItemCategoryCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  userCreated?: Prisma.SortOrder
 }
 
 export type ItemCategoryAvgOrderByAggregateInput = {
@@ -281,11 +308,13 @@ export type ItemCategoryAvgOrderByAggregateInput = {
 export type ItemCategoryMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  userCreated?: Prisma.SortOrder
 }
 
 export type ItemCategoryMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  userCreated?: Prisma.SortOrder
 }
 
 export type ItemCategorySumOrderByAggregateInput = {
@@ -312,13 +341,33 @@ export type EnumCategoryFieldUpdateOperationsInput = {
   set?: $Enums.Category
 }
 
+export type ItemCategoryCreateNestedOneWithoutKeywordsInput = {
+  create?: Prisma.XOR<Prisma.ItemCategoryCreateWithoutKeywordsInput, Prisma.ItemCategoryUncheckedCreateWithoutKeywordsInput>
+  connectOrCreate?: Prisma.ItemCategoryCreateOrConnectWithoutKeywordsInput
+  connect?: Prisma.ItemCategoryWhereUniqueInput
+}
+
+export type ItemCategoryUpdateOneWithoutKeywordsNestedInput = {
+  create?: Prisma.XOR<Prisma.ItemCategoryCreateWithoutKeywordsInput, Prisma.ItemCategoryUncheckedCreateWithoutKeywordsInput>
+  connectOrCreate?: Prisma.ItemCategoryCreateOrConnectWithoutKeywordsInput
+  upsert?: Prisma.ItemCategoryUpsertWithoutKeywordsInput
+  disconnect?: Prisma.ItemCategoryWhereInput | boolean
+  delete?: Prisma.ItemCategoryWhereInput | boolean
+  connect?: Prisma.ItemCategoryWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ItemCategoryUpdateToOneWithWhereWithoutKeywordsInput, Prisma.ItemCategoryUpdateWithoutKeywordsInput>, Prisma.ItemCategoryUncheckedUpdateWithoutKeywordsInput>
+}
+
 export type ItemCategoryCreateWithoutItemsInput = {
   name: $Enums.Category
+  userCreated?: boolean
+  keywords?: Prisma.CategoryKeywordCreateNestedManyWithoutItemCategoryInput
 }
 
 export type ItemCategoryUncheckedCreateWithoutItemsInput = {
   id?: number
   name: $Enums.Category
+  userCreated?: boolean
+  keywords?: Prisma.CategoryKeywordUncheckedCreateNestedManyWithoutItemCategoryInput
 }
 
 export type ItemCategoryCreateOrConnectWithoutItemsInput = {
@@ -339,11 +388,57 @@ export type ItemCategoryUpdateToOneWithWhereWithoutItemsInput = {
 
 export type ItemCategoryUpdateWithoutItemsInput = {
   name?: Prisma.EnumCategoryFieldUpdateOperationsInput | $Enums.Category
+  userCreated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  keywords?: Prisma.CategoryKeywordUpdateManyWithoutItemCategoryNestedInput
 }
 
 export type ItemCategoryUncheckedUpdateWithoutItemsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.EnumCategoryFieldUpdateOperationsInput | $Enums.Category
+  userCreated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  keywords?: Prisma.CategoryKeywordUncheckedUpdateManyWithoutItemCategoryNestedInput
+}
+
+export type ItemCategoryCreateWithoutKeywordsInput = {
+  name: $Enums.Category
+  userCreated?: boolean
+  items?: Prisma.ItemCreateNestedManyWithoutCategoryInput
+}
+
+export type ItemCategoryUncheckedCreateWithoutKeywordsInput = {
+  id?: number
+  name: $Enums.Category
+  userCreated?: boolean
+  items?: Prisma.ItemUncheckedCreateNestedManyWithoutCategoryInput
+}
+
+export type ItemCategoryCreateOrConnectWithoutKeywordsInput = {
+  where: Prisma.ItemCategoryWhereUniqueInput
+  create: Prisma.XOR<Prisma.ItemCategoryCreateWithoutKeywordsInput, Prisma.ItemCategoryUncheckedCreateWithoutKeywordsInput>
+}
+
+export type ItemCategoryUpsertWithoutKeywordsInput = {
+  update: Prisma.XOR<Prisma.ItemCategoryUpdateWithoutKeywordsInput, Prisma.ItemCategoryUncheckedUpdateWithoutKeywordsInput>
+  create: Prisma.XOR<Prisma.ItemCategoryCreateWithoutKeywordsInput, Prisma.ItemCategoryUncheckedCreateWithoutKeywordsInput>
+  where?: Prisma.ItemCategoryWhereInput
+}
+
+export type ItemCategoryUpdateToOneWithWhereWithoutKeywordsInput = {
+  where?: Prisma.ItemCategoryWhereInput
+  data: Prisma.XOR<Prisma.ItemCategoryUpdateWithoutKeywordsInput, Prisma.ItemCategoryUncheckedUpdateWithoutKeywordsInput>
+}
+
+export type ItemCategoryUpdateWithoutKeywordsInput = {
+  name?: Prisma.EnumCategoryFieldUpdateOperationsInput | $Enums.Category
+  userCreated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  items?: Prisma.ItemUpdateManyWithoutCategoryNestedInput
+}
+
+export type ItemCategoryUncheckedUpdateWithoutKeywordsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.EnumCategoryFieldUpdateOperationsInput | $Enums.Category
+  userCreated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  items?: Prisma.ItemUncheckedUpdateManyWithoutCategoryNestedInput
 }
 
 
@@ -353,10 +448,12 @@ export type ItemCategoryUncheckedUpdateWithoutItemsInput = {
 
 export type ItemCategoryCountOutputType = {
   items: number
+  keywords: number
 }
 
 export type ItemCategoryCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   items?: boolean | ItemCategoryCountOutputTypeCountItemsArgs
+  keywords?: boolean | ItemCategoryCountOutputTypeCountKeywordsArgs
 }
 
 /**
@@ -376,32 +473,45 @@ export type ItemCategoryCountOutputTypeCountItemsArgs<ExtArgs extends runtime.Ty
   where?: Prisma.ItemWhereInput
 }
 
+/**
+ * ItemCategoryCountOutputType without action
+ */
+export type ItemCategoryCountOutputTypeCountKeywordsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CategoryKeywordWhereInput
+}
+
 
 export type ItemCategorySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  userCreated?: boolean
   items?: boolean | Prisma.ItemCategory$itemsArgs<ExtArgs>
+  keywords?: boolean | Prisma.ItemCategory$keywordsArgs<ExtArgs>
   _count?: boolean | Prisma.ItemCategoryCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["itemCategory"]>
 
 export type ItemCategorySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  userCreated?: boolean
 }, ExtArgs["result"]["itemCategory"]>
 
 export type ItemCategorySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  userCreated?: boolean
 }, ExtArgs["result"]["itemCategory"]>
 
 export type ItemCategorySelectScalar = {
   id?: boolean
   name?: boolean
+  userCreated?: boolean
 }
 
-export type ItemCategoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name", ExtArgs["result"]["itemCategory"]>
+export type ItemCategoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "userCreated", ExtArgs["result"]["itemCategory"]>
 export type ItemCategoryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   items?: boolean | Prisma.ItemCategory$itemsArgs<ExtArgs>
+  keywords?: boolean | Prisma.ItemCategory$keywordsArgs<ExtArgs>
   _count?: boolean | Prisma.ItemCategoryCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ItemCategoryIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -411,10 +521,12 @@ export type $ItemCategoryPayload<ExtArgs extends runtime.Types.Extensions.Intern
   name: "ItemCategory"
   objects: {
     items: Prisma.$ItemPayload<ExtArgs>[]
+    keywords: Prisma.$CategoryKeywordPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     name: $Enums.Category
+    userCreated: boolean
   }, ExtArgs["result"]["itemCategory"]>
   composites: {}
 }
@@ -810,6 +922,7 @@ readonly fields: ItemCategoryFieldRefs;
 export interface Prisma__ItemCategoryClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   items<T extends Prisma.ItemCategory$itemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ItemCategory$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  keywords<T extends Prisma.ItemCategory$keywordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ItemCategory$keywordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CategoryKeywordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -841,6 +954,7 @@ export interface Prisma__ItemCategoryClient<T, Null = never, ExtArgs extends run
 export interface ItemCategoryFieldRefs {
   readonly id: Prisma.FieldRef<"ItemCategory", 'Int'>
   readonly name: Prisma.FieldRef<"ItemCategory", 'Category'>
+  readonly userCreated: Prisma.FieldRef<"ItemCategory", 'Boolean'>
 }
     
 
@@ -1255,6 +1369,30 @@ export type ItemCategory$itemsArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.ItemScalarFieldEnum | Prisma.ItemScalarFieldEnum[]
+}
+
+/**
+ * ItemCategory.keywords
+ */
+export type ItemCategory$keywordsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CategoryKeyword
+   */
+  select?: Prisma.CategoryKeywordSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CategoryKeyword
+   */
+  omit?: Prisma.CategoryKeywordOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CategoryKeywordInclude<ExtArgs> | null
+  where?: Prisma.CategoryKeywordWhereInput
+  orderBy?: Prisma.CategoryKeywordOrderByWithRelationInput | Prisma.CategoryKeywordOrderByWithRelationInput[]
+  cursor?: Prisma.CategoryKeywordWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CategoryKeywordScalarFieldEnum | Prisma.CategoryKeywordScalarFieldEnum[]
 }
 
 /**

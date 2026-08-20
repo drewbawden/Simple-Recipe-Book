@@ -54,6 +54,7 @@ export const ModelName = {
   StoreProduct: 'StoreProduct',
   Item: 'Item',
   ItemCategory: 'ItemCategory',
+  CategoryKeyword: 'CategoryKeyword',
   ItemUsage: 'ItemUsage',
   Inventory: 'Inventory',
   Nutrition: 'Nutrition',
@@ -112,10 +113,21 @@ export type ItemScalarFieldEnum = (typeof ItemScalarFieldEnum)[keyof typeof Item
 
 export const ItemCategoryScalarFieldEnum = {
   id: 'id',
-  name: 'name'
+  name: 'name',
+  userCreated: 'userCreated'
 } as const
 
 export type ItemCategoryScalarFieldEnum = (typeof ItemCategoryScalarFieldEnum)[keyof typeof ItemCategoryScalarFieldEnum]
+
+
+export const CategoryKeywordScalarFieldEnum = {
+  id: 'id',
+  keyword: 'keyword',
+  weight: 'weight',
+  itemCategoryId: 'itemCategoryId'
+} as const
+
+export type CategoryKeywordScalarFieldEnum = (typeof CategoryKeywordScalarFieldEnum)[keyof typeof CategoryKeywordScalarFieldEnum]
 
 
 export const ItemUsageScalarFieldEnum = {

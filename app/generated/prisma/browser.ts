@@ -33,6 +33,11 @@ export type Item = Prisma.ItemModel
  */
 export type ItemCategory = Prisma.ItemCategoryModel
 /**
+ * Model CategoryKeyword
+ * 
+ */
+export type CategoryKeyword = Prisma.CategoryKeywordModel
+/**
  * Model ItemUsage
  * 
  */

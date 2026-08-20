@@ -50,9 +50,19 @@ model Item {
 }
 
 model ItemCategory {
-  id    Int      @id @default(autoincrement())
-  name  Category @unique
-  items Item[]
+  id          Int               @id @default(autoincrement())
+  name        Category          @unique
+  items       Item[]
+  userCreated Boolean           @default(false)
+  keywords    CategoryKeyword[]
+}
+
+model CategoryKeyword {
+  id             Int           @id @default(autoincrement())
+  keyword        String
+  weight         Int           @default(1) // -2-2
+  itemCategory   ItemCategory? @relation(fields: [itemCategoryId], references: [id])
+  itemCategoryId Int?
 }
 
 // for autosuggest weighting

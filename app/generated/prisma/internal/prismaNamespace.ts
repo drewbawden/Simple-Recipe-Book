@@ -387,6 +387,7 @@ export const ModelName = {
   StoreProduct: 'StoreProduct',
   Item: 'Item',
   ItemCategory: 'ItemCategory',
+  CategoryKeyword: 'CategoryKeyword',
   ItemUsage: 'ItemUsage',
   Inventory: 'Inventory',
   Nutrition: 'Nutrition',
@@ -411,7 +412,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "storeProduct" | "item" | "itemCategory" | "itemUsage" | "inventory" | "nutrition" | "recipes" | "recipeIngredient" | "recipeInstructionStep" | "shoppingList" | "shoppingListItem" | "shoppingListItemSource"
+    modelProps: "storeProduct" | "item" | "itemCategory" | "categoryKeyword" | "itemUsage" | "inventory" | "nutrition" | "recipes" | "recipeIngredient" | "recipeInstructionStep" | "shoppingList" | "shoppingListItem" | "shoppingListItemSource"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -634,6 +635,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ItemCategoryCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ItemCategoryCountAggregateOutputType> | number
+        }
+      }
+    }
+    CategoryKeyword: {
+      payload: Prisma.$CategoryKeywordPayload<ExtArgs>
+      fields: Prisma.CategoryKeywordFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CategoryKeywordFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoryKeywordPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CategoryKeywordFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoryKeywordPayload>
+        }
+        findFirst: {
+          args: Prisma.CategoryKeywordFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoryKeywordPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CategoryKeywordFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoryKeywordPayload>
+        }
+        findMany: {
+          args: Prisma.CategoryKeywordFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoryKeywordPayload>[]
+        }
+        create: {
+          args: Prisma.CategoryKeywordCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoryKeywordPayload>
+        }
+        createMany: {
+          args: Prisma.CategoryKeywordCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CategoryKeywordCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoryKeywordPayload>[]
+        }
+        delete: {
+          args: Prisma.CategoryKeywordDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoryKeywordPayload>
+        }
+        update: {
+          args: Prisma.CategoryKeywordUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoryKeywordPayload>
+        }
+        deleteMany: {
+          args: Prisma.CategoryKeywordDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CategoryKeywordUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CategoryKeywordUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoryKeywordPayload>[]
+        }
+        upsert: {
+          args: Prisma.CategoryKeywordUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoryKeywordPayload>
+        }
+        aggregate: {
+          args: Prisma.CategoryKeywordAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCategoryKeyword>
+        }
+        groupBy: {
+          args: Prisma.CategoryKeywordGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CategoryKeywordGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CategoryKeywordCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CategoryKeywordCountAggregateOutputType> | number
         }
       }
     }
@@ -1373,10 +1448,21 @@ export type ItemScalarFieldEnum = (typeof ItemScalarFieldEnum)[keyof typeof Item
 
 export const ItemCategoryScalarFieldEnum = {
   id: 'id',
-  name: 'name'
+  name: 'name',
+  userCreated: 'userCreated'
 } as const
 
 export type ItemCategoryScalarFieldEnum = (typeof ItemCategoryScalarFieldEnum)[keyof typeof ItemCategoryScalarFieldEnum]
+
+
+export const CategoryKeywordScalarFieldEnum = {
+  id: 'id',
+  keyword: 'keyword',
+  weight: 'weight',
+  itemCategoryId: 'itemCategoryId'
+} as const
+
+export type CategoryKeywordScalarFieldEnum = (typeof CategoryKeywordScalarFieldEnum)[keyof typeof CategoryKeywordScalarFieldEnum]
 
 
 export const ItemUsageScalarFieldEnum = {
@@ -1804,6 +1890,7 @@ export type GlobalOmitConfig = {
   storeProduct?: Prisma.StoreProductOmit
   item?: Prisma.ItemOmit
   itemCategory?: Prisma.ItemCategoryOmit
+  categoryKeyword?: Prisma.CategoryKeywordOmit
   itemUsage?: Prisma.ItemUsageOmit
   inventory?: Prisma.InventoryOmit
   nutrition?: Prisma.NutritionOmit

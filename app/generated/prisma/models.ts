@@ -11,6 +11,7 @@
 export type * from './models/StoreProduct'
 export type * from './models/Item'
 export type * from './models/ItemCategory'
+export type * from './models/CategoryKeyword'
 export type * from './models/ItemUsage'
 export type * from './models/Inventory'
 export type * from './models/Nutrition'
