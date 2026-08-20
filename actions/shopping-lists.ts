@@ -4,6 +4,7 @@ import { PrismaClient } from "../app/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import "dotenv/config";
 import { Category, ItemType } from "../app/generated/prisma/enums";
+import { normaliseItemName } from "@/lib/items";
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
@@ -163,11 +164,8 @@ export const addItemToList = async (
   shoppingListId = 1,
   itemType = ItemType.FOOD,
 ) => {
-  console.log(itemName);
-  console.log(categoryName);
-  console.log(manuallyAdded);
-  console.log(shoppingListId);
-  console.log(itemType);
+  itemName = normaliseItemName(itemName);
+
   const category = await prisma.itemCategory.upsert({
     where: {
       name: categoryName,

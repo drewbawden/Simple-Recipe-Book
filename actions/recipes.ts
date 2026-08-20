@@ -13,6 +13,7 @@ import { mkdir, writeFile } from "fs/promises";
 import path from "path";
 import { randomUUID } from "crypto";
 import { downloadExternalRecipeImage } from "@/actions/parse-external";
+import { normaliseItemName } from "@/lib/items";
 import { filterArguments, RecipeFormData } from "@/types/recipe";
 
 const adapter = new PrismaPg({
@@ -144,6 +145,7 @@ export async function updateRecipe(recipeId: number, formData: FormData) {
           create: await Promise.all(
             data.ingredients.map(async (ingredient) => {
               const parsed = parseQuantity(ingredient.quantity);
+              const normalisedName = normaliseItemName(ingredient.name);
 
               if (parsed.quantity === null) {
                 throw new Error(
@@ -154,11 +156,11 @@ export async function updateRecipe(recipeId: number, formData: FormData) {
               let item;
               item = await tx.item.upsert({
                 where: {
-                  name: ingredient.name,
+                  name: normalisedName,
                 },
                 update: {},
                 create: {
-                  name: ingredient.name,
+                  name: normalisedName,
                   type: ItemType.FOOD,
                 },
               });
@@ -232,6 +234,7 @@ export async function insertNewRecipe(formData: FormData) {
           create: await Promise.all(
             data.ingredients.map(async (ingredient) => {
               const parsed = parseQuantity(ingredient.quantity);
+              const normalisedName = normaliseItemName(ingredient.name);
 
               if (parsed.quantity === null) {
                 throw new Error(
@@ -242,11 +245,11 @@ export async function insertNewRecipe(formData: FormData) {
               let item;
               item = await tx.item.upsert({
                 where: {
-                  name: ingredient.name,
+                  name: normalisedName,
                 },
                 update: {},
                 create: {
-                  name: ingredient.name,
+                  name: normalisedName,
                   type: ItemType.FOOD,
                 },
               });
