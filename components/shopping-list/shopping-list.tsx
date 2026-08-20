@@ -7,11 +7,12 @@ import {
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { ListItemCard } from "@/components/shopping-list/item-card";
-import { categoryEnumToName, computeCategory } from "@/lib/category";
+import { categoryEnumToName } from "@/lib/category";
 import { computeQuantity } from "@/lib/list-item";
-import { getCategories } from "@/actions/dropdowns";
 import { ShoppingListItemInput } from "./item-input";
 import { XIcon } from "lucide-react";
+import { Modal } from "../templates/modal";
+import { ItemEditPopup } from "./item-edit";
 
 export const ShoppingList = () => {
   const [loading, setLoading] = useState(true);
@@ -20,11 +21,10 @@ export const ShoppingList = () => {
   const [groupedList, setGroupedList] = useState<
     Awaited<ReturnType<typeof getShoppingListGroupedByCategory>>
   >([]);
-  const deleteTimers = useRef<Record<number, NodeJS.Timeout | undefined>>({});
-  const [categories, setCategories] = useState<
-    Awaited<ReturnType<typeof getCategories>>
-  >([]);
   const [addToCategory, setAddToCategory] = useState<number | null>(null);
+  const [editItem, setEditItem] = useState<number | null>(null);
+
+  const deleteTimers = useRef<Record<number, NodeJS.Timeout | undefined>>({});
 
   const refreshData = async () => {
     const [nextList, nextGroupedList] = await Promise.all([
@@ -220,6 +220,13 @@ export const ShoppingList = () => {
           </ul>
         ))}
       </div>
+      <Modal
+        isOpen={editItem !== null}
+        onClose={() => setEditItem(null)}
+        size="md"
+      >
+        <ItemEditPopup />
+      </Modal>
     </div>
   );
 };

@@ -68,11 +68,6 @@ export const ShoppingListItemInput = ({
         />
         <input type="submit" hidden />
       </form>
-      {/* <ul>
-        list of suggestions (with links?)
-        <li>move [item] to [category]?</li>
-        <li>move [other item] to [different category]?</li>
-      </ul> */}
     </div>
   );
 };

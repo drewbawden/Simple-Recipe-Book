@@ -160,7 +160,7 @@ export const getCategories = async () => {
 export const addItemToList = async (
   itemName: string,
   categoryName: Category,
-  manuallyAdded = false,
+  manuallyAdded?: boolean,
   shoppingListId = 1,
   itemType = ItemType.FOOD,
 ) => {
@@ -175,19 +175,24 @@ export const addItemToList = async (
       name: categoryName,
     },
   });
+
   const item = await prisma.item.upsert({
     where: {
       name: itemName,
     },
     update: {
       categoryId: category.id,
-      manuallyCategorised: manuallyAdded,
+      ...(manuallyAdded !== undefined
+        ? { manuallyCategorised: manuallyAdded }
+        : {}),
     },
     create: {
       name: itemName,
       type: itemType,
       categoryId: category.id,
-      manuallyCategorised: manuallyAdded,
+      ...(manuallyAdded !== undefined
+        ? { manuallyCategorised: manuallyAdded }
+        : {}),
     },
   });
 
@@ -294,4 +299,18 @@ export const addRecipeToShoppingList = async (formData: FormData) => {
 
     return shoppingList;
   });
+};
+
+export const getManualCategory = async (itemName: string) => {
+  const manualCategory = await prisma.item.findUnique({
+    where: {
+      name: itemName,
+      manuallyCategorised: true,
+    },
+    include: {
+      category: true,
+    },
+  });
+
+  return manualCategory;
 };
