@@ -1,6 +1,12 @@
-import { useState, useEffect, useRef } from "react";
-import { ChevronDown, Trash2Icon } from "lucide-react";
-import { deleteItem, getShoppingList } from "@/actions/shopping-lists";
+import { useState } from "react";
+import { ChevronDown, SettingsIcon, Trash2Icon } from "lucide-react";
+import { getShoppingList } from "@/actions/shopping-lists";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/templates/context-menu";
 
 type ShoppingList = NonNullable<Awaited<ReturnType<typeof getShoppingList>>>;
 
@@ -56,8 +62,8 @@ export const ListItemCard = ({
 
         <div className="flex flex-row space-x-2">
           {sources && sources.length > 0 && (
-            <label className="flex items-center gap-4 border-1 border-gray-500 rounded">
-              <span className="rounded-md bg-muted px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+            <label className="flex items-center border-1 border-gray-500 rounded">
+              <span className="rounded-md bg-muted pl-2 py-1 text-xs font-semibold text-muted-foreground">
                 {totalUnit === "mixed units" ? "" : totalQuantity}
                 {totalUnit ? ` ${totalUnit}` : ""}
               </span>
@@ -77,14 +83,18 @@ export const ListItemCard = ({
               </button>
             </label>
           )}
-          <button
-            className="text-red-300 px-1"
-            onClick={async () => {
-              handleItemDeleted(listItem.id);
-            }}
-          >
-            <Trash2Icon />
-          </button>
+          <ContextMenu>
+            <ContextMenuTrigger>
+              <SettingsIcon />
+            </ContextMenuTrigger>
+            <ContextMenuContent align="right" className="text-gray-900">
+              <ContextMenuItem onSelect={() => {}}>Edit</ContextMenuItem>
+              <hr />
+              <ContextMenuItem>Change Category</ContextMenuItem>
+              <hr />
+              <ContextMenuItem className="text-red-500">Delete</ContextMenuItem>
+            </ContextMenuContent>
+          </ContextMenu>
         </div>
       </label>
 

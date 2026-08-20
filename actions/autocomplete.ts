@@ -63,7 +63,7 @@ const autocompleteMap: Record<
       select: { id: true, name: true },
     }),
   categories: async (q) =>
-    prisma.category.findMany({
+    prisma.itemCategory.findMany({
       where: { name: { contains: q, mode: "insensitive" } },
       take: 8,
       select: { id: true, name: true },

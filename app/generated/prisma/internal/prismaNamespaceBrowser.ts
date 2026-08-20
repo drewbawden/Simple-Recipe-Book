@@ -102,6 +102,7 @@ export const ItemScalarFieldEnum = {
   name: 'name',
   type: 'type',
   categoryId: 'categoryId',
+  manuallyCategorised: 'manuallyCategorised',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

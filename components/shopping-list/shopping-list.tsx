@@ -2,7 +2,6 @@ import {
   getShoppingList,
   setItemCompleted,
   deleteItem,
-  addItemToList,
   getShoppingListGroupedByCategory,
 } from "@/actions/shopping-lists";
 import { useState, useEffect, useRef } from "react";
@@ -10,6 +9,9 @@ import Link from "next/link";
 import { ListItemCard } from "@/components/shopping-list/item-card";
 import { categoryEnumToName, computeCategory } from "@/lib/category";
 import { computeQuantity } from "@/lib/list-item";
+import { getCategories } from "@/actions/dropdowns";
+import { ShoppingListItemInput } from "./item-input";
+import { XIcon } from "lucide-react";
 
 export const ShoppingList = () => {
   const [loading, setLoading] = useState(true);
@@ -19,7 +21,10 @@ export const ShoppingList = () => {
     Awaited<ReturnType<typeof getShoppingListGroupedByCategory>>
   >([]);
   const deleteTimers = useRef<Record<number, NodeJS.Timeout | undefined>>({});
-  const [inputValue, setInputValue] = useState("");
+  const [categories, setCategories] = useState<
+    Awaited<ReturnType<typeof getCategories>>
+  >([]);
+  const [addToCategory, setAddToCategory] = useState<number | null>(null);
 
   const refreshData = async () => {
     const [nextList, nextGroupedList] = await Promise.all([
@@ -29,16 +34,6 @@ export const ShoppingList = () => {
 
     setShoppingList(nextList);
     setGroupedList(nextGroupedList);
-  };
-
-  const handleInputSubmit = async (productName: string) => {
-    // TODO: Should weighting be biased above a certain threshold (~0.35) or linear?
-    if (productName != "") {
-      setInputValue("");
-      const category = await computeCategory(productName);
-      await addItemToList(productName, category);
-      await refreshData();
-    }
   };
 
   useEffect(() => {
@@ -165,28 +160,6 @@ export const ShoppingList = () => {
 
   return (
     <div className="mx-auto max-w-xl p-6 flex flex-col text-center space-y-1">
-      <form
-        action={async (formData) => {
-          const productName = formData.get("productName") as string;
-          handleInputSubmit(productName);
-        }}
-      >
-        <input
-          type="text"
-          name="productName"
-          id="productName"
-          className="bg-gray-500 m-5 p-1"
-          placeholder="enter item"
-          value={inputValue}
-          onChange={(e) => {
-            setInputValue(e.target.value);
-          }}
-          onBlur={(e) => {
-            handleInputSubmit(e.target.value);
-          }}
-        />
-        <input type="submit" hidden />
-      </form>
       <Link
         href="/"
         className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded mb-4"
@@ -195,6 +168,7 @@ export const ShoppingList = () => {
       </Link>
       <h1 className="mb-6 text-4xl font-bold">{shoppingList.name}</h1>
       <hr className="h-0.5 bg-black pb-2" />
+      <ShoppingListItemInput refreshData={refreshData} />
       <div className="space-y-2">
         {groupedList.map((category) => (
           <ul key={category.name} className="bg-gray-800 p-2 rounded space-y-2">
@@ -220,6 +194,28 @@ export const ShoppingList = () => {
                 />
               </li>
             ))}
+            {addToCategory == category.id ? (
+              <div className="flex flex-row justify-center space-x-1">
+                <ShoppingListItemInput
+                  refreshData={refreshData}
+                  onEnter={() => setAddToCategory(null)}
+                  categoryName={category.name}
+                />
+                <button
+                  className="text-red-400 p-1 my-auto border-1 rounded-4xl h-1/2 border-red-400"
+                  onClick={() => setAddToCategory(null)}
+                >
+                  <XIcon />
+                </button>
+              </div>
+            ) : (
+              <button
+                className="bg-gray-400 text-2xl rounded px-10 py-1"
+                onClick={() => setAddToCategory(category.id)}
+              >
+                +
+              </button>
+            )}
           </ul>
         ))}
       </div>

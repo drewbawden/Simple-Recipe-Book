@@ -49,7 +49,10 @@ export const getShoppingListGroupedByCategory = async () => {
 
         if (items.length === 0) return null;
 
+        const categoryId = items[0]?.item.category?.id ?? null;
+
         return {
+          id: categoryId,
           name: categoryName,
           items: items.map((item) => ({
             ...item,
@@ -75,8 +78,11 @@ export const getShoppingListGroupedByCategory = async () => {
       .filter(
         (
           group,
-        ): group is { name: Category; items: typeof shoppingList.items } =>
-          group !== null,
+        ): group is {
+          id: number | null;
+          name: Category;
+          items: typeof shoppingList.items;
+        } => group !== null,
       );
   } catch (error) {
     console.error("Database Error:", error);
@@ -136,12 +142,32 @@ export const getShoppingList = async () => {
   }
 };
 
+export const getCategories = async () => {
+  try {
+    const categories = await prisma.itemCategory.findMany();
+
+    if (!categories) return null;
+
+    console.log(categories);
+    return categories;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch item categories");
+  }
+};
+
 export const addItemToList = async (
   itemName: string,
   categoryName: Category,
+  manuallyAdded = false,
   shoppingListId = 1,
   itemType = ItemType.FOOD,
 ) => {
+  console.log(itemName);
+  console.log(categoryName);
+  console.log(manuallyAdded);
+  console.log(shoppingListId);
+  console.log(itemType);
   const category = await prisma.itemCategory.upsert({
     where: {
       name: categoryName,
@@ -157,11 +183,13 @@ export const addItemToList = async (
     },
     update: {
       categoryId: category.id,
+      manuallyCategorised: manuallyAdded,
     },
     create: {
       name: itemName,
       type: itemType,
       categoryId: category.id,
+      manuallyCategorised: manuallyAdded,
     },
   });
 

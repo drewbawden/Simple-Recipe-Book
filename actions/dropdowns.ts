@@ -14,9 +14,9 @@ const prisma = new PrismaClient({
 
 export async function getCategories() {
   try {
-    return await prisma.category.findMany();
+    return await prisma.itemCategory.findMany();
   } catch (error) {
     console.error("Database Error:", error);
-    throw new Error("Failed to fetch categories");
+    throw new Error("Failed to fetch item categories");
   }
 }

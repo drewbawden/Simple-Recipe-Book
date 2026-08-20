@@ -490,10 +490,6 @@ export type ShoppingListItemUncheckedUpdateManyWithoutShoppingListNestedInput = 
   deleteMany?: Prisma.ShoppingListItemScalarWhereInput | Prisma.ShoppingListItemScalarWhereInput[]
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
 export type ShoppingListItemCreateNestedOneWithoutShoppingListItemSourcesInput = {
   create?: Prisma.XOR<Prisma.ShoppingListItemCreateWithoutShoppingListItemSourcesInput, Prisma.ShoppingListItemUncheckedCreateWithoutShoppingListItemSourcesInput>
   connectOrCreate?: Prisma.ShoppingListItemCreateOrConnectWithoutShoppingListItemSourcesInput

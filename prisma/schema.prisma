@@ -36,8 +36,9 @@ model Item {
   name String   @unique
   type ItemType
 
-  category   ItemCategory? @relation(fields: [categoryId], references: [id])
-  categoryId Int?
+  category            ItemCategory? @relation(fields: [categoryId], references: [id])
+  categoryId          Int?
+  manuallyCategorised Boolean       @default(false)
 
   products          StoreProduct[]
   ingredients       RecipeIngredient[]

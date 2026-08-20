@@ -1363,6 +1363,7 @@ export const ItemScalarFieldEnum = {
   name: 'name',
   type: 'type',
   categoryId: 'categoryId',
+  manuallyCategorised: 'manuallyCategorised',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1616,6 +1617,13 @@ export type ListEnumItemTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$Pri
 
 
 /**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+/**
  * Reference to a field of type 'Category'
  */
 export type EnumCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Category'>
@@ -1682,13 +1690,6 @@ export type EnumStandardUnitFieldRefInput<$PrismaModel> = FieldRefInputType<$Pri
  * Reference to a field of type 'StandardUnit[]'
  */
 export type ListEnumStandardUnitFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StandardUnit[]'>
-    
-
-
-/**
- * Reference to a field of type 'Boolean'
- */
-export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
