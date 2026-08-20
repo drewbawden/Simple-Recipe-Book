@@ -4,6 +4,7 @@ import { addItemToList } from "@/actions/shopping-lists";
 import { Category } from "@/app/generated/prisma/enums";
 import { computeCategory } from "@/lib/category";
 import { useState } from "react";
+import AutocompleteInput from "../templates/autocomplete";
 
 interface ShoppingListItemInputProps {
   refreshData: () => void;
@@ -49,19 +50,18 @@ export const ShoppingListItemInput = ({
           handleInputSubmit(inputValue);
         }}
       >
-        <input
-          type="text"
+        <AutocompleteInput
+          modelType="items"
           name="productName"
           id="productName"
-          className="bg-gray-500 my-5 p-1"
+          className="bg-gray-500 my-5 p-1 text-white"
           placeholder="enter item"
           value={inputValue}
-          onChange={(e) => {
-            setInputValue(e.target.value);
-          }}
-          onBlur={(e) => {
-            handleInputSubmit(e.target.value);
-          }}
+          onChange={setInputValue}
+          onEnter={handleInputSubmit}
+          onBlur={handleInputSubmit}
+          selectOnEnter={false}
+          blurOnSelect={true}
         />
         <input type="submit" hidden />
       </form>
