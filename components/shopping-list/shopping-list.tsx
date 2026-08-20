@@ -200,6 +200,7 @@ export const ShoppingList = () => {
                   refreshData={refreshData}
                   onEnter={() => setAddToCategory(null)}
                   categoryName={category.name}
+                  autoFocus={true}
                 />
                 <button
                   className="text-red-400 p-1 my-auto border-1 rounded-4xl h-1/2 border-red-400"

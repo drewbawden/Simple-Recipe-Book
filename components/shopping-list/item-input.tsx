@@ -10,11 +10,13 @@ interface ShoppingListItemInputProps {
   refreshData: () => void;
   onEnter?: () => void;
   categoryName?: Category | null;
+  autoFocus?: boolean;
 }
 export const ShoppingListItemInput = ({
   refreshData,
   onEnter,
   categoryName = null,
+  autoFocus = false,
 }: ShoppingListItemInputProps) => {
   const [inputValue, setInputValue] = useState("");
 
@@ -62,6 +64,7 @@ export const ShoppingListItemInput = ({
           onBlur={handleInputSubmit}
           selectOnEnter={false}
           blurOnSelect={true}
+          autoFocus={autoFocus}
         />
         <input type="submit" hidden />
       </form>

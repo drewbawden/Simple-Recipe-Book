@@ -28,6 +28,7 @@ interface AutocompleteInputProps {
 
   selectOnEnter?: boolean;
   blurOnSelect?: boolean;
+  autoFocus?: boolean;
 }
 
 export default function AutocompleteInput({
@@ -44,6 +45,7 @@ export default function AutocompleteInput({
   required = false,
   selectOnEnter = true,
   blurOnSelect = true,
+  autoFocus = false,
 }: AutocompleteInputProps) {
   const [query, setQuery] = useState(value);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
@@ -121,6 +123,7 @@ export default function AutocompleteInput({
   return (
     <div className="relative text-gray-800">
       <input
+        autoFocus={autoFocus}
         ref={inputRef}
         required={required}
         type="text"
