@@ -4,6 +4,7 @@ import {
   deleteItem,
   getShoppingListGroupedByCategory,
   clearShoppingList,
+  editListItem,
 } from "@/actions/shopping-lists";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
@@ -13,6 +14,7 @@ import { ShoppingListItemInput } from "@/components/shopping-list/item-input";
 import { XIcon } from "lucide-react";
 import { Modal } from "@/components/templates/modal";
 import { ItemEditPopup } from "@/components/shopping-list/popups/item-edit";
+import { listItem } from "@/types/list-item";
 
 export const ShoppingList = () => {
   const [loading, setLoading] = useState(true);
@@ -22,7 +24,8 @@ export const ShoppingList = () => {
     Awaited<ReturnType<typeof getShoppingListGroupedByCategory>>
   >([]);
   const [addToCategory, setAddToCategory] = useState<string | null>(null);
-  const [editItem, setEditItem] = useState<number | null>(null);
+  const [editItem, setEditItem] = useState<listItem | null>(null);
+  const editFormRef = useRef<HTMLFormElement>(null);
 
   const deleteTimers = useRef<Record<number, NodeJS.Timeout | undefined>>({});
 
@@ -158,7 +161,19 @@ export const ShoppingList = () => {
     }
   };
 
-  const handleEditSubmit = () => {};
+  const handleEditSubmit = async () => {
+    const formData = new FormData(editFormRef.current)
+    setEditItem(null);
+    const fields = {
+      id: Number(formData.get("id")),
+      name: formData.get("name"),
+      notes: formData.get("notes"),
+      url: formData.get("url"),
+      urgent: formData.get("urgent") === "on",
+    }
+    await editListItem(fields)
+    await refreshData();
+  };
 
   return (
     <div className="mx-auto max-w-xl p-6 flex flex-col text-center space-y-1">
@@ -203,7 +218,15 @@ export const ShoppingList = () => {
                   sources={listItem.shoppingListItemSources}
                   handleItemChecked={handleItemChecked}
                   handleItemDeleted={handleItemDeleted}
-                  setItemEdit={setEditItem}
+                  setItemEdit={() =>
+                    setEditItem({
+                      id: listItem.id,
+                      name: listItem.item.name,
+                      notes: listItem.notes ?? undefined,
+                      url: listItem.url ?? undefined,
+                      urgent: listItem.urgent,
+                    })
+                  }
                 />
               </li>
             ))}
@@ -241,7 +264,7 @@ export const ShoppingList = () => {
         showTick
         handleTick={handleEditSubmit}
       >
-        <ItemEditPopup />
+        <ItemEditPopup initialData={editItem} formRef={editFormRef} />
       </Modal>
     </div>
   );

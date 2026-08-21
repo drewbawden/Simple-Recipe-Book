@@ -7,6 +7,7 @@ import { ItemType } from "../app/generated/prisma/enums";
 import { normaliseItemName } from "@/lib/items";
 import { computeCategory } from "@/lib/category";
 import { dynamicListSort } from "@/lib/shopping-list";
+import { listItem } from "@/types/list-item";
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
@@ -383,3 +384,28 @@ const categoriseItem = async (
     },
   });
 };
+
+export const editListItem = async (data: listItem) => {
+  console.log(data)
+  try {
+    await prisma.shoppingListItem.update({
+      where: {
+        id: data.id,
+      },
+      data: {
+        notes: data.notes,
+        url: data.url,
+        urgent: data.urgent,
+
+        item: {
+          update: {
+            name: data.name
+          }
+        }
+      }
+    });
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to update list item");
+  }
+}

@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useState } from "react";
-import { ChevronDown, SettingsIcon } from "lucide-react";
+import { ChevronDown, LinkIcon, SettingsIcon } from "lucide-react";
 import { getShoppingList } from "@/actions/shopping-lists";
 import {
   ContextMenu,
@@ -39,7 +39,7 @@ export const ListItemCard = ({
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="mb-2 rounded-xl border bg-card text-card-foreground shadow-sm transition-all hover:border-accent hover:shadow-md">
+    <div className={`mb-2 rounded-xl border bg-card text-card-foreground shadow-sm  transition-all hover:border-accent hover:shadow-md ${listItem.urgent && "bg-red-400"}`}>
       <label className="flex items-center justify-between px-2 py-2">
         <div className="mx-1 flex items-center gap-3">
           <input
@@ -50,16 +50,18 @@ export const ListItemCard = ({
             className="h-5 w-5 rounded border-muted-foreground/30 text-primary focus:ring-primary cursor-pointer accent-primary"
           />
 
-          <label
-            htmlFor={`item-${listItem.id}`}
-            className={`font-medium cursor-pointer select-none ${
-              listItem.completed
+          <div className="text-left">
+            <label
+              htmlFor={`item-${listItem.id}`}
+              className={`font-medium cursor-pointer select-none ${listItem.completed
                 ? "line-through text-muted-foreground opacity-70"
                 : "text-foreground"
-            }`}
-          >
-            {listItem.item.name}
-          </label>
+                }`}
+            >
+              {listItem.item.name}
+            </label>
+            <p className="text-sm text-gray-400">{listItem.notes}</p>
+          </div>
         </div>
 
         <div className="flex flex-row space-x-2">
@@ -78,12 +80,16 @@ export const ListItemCard = ({
                 aria-label="Toggle ingredients"
               >
                 <ChevronDown
-                  className={`h-5 w-5 transition-transform duration-200 ${
-                    isOpen ? "rotate-180" : ""
-                  }`}
+                  className={`h-5 w-5 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
+                    }`}
                 />
               </button>
             </label>
+          )}
+          {listItem.url && (
+            <a href={listItem.url} target="_blank">
+              <div className="bg-blue-400 p-1 rounded h-min"><LinkIcon /></div>
+            </a>
           )}
           <ContextMenu>
             <ContextMenuTrigger>
@@ -113,26 +119,28 @@ export const ListItemCard = ({
         </div>
       </label>
 
-      {isOpen && sources && sources.length > 0 && (
-        <div className="border-t bg-muted/40 px-4 py-3">
-          <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            Needed for
-          </p>
-          <ul className="space-y-1.5 pl-2 text-sm text-muted-foreground">
-            {sources.map((source) => (
-              <li key={source.id} className="flex items-center justify-between">
-                <span className="max-w-md">
-                  {source.recipeIngredient.recipe.name || "Recipe Source"}
-                </span>
-                <span className="font-mono text-xs">
-                  {source.recipeIngredient.quantity}{" "}
-                  {source.recipeIngredient.unit}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
+      {
+        isOpen && sources && sources.length > 0 && (
+          <div className="border-t bg-muted/40 px-4 py-3">
+            <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              Needed for
+            </p>
+            <ul className="space-y-1.5 pl-2 text-sm text-muted-foreground">
+              {sources.map((source) => (
+                <li key={source.id} className="flex items-center justify-between">
+                  <span className="max-w-md">
+                    {source.recipeIngredient.recipe.name || "Recipe Source"}
+                  </span>
+                  <span className="font-mono text-xs">
+                    {source.recipeIngredient.quantity}{" "}
+                    {source.recipeIngredient.unit}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+    </div >
   );
 };
