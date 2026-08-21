@@ -128,10 +128,14 @@ export const computeCategory = async (productName: string) => {
   }
 
   // Fallback to zsl model if previous checks returned no hits
-  const zslScores = await zslCategorise(productName);
-  const topZslScore = zslScores[0];
-  if (topZslScore.confidence > 0.35 && topZslScore.category) {
-    return String(topZslScore.category).toLowerCase();
+  try {
+    const zslScores = await zslCategorise(productName);
+    const topZslScore = zslScores[0];
+    if (topZslScore.confidence > 0.35 && topZslScore.category) {
+      return String(topZslScore.category).toLowerCase();
+    }
+  } catch (error) {
+    console.error("Failed to categorise with ZSL model");
   }
 
   return "other";

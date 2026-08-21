@@ -3,6 +3,7 @@ import {
   setItemCompleted,
   deleteItem,
   getShoppingListGroupedByCategory,
+  clearShoppingList,
 } from "@/actions/shopping-lists";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
@@ -166,6 +167,16 @@ export const ShoppingList = () => {
         Recipes
       </Link>
       <h1 className="mb-6 text-4xl font-bold">{shoppingList.name}</h1>
+      <hr className="h-0.5 bg-black pb-2" />
+      <button
+        className="bg-red-400 w-fit p-2"
+        onClick={async () => {
+          await clearShoppingList();
+          refreshData();
+        }}
+      >
+        Clear List
+      </button>
       <hr className="h-0.5 bg-black pb-2" />
       <ShoppingListItemInput refreshData={refreshData} />
       <div className="space-y-2">

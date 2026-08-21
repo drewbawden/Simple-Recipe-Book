@@ -336,3 +336,16 @@ export const fuzzyFindKeywords = async (keyword: string) => {
     throw new Error("Failed to fuzzy find keywords");
   }
 };
+
+export const clearShoppingList = async (listId = 1) => {
+  try {
+    await prisma.shoppingListItem.deleteMany({
+      where: {
+        shoppingListId: listId,
+      },
+    });
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to clear shopping list");
+  }
+};
