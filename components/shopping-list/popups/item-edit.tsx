@@ -1,6 +1,6 @@
 export const ItemEditPopup = () => {
   return (
-    <div className="text-gray-900">
+    <form className="text-gray-900">
       <div className="border-1 border-gray-200 rounded">
         <input type="text" placeholder="Name" className="block" />
         <input type="text" placeholder="Notes" className="block" />
@@ -15,6 +15,6 @@ export const ItemEditPopup = () => {
       <div>
         <p>flagged (priority) boolean</p>
       </div>
-    </div>
+    </form>
   );
 };

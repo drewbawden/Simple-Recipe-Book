@@ -185,6 +185,10 @@ model ShoppingListItem {
   item   Item @relation(fields: [itemId], references: [id])
   itemId Int
 
+  notes String?
+  url   String?
+
+  urgent    Boolean @default(false)
   completed Boolean @default(false)
 
   shoppingListItemSources ShoppingListItemSource[]
