@@ -5,7 +5,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import "dotenv/config";
 import { ItemType } from "../app/generated/prisma/enums";
 import { normaliseItemName } from "@/lib/items";
-import { categoryEnumToName } from "@/lib/category";
+import { categoryEnumToName, computeCategory } from "@/lib/category";
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
@@ -286,9 +286,14 @@ export const addRecipeToShoppingList = async (formData: FormData) => {
           in: ingredientIds,
         },
       },
+      include: {
+        item: true,
+      },
     });
 
     for (const ingredient of ingredients) {
+      await categoriseItem(ingredient.item.id, ingredient.item.name, tx);
+
       await tx.shoppingListItem.create({
         data: {
           shoppingListId: shoppingList.id,
@@ -348,4 +353,28 @@ export const clearShoppingList = async (listId = 1) => {
     console.error("Database Error:", error);
     throw new Error("Failed to clear shopping list");
   }
+};
+
+const categoriseItem = async (
+  itemId: number,
+  itemName: string,
+  tx = prisma,
+) => {
+  const categorySlug = await computeCategory(itemName);
+
+  const category = await tx.itemCategory.upsert({
+    where: { slug: categorySlug },
+    update: {},
+    create: {
+      slug: categorySlug,
+      displayName: categoryEnumToName(categorySlug as any) ?? categorySlug,
+    },
+  });
+
+  return tx.item.update({
+    where: { id: itemId },
+    data: {
+      categorySlug: category.slug,
+    },
+  });
 };
