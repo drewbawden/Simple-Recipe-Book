@@ -6,6 +6,7 @@ import "dotenv/config";
 import { ItemType } from "../app/generated/prisma/enums";
 import { normaliseItemName } from "@/lib/items";
 import { categoryEnumToName, computeCategory } from "@/lib/category";
+import { dynamicListSort } from "@/lib/shopping-list";
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
@@ -71,7 +72,7 @@ export const getShoppingListGroupedByCategory = async () => {
       }
     }
 
-    return Array.from(categories.values()).map((category) => ({
+    const categoriesArray = Array.from(categories.values()).map((category) => ({
       ...category,
       items: category.items.map((item) => ({
         ...item,
@@ -91,6 +92,10 @@ export const getShoppingListGroupedByCategory = async () => {
         })),
       })),
     }));
+
+    categoriesArray.sort(dynamicListSort("slug"));
+
+    return categoriesArray;
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch grouped shopping list");

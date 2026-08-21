@@ -8,7 +8,7 @@ import {
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { ListItemCard } from "@/components/shopping-list/item-card";
-import { computeQuantity } from "@/lib/list-item";
+import { computeQuantity } from "@/lib/shopping-list";
 import { ShoppingListItemInput } from "@/components/shopping-list/item-input";
 import { XIcon } from "lucide-react";
 import { Modal } from "@/components/templates/modal";
