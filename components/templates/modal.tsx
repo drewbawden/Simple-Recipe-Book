@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
 import Image, { ImageProps } from "next/image";
+import { CheckIcon, XIcon } from "lucide-react";
 
 type ModalSize = "xs" | "sm" | "md" | "lg" | "xl" | "xxl" | "xxxl";
 
@@ -10,6 +11,9 @@ interface ModalProps {
   children: React.ReactNode;
   size?: ModalSize;
   hideCross?: boolean;
+  showTick?: boolean;
+  modalTitle: String;
+  handleTick?: () => void;
 }
 
 export const Modal = ({
@@ -18,6 +22,9 @@ export const Modal = ({
   children,
   size = "lg",
   hideCross,
+  showTick,
+  modalTitle,
+  handleTick,
 }: ModalProps) => {
   useEffect(() => {
     if (!isOpen) return;
@@ -56,23 +63,29 @@ export const Modal = ({
           sm:rounded-lg sm:border-3 sm:border-gray-800
         `}
       >
-        {hideCross ?? (
-          <button
-            type="button"
-            onClick={onClose}
-            className="z-10 absolute top-0 right-0 text-gray-600 hover:text-gray-500 active:text-gray-400 p-2 focus:outline-none"
-          >
-            <svg
-              className="h-8 w-8"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={3}
+        <div className="text-gray-900 shadow-sm p-3 flex flex-row justify-between sticky top-0 bg-white rounded-b z-20">
+          {!hideCross ? (
+            <button
+              className="bg-red-300 rounded-4xl p-1 hover:bg-red-400 active:bg-red-500"
+              onClick={onClose}
             >
-              <path d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        )}
+              <XIcon />
+            </button>
+          ) : (
+            <div className="p-4"></div>
+          )}
+          <h1 className="font-bold text-lg">{modalTitle}</h1>
+          {showTick ? (
+            <button
+              className="bg-green-300 rounded-4xl p-1 hover:bg-green-400 active:bg-green-500"
+              onClick={handleTick}
+            >
+              <CheckIcon />
+            </button>
+          ) : (
+            <div className="p-4"></div>
+          )}
+        </div>
         <div className="m-3 flex-1 overscroll-contain pb-1 sm:pb-0">
           {children}
         </div>

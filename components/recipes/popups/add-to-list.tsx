@@ -70,10 +70,6 @@ export const AddToShoppingListPopup = ({
 
   return (
     <Form action={handleAdd} className="text-gray-900">
-      <h1 className="rounded-xl bg-gray-50 border border-gray-200 p-4 text-2xl p-2 pb-4 text-center">
-        Add to Shopping List
-      </h1>
-      <hr className="h-0.5 bg-black" />
       <div className="flex p-2 justify-between space-x-2 items-center">
         <div className="border border-gray-200 rounded-xl p-2 space-x-2">
           <label htmlFor="selectAllCheck">Select All</label>

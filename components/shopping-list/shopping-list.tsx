@@ -158,6 +158,8 @@ export const ShoppingList = () => {
     }
   };
 
+  const handleEditSubmit = () => {};
+
   return (
     <div className="mx-auto max-w-xl p-6 flex flex-col text-center space-y-1">
       <Link
@@ -235,6 +237,9 @@ export const ShoppingList = () => {
         isOpen={editItem !== null}
         onClose={() => setEditItem(null)}
         size="md"
+        modalTitle="Edit Item"
+        showTick
+        handleTick={handleEditSubmit}
       >
         <ItemEditPopup />
       </Modal>

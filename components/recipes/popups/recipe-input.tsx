@@ -536,6 +536,7 @@ export const RecipeInputPopup = ({
       <Modal
         isOpen={isIngredientsOpen}
         onClose={() => setIsIngredientsOpen(false)}
+        modalTitle="Add Ingredients"
       >
         <AddIngredientsPopup
           ingredientsList={ingredientsList}
@@ -545,6 +546,7 @@ export const RecipeInputPopup = ({
       <Modal
         isOpen={isInstructionsOpen}
         onClose={() => setIsInstructionsOpen(false)}
+        modalTitle="Add Instructions"
       >
         <AddInstructionsPopup
           instructionList={instructionList}
@@ -555,6 +557,7 @@ export const RecipeInputPopup = ({
         isOpen={isExternalIngredientsReviewOpen}
         onClose={handleCancelExternalIngredients}
         hideCross
+        modalTitle="Review Ingredients"
       >
         <IngredientsReviewPopup
           parsedIngredients={parsedExternalIngredients}
