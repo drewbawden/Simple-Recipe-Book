@@ -324,7 +324,12 @@ export const getManualCategory = async (itemName: string) => {
 export const fuzzyFindKeywords = async (keyword: string) => {
   try {
     const matches = await prisma.$queryRaw`
-      SELECT *, similarity(keyword, ${keyword}) as confidence FROM "CategoryKeyword" WHERE keyword % ${keyword} ORDER BY confidence DESC
+      SELECT 
+      *, similarity(lower(keyword), lower(${keyword})) as confidence 
+      FROM "CategoryKeyword" 
+      WHERE lower(keyword) % lower(${keyword})
+      ORDER BY confidence DESC 
+      LIMIT 20
     `;
     return matches;
   } catch (error) {
