@@ -9,10 +9,10 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { ListItemCard } from "@/components/shopping-list/item-card";
 import { computeQuantity } from "@/lib/list-item";
-import { ShoppingListItemInput } from "./item-input";
+import { ShoppingListItemInput } from "@/components/shopping-list/item-input";
 import { XIcon } from "lucide-react";
-import { Modal } from "../templates/modal";
-import { ItemEditPopup } from "./item-edit";
+import { Modal } from "@/components/templates/modal";
+import { ItemEditPopup } from "@/components/shopping-list/popups/item-edit";
 
 export const ShoppingList = () => {
   const [loading, setLoading] = useState(true);
@@ -201,6 +201,7 @@ export const ShoppingList = () => {
                   sources={listItem.shoppingListItemSources}
                   handleItemChecked={handleItemChecked}
                   handleItemDeleted={handleItemDeleted}
+                  setItemEdit={setEditItem}
                 />
               </li>
             ))}

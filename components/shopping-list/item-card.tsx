@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ChevronDown, SettingsIcon, Trash2Icon } from "lucide-react";
+import { Dispatch, SetStateAction, useState } from "react";
+import { ChevronDown, SettingsIcon } from "lucide-react";
 import { getShoppingList } from "@/actions/shopping-lists";
 import {
   ContextMenu,
@@ -24,6 +24,7 @@ interface ListItemCardProps {
     e: React.ChangeEvent<HTMLInputElement>,
   ) => Promise<void>;
   handleItemDeleted: (id: number) => void;
+  setItemEdit: Dispatch<SetStateAction<number | null>>;
 }
 
 export const ListItemCard = ({
@@ -33,6 +34,7 @@ export const ListItemCard = ({
   sources,
   handleItemChecked,
   handleItemDeleted,
+  setItemEdit,
 }: ListItemCardProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -88,11 +90,24 @@ export const ListItemCard = ({
               <SettingsIcon />
             </ContextMenuTrigger>
             <ContextMenuContent align="right" className="text-gray-900">
-              <ContextMenuItem onSelect={() => {}}>Edit</ContextMenuItem>
+              <ContextMenuItem
+                onSelect={() => {
+                  setItemEdit(listItem.id);
+                }}
+              >
+                Edit
+              </ContextMenuItem>
               <hr />
               <ContextMenuItem>Change Category</ContextMenuItem>
               <hr />
-              <ContextMenuItem className="text-red-500">Delete</ContextMenuItem>
+              <ContextMenuItem
+                className="text-red-500"
+                onClick={() => {
+                  handleItemDeleted(listItem.id);
+                }}
+              >
+                Delete
+              </ContextMenuItem>
             </ContextMenuContent>
           </ContextMenu>
         </div>
