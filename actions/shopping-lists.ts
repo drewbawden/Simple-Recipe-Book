@@ -320,3 +320,15 @@ export const getManualCategory = async (itemName: string) => {
 
   return manualCategory;
 };
+
+export const fuzzyFindKeywords = async (keyword: string) => {
+  try {
+    const matches = await prisma.$queryRaw`
+      SELECT *, similarity(keyword, ${keyword}) as confidence FROM "CategoryKeyword" WHERE keyword % ${keyword} ORDER BY confidence DESC
+    `;
+    return matches;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fuzzy find keywords");
+  }
+};

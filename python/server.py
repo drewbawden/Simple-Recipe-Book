@@ -72,13 +72,8 @@ def classify_product(product_name: str):
             }
         )
 
-    best = results[0]
-
-    return {
-        "category": best["category"],
-        "confidence": best["confidence"],
-        "results": results,
-    }
+    return results;
+    
 
 
 @app.post("/classify")
