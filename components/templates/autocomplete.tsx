@@ -52,15 +52,15 @@ export default function AutocompleteInput({
   const [isOpen, setIsOpen] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
-  const selectedRef = useRef(false);
+  const selectedValueRef = useRef<string | null>(null);
 
   useEffect(() => {
     setQuery(value);
   }, [value]);
 
   useEffect(() => {
-    if (selectedRef.current) {
-      selectedRef.current = false;
+    if (selectedValueRef.current) {
+      selectedValueRef.current = null;
       return;
     }
 
@@ -89,7 +89,7 @@ export default function AutocompleteInput({
   };
 
   const handleSelect = (item: Suggestion) => {
-    selectedRef.current = true;
+    selectedValueRef.current = item.name;
 
     setQuery(item.name);
     setIsOpen(false);
@@ -117,6 +117,13 @@ export default function AutocompleteInput({
 
   const handleBlur = () => {
     setIsOpen(false);
+
+    if (selectedValueRef.current) {
+      onBlur?.(selectedValueRef.current);
+      selectedValueRef.current = null;
+      return;
+    }
+
     onBlur?.(query.trim());
   };
 

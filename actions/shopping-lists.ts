@@ -55,9 +55,8 @@ export const getShoppingListGroupedByCategory = async () => {
     for (const item of shoppingList.items) {
       const category = item.item.category;
 
-      if (!category) continue;
-
-      const slug = category.slug;
+      const slug = category?.slug ?? "other";
+      const displayName = category?.displayName ?? "Other";
 
       const existing = categories.get(slug);
 
@@ -66,7 +65,7 @@ export const getShoppingListGroupedByCategory = async () => {
       } else {
         categories.set(slug, {
           slug,
-          displayName: category.displayName ?? slug,
+          displayName,
           items: [item],
         });
       }
@@ -222,13 +221,30 @@ export const setItemCompleted = async (
   listItemId: number,
   completed: boolean,
 ) => {
-  await prisma.shoppingListItem.updateMany({
-    where: {
-      id: listItemId,
-    },
-    data: {
-      completed,
-    },
+  if (!completed) {
+    await prisma.shoppingListItem.updateMany({
+      where: {
+        id: listItemId,
+      },
+      data: {
+        completed,
+      },
+    });
+    return;
+  }
+
+  await prisma.$transaction(async (tx) => {
+    await tx.shoppingListItemSource.deleteMany({
+      where: {
+        shoppingListItemId: listItemId,
+      },
+    });
+
+    await tx.shoppingListItem.deleteMany({
+      where: {
+        id: listItemId,
+      },
+    });
   });
 };
 
@@ -240,7 +256,7 @@ export const deleteItem = async (listItemId: number) => {
       },
     });
 
-    await tx.shoppingListItem.delete({
+    await tx.shoppingListItem.deleteMany({
       where: {
         id: listItemId,
       },
@@ -273,34 +289,17 @@ export const addRecipeToShoppingList = async (formData: FormData) => {
     });
 
     for (const ingredient of ingredients) {
-      const existingItem = await tx.shoppingListItem.findFirst({
-        where: {
+      await tx.shoppingListItem.create({
+        data: {
           shoppingListId: shoppingList.id,
           itemId: ingredient.itemId,
-        },
-      });
-
-      if (existingItem) {
-        await tx.shoppingListItemSource.create({
-          data: {
-            shoppingListItemId: existingItem.id,
-            recipeIngredientId: ingredient.id,
-          },
-        });
-      } else {
-        await tx.shoppingListItem.create({
-          data: {
-            shoppingListId: shoppingList.id,
-            itemId: ingredient.itemId,
-
-            shoppingListItemSources: {
-              create: {
-                recipeIngredientId: ingredient.id,
-              },
+          shoppingListItemSources: {
+            create: {
+              recipeIngredientId: ingredient.id,
             },
           },
-        });
-      }
+        },
+      });
     }
 
     return shoppingList;
