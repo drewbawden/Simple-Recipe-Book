@@ -7,7 +7,6 @@ import {
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { ListItemCard } from "@/components/shopping-list/item-card";
-import { categoryEnumToName } from "@/lib/category";
 import { computeQuantity } from "@/lib/list-item";
 import { ShoppingListItemInput } from "./item-input";
 import { XIcon } from "lucide-react";
@@ -21,7 +20,7 @@ export const ShoppingList = () => {
   const [groupedList, setGroupedList] = useState<
     Awaited<ReturnType<typeof getShoppingListGroupedByCategory>>
   >([]);
-  const [addToCategory, setAddToCategory] = useState<number | null>(null);
+  const [addToCategory, setAddToCategory] = useState<string | null>(null);
   const [editItem, setEditItem] = useState<number | null>(null);
 
   const deleteTimers = useRef<Record<number, NodeJS.Timeout | undefined>>({});
@@ -171,10 +170,10 @@ export const ShoppingList = () => {
       <ShoppingListItemInput refreshData={refreshData} />
       <div className="space-y-2">
         {groupedList.map((category) => (
-          <ul key={category.name} className="bg-gray-800 p-2 rounded space-y-2">
+          <ul key={category.slug} className="bg-gray-800 p-2 rounded space-y-2">
             <div className="flex">
               <h1 className="text-2xl text-left font-bold bg-black p-1 rounded">
-                {categoryEnumToName(category.name)}
+                {category.displayName ?? category.slug}
               </h1>
             </div>
             {category.items.map((listItem) => (
@@ -194,12 +193,12 @@ export const ShoppingList = () => {
                 />
               </li>
             ))}
-            {addToCategory == category.id ? (
+            {addToCategory == category.slug ? (
               <div className="flex flex-row justify-center space-x-1">
                 <ShoppingListItemInput
                   refreshData={refreshData}
                   onEnter={() => setAddToCategory(null)}
-                  categoryName={category.name}
+                  categoryName={category.slug}
                   autoFocus={true}
                 />
                 <button
@@ -212,7 +211,7 @@ export const ShoppingList = () => {
             ) : (
               <button
                 className="bg-gray-400 text-2xl rounded px-10 py-1"
-                onClick={() => setAddToCategory(category.id)}
+                onClick={() => setAddToCategory(category.slug)}
               >
                 +
               </button>

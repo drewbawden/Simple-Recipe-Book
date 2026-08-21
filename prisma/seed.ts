@@ -20,48 +20,41 @@ async function main() {
 
   const categoryRows = await prisma.itemCategory.findMany({
     select: {
-      id: true,
-      name: true,
+      slug: true,
+      displayName: true,
     },
   });
 
-  const categoryIdByName = new Map(
-    categoryRows.map((category) => [category.name, category.id]),
-  );
-
   console.log(`Found ${categoryRows.length} categories.`);
 
-  const keywordData = categoryKeywords.map((kw) => {
-    const { keyword, weight } = kw as any;
+  const keywordData = categoryKeywords.map(
+    ({ keyword, weight, categorySlug }) => {
+      if (!categorySlug) {
+        throw new Error(
+          `Category "${categorySlug}" not found while seeding keyword "${keyword}"`,
+        );
+      }
 
-    if (kw.hasOwnProperty("categoryId") && kw.categoryId != null) {
       return {
         keyword,
         weight,
-        categoryId: kw.categoryId,
+        categorySlug,
       };
-    }
+    },
+  );
 
-    const categoryName = (kw as any).category;
-    const categoryId = categoryIdByName.get(categoryName);
+  const dedupedKeywordData = Array.from(
+    new Map(
+      keywordData.map((k) => [`${k.keyword}::${k.categorySlug}`, k]),
+    ).values(),
+  );
 
-    if (!categoryId) {
-      throw new Error(
-        `Category "${categoryName}" not found while seeding keyword "${keyword}"`,
-      );
-    }
-
-    return {
-      keyword,
-      weight,
-      categoryId,
-    };
-  });
-
-  console.log(`Seeding ${keywordData.length} category keywords...`);
+  console.log(
+    `Seeding ${dedupedKeywordData.length} unique category keywords...`,
+  );
 
   await prisma.categoryKeyword.createMany({
-    data: keywordData,
+    data: dedupedKeywordData,
     skipDuplicates: true,
   });
 

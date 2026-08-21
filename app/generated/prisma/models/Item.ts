@@ -28,19 +28,17 @@ export type AggregateItem = {
 
 export type ItemAvgAggregateOutputType = {
   id: number | null
-  categoryId: number | null
 }
 
 export type ItemSumAggregateOutputType = {
   id: number | null
-  categoryId: number | null
 }
 
 export type ItemMinAggregateOutputType = {
   id: number | null
   name: string | null
   type: $Enums.ItemType | null
-  categoryId: number | null
+  categorySlug: string | null
   manuallyCategorised: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -50,7 +48,7 @@ export type ItemMaxAggregateOutputType = {
   id: number | null
   name: string | null
   type: $Enums.ItemType | null
-  categoryId: number | null
+  categorySlug: string | null
   manuallyCategorised: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -60,7 +58,7 @@ export type ItemCountAggregateOutputType = {
   id: number
   name: number
   type: number
-  categoryId: number
+  categorySlug: number
   manuallyCategorised: number
   createdAt: number
   updatedAt: number
@@ -70,19 +68,17 @@ export type ItemCountAggregateOutputType = {
 
 export type ItemAvgAggregateInputType = {
   id?: true
-  categoryId?: true
 }
 
 export type ItemSumAggregateInputType = {
   id?: true
-  categoryId?: true
 }
 
 export type ItemMinAggregateInputType = {
   id?: true
   name?: true
   type?: true
-  categoryId?: true
+  categorySlug?: true
   manuallyCategorised?: true
   createdAt?: true
   updatedAt?: true
@@ -92,7 +88,7 @@ export type ItemMaxAggregateInputType = {
   id?: true
   name?: true
   type?: true
-  categoryId?: true
+  categorySlug?: true
   manuallyCategorised?: true
   createdAt?: true
   updatedAt?: true
@@ -102,7 +98,7 @@ export type ItemCountAggregateInputType = {
   id?: true
   name?: true
   type?: true
-  categoryId?: true
+  categorySlug?: true
   manuallyCategorised?: true
   createdAt?: true
   updatedAt?: true
@@ -199,7 +195,7 @@ export type ItemGroupByOutputType = {
   id: number
   name: string
   type: $Enums.ItemType
-  categoryId: number | null
+  categorySlug: string | null
   manuallyCategorised: boolean
   createdAt: Date
   updatedAt: Date
@@ -232,7 +228,7 @@ export type ItemWhereInput = {
   id?: Prisma.IntFilter<"Item"> | number
   name?: Prisma.StringFilter<"Item"> | string
   type?: Prisma.EnumItemTypeFilter<"Item"> | $Enums.ItemType
-  categoryId?: Prisma.IntNullableFilter<"Item"> | number | null
+  categorySlug?: Prisma.StringNullableFilter<"Item"> | string | null
   manuallyCategorised?: Prisma.BoolFilter<"Item"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Item"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Item"> | Date | string
@@ -247,7 +243,7 @@ export type ItemOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   type?: Prisma.SortOrder
-  categoryId?: Prisma.SortOrderInput | Prisma.SortOrder
+  categorySlug?: Prisma.SortOrderInput | Prisma.SortOrder
   manuallyCategorised?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -265,7 +261,7 @@ export type ItemWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.ItemWhereInput[]
   NOT?: Prisma.ItemWhereInput | Prisma.ItemWhereInput[]
   type?: Prisma.EnumItemTypeFilter<"Item"> | $Enums.ItemType
-  categoryId?: Prisma.IntNullableFilter<"Item"> | number | null
+  categorySlug?: Prisma.StringNullableFilter<"Item"> | string | null
   manuallyCategorised?: Prisma.BoolFilter<"Item"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Item"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Item"> | Date | string
@@ -280,7 +276,7 @@ export type ItemOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   type?: Prisma.SortOrder
-  categoryId?: Prisma.SortOrderInput | Prisma.SortOrder
+  categorySlug?: Prisma.SortOrderInput | Prisma.SortOrder
   manuallyCategorised?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -298,7 +294,7 @@ export type ItemScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"Item"> | number
   name?: Prisma.StringWithAggregatesFilter<"Item"> | string
   type?: Prisma.EnumItemTypeWithAggregatesFilter<"Item"> | $Enums.ItemType
-  categoryId?: Prisma.IntNullableWithAggregatesFilter<"Item"> | number | null
+  categorySlug?: Prisma.StringNullableWithAggregatesFilter<"Item"> | string | null
   manuallyCategorised?: Prisma.BoolWithAggregatesFilter<"Item"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Item"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Item"> | Date | string
@@ -321,7 +317,7 @@ export type ItemUncheckedCreateInput = {
   id?: number
   name: string
   type: $Enums.ItemType
-  categoryId?: number | null
+  categorySlug?: string | null
   manuallyCategorised?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -348,7 +344,7 @@ export type ItemUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumItemTypeFieldUpdateOperationsInput | $Enums.ItemType
-  categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  categorySlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   manuallyCategorised?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -362,7 +358,7 @@ export type ItemCreateManyInput = {
   id?: number
   name: string
   type: $Enums.ItemType
-  categoryId?: number | null
+  categorySlug?: string | null
   manuallyCategorised?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -380,7 +376,7 @@ export type ItemUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumItemTypeFieldUpdateOperationsInput | $Enums.ItemType
-  categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  categorySlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   manuallyCategorised?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -395,7 +391,7 @@ export type ItemCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   type?: Prisma.SortOrder
-  categoryId?: Prisma.SortOrder
+  categorySlug?: Prisma.SortOrder
   manuallyCategorised?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -403,14 +399,13 @@ export type ItemCountOrderByAggregateInput = {
 
 export type ItemAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  categoryId?: Prisma.SortOrder
 }
 
 export type ItemMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   type?: Prisma.SortOrder
-  categoryId?: Prisma.SortOrder
+  categorySlug?: Prisma.SortOrder
   manuallyCategorised?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -420,7 +415,7 @@ export type ItemMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   type?: Prisma.SortOrder
-  categoryId?: Prisma.SortOrder
+  categorySlug?: Prisma.SortOrder
   manuallyCategorised?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -428,7 +423,6 @@ export type ItemMinOrderByAggregateInput = {
 
 export type ItemSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  categoryId?: Prisma.SortOrder
 }
 
 export type ItemListRelationFilter = {
@@ -570,7 +564,7 @@ export type ItemUncheckedCreateWithoutProductsInput = {
   id?: number
   name: string
   type: $Enums.ItemType
-  categoryId?: number | null
+  categorySlug?: string | null
   manuallyCategorised?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -611,7 +605,7 @@ export type ItemUncheckedUpdateWithoutProductsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumItemTypeFieldUpdateOperationsInput | $Enums.ItemType
-  categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  categorySlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   manuallyCategorised?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -678,7 +672,7 @@ export type ItemScalarWhereInput = {
   id?: Prisma.IntFilter<"Item"> | number
   name?: Prisma.StringFilter<"Item"> | string
   type?: Prisma.EnumItemTypeFilter<"Item"> | $Enums.ItemType
-  categoryId?: Prisma.IntNullableFilter<"Item"> | number | null
+  categorySlug?: Prisma.StringNullableFilter<"Item"> | string | null
   manuallyCategorised?: Prisma.BoolFilter<"Item"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Item"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Item"> | Date | string
@@ -700,7 +694,7 @@ export type ItemUncheckedCreateWithoutItemUsagesInput = {
   id?: number
   name: string
   type: $Enums.ItemType
-  categoryId?: number | null
+  categorySlug?: string | null
   manuallyCategorised?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -741,7 +735,7 @@ export type ItemUncheckedUpdateWithoutItemUsagesInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumItemTypeFieldUpdateOperationsInput | $Enums.ItemType
-  categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  categorySlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   manuallyCategorised?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -766,7 +760,7 @@ export type ItemUncheckedCreateWithoutIngredientsInput = {
   id?: number
   name: string
   type: $Enums.ItemType
-  categoryId?: number | null
+  categorySlug?: string | null
   manuallyCategorised?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -807,7 +801,7 @@ export type ItemUncheckedUpdateWithoutIngredientsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumItemTypeFieldUpdateOperationsInput | $Enums.ItemType
-  categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  categorySlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   manuallyCategorised?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -832,7 +826,7 @@ export type ItemUncheckedCreateWithoutShoppingListItemsInput = {
   id?: number
   name: string
   type: $Enums.ItemType
-  categoryId?: number | null
+  categorySlug?: string | null
   manuallyCategorised?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -873,7 +867,7 @@ export type ItemUncheckedUpdateWithoutShoppingListItemsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumItemTypeFieldUpdateOperationsInput | $Enums.ItemType
-  categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  categorySlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   manuallyCategorised?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -987,7 +981,7 @@ export type ItemSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   id?: boolean
   name?: boolean
   type?: boolean
-  categoryId?: boolean
+  categorySlug?: boolean
   manuallyCategorised?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1003,7 +997,7 @@ export type ItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   name?: boolean
   type?: boolean
-  categoryId?: boolean
+  categorySlug?: boolean
   manuallyCategorised?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1014,7 +1008,7 @@ export type ItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   name?: boolean
   type?: boolean
-  categoryId?: boolean
+  categorySlug?: boolean
   manuallyCategorised?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1025,13 +1019,13 @@ export type ItemSelectScalar = {
   id?: boolean
   name?: boolean
   type?: boolean
-  categoryId?: boolean
+  categorySlug?: boolean
   manuallyCategorised?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "type" | "categoryId" | "manuallyCategorised" | "createdAt" | "updatedAt", ExtArgs["result"]["item"]>
+export type ItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "type" | "categorySlug" | "manuallyCategorised" | "createdAt" | "updatedAt", ExtArgs["result"]["item"]>
 export type ItemInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   category?: boolean | Prisma.Item$categoryArgs<ExtArgs>
   products?: boolean | Prisma.Item$productsArgs<ExtArgs>
@@ -1060,7 +1054,7 @@ export type $ItemPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     id: number
     name: string
     type: $Enums.ItemType
-    categoryId: number | null
+    categorySlug: string | null
     manuallyCategorised: boolean
     createdAt: Date
     updatedAt: Date
@@ -1495,7 +1489,7 @@ export interface ItemFieldRefs {
   readonly id: Prisma.FieldRef<"Item", 'Int'>
   readonly name: Prisma.FieldRef<"Item", 'String'>
   readonly type: Prisma.FieldRef<"Item", 'ItemType'>
-  readonly categoryId: Prisma.FieldRef<"Item", 'Int'>
+  readonly categorySlug: Prisma.FieldRef<"Item", 'String'>
   readonly manuallyCategorised: Prisma.FieldRef<"Item", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Item", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Item", 'DateTime'>

@@ -5,6 +5,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import "dotenv/config";
 import { ItemType } from "../app/generated/prisma/enums";
 import { normaliseItemName } from "@/lib/items";
+import { categoryEnumToName } from "@/lib/category";
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
@@ -43,10 +44,10 @@ export const getShoppingListGroupedByCategory = async () => {
     if (!shoppingList) return [];
 
     const categories = new Map<
-      number,
+      string,
       {
-        id: number;
-        name: string;
+        slug: string;
+        displayName: string | null;
         items: typeof shoppingList.items;
       }
     >();
@@ -56,14 +57,16 @@ export const getShoppingListGroupedByCategory = async () => {
 
       if (!category) continue;
 
-      const existing = categories.get(category.id);
+      const slug = category.slug;
+
+      const existing = categories.get(slug);
 
       if (existing) {
         existing.items.push(item);
       } else {
-        categories.set(category.id, {
-          id: category.id,
-          name: category.name,
+        categories.set(slug, {
+          slug,
+          displayName: category.displayName ?? slug,
           items: [item],
         });
       }
@@ -73,22 +76,20 @@ export const getShoppingListGroupedByCategory = async () => {
       ...category,
       items: category.items.map((item) => ({
         ...item,
-        shoppingListItemSources: item.shoppingListItemSources.map(
-          (source) => ({
-            ...source,
-            recipeIngredient: {
-              ...source.recipeIngredient,
-              normalQuantity:
-                source.recipeIngredient.normalQuantity == null
-                  ? null
-                  : Number(source.recipeIngredient.normalQuantity),
-              standardQuantity:
-                source.recipeIngredient.standardQuantity == null
-                  ? null
-                  : Number(source.recipeIngredient.standardQuantity),
-            },
-          }),
-        ),
+        shoppingListItemSources: item.shoppingListItemSources.map((source) => ({
+          ...source,
+          recipeIngredient: {
+            ...source.recipeIngredient,
+            normalQuantity:
+              source.recipeIngredient.normalQuantity == null
+                ? null
+                : Number(source.recipeIngredient.normalQuantity),
+            standardQuantity:
+              source.recipeIngredient.standardQuantity == null
+                ? null
+                : Number(source.recipeIngredient.standardQuantity),
+          },
+        })),
       })),
     }));
   } catch (error) {
@@ -165,7 +166,7 @@ export const getCategories = async () => {
 
 export const addItemToList = async (
   itemName: string,
-  categoryName: string,
+  categorySlug: string,
   manuallyAdded?: boolean,
   shoppingListId = 1,
   itemType = ItemType.FOOD,
@@ -173,12 +174,11 @@ export const addItemToList = async (
   itemName = normaliseItemName(itemName);
 
   const category = await prisma.itemCategory.upsert({
-    where: {
-      name: categoryName,
-    },
+    where: { slug: categorySlug },
     update: {},
     create: {
-      name: categoryName,
+      slug: categorySlug,
+      displayName: categoryEnumToName(categorySlug as any) ?? categorySlug,
     },
   });
 
@@ -187,7 +187,7 @@ export const addItemToList = async (
       name: itemName,
     },
     update: {
-      categoryId: category.id,
+      categorySlug: category.slug,
       ...(manuallyAdded !== undefined
         ? { manuallyCategorised: manuallyAdded }
         : {}),
@@ -195,7 +195,7 @@ export const addItemToList = async (
     create: {
       name: itemName,
       type: itemType,
-      categoryId: category.id,
+      categorySlug: category.slug,
       ...(manuallyAdded !== undefined
         ? { manuallyCategorised: manuallyAdded }
         : {}),

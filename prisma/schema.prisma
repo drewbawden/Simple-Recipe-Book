@@ -36,8 +36,8 @@ model Item {
   name String   @unique
   type ItemType
 
-  category            ItemCategory? @relation(fields: [categoryId], references: [id])
-  categoryId          Int?
+  category            ItemCategory? @relation(fields: [categorySlug], references: [slug])
+  categorySlug        String?
   manuallyCategorised Boolean       @default(false)
 
   products          StoreProduct[]
@@ -50,23 +50,22 @@ model Item {
 }
 
 model ItemCategory {
-  id          Int               @id @default(autoincrement())
-  name        String            @unique
+  slug        String            @id @unique
   displayName String?
-  items       Item[]
   userCreated Boolean           @default(false)
+  items       Item[]
   keywords    CategoryKeyword[]
 }
 
 model CategoryKeyword {
-  id         Int           @id @default(autoincrement())
-  keyword    String
-  weight     Int           @default(1) // -2-2
-  category   ItemCategory? @relation(fields: [categoryId], references: [id])
-  categoryId Int?
+  id           Int          @id @default(autoincrement())
+  keyword      String
+  weight       Int          @default(1) // -3-3
+  category     ItemCategory @relation(fields: [categorySlug], references: [slug])
+  categorySlug String
 
-  @@unique([keyword, categoryId])
-  @@index([categoryId])
+  @@unique([keyword, categorySlug])
+  @@index([categorySlug])
 }
 
 // for autosuggest weighting

@@ -29,34 +29,32 @@ export type AggregateCategoryKeyword = {
 export type CategoryKeywordAvgAggregateOutputType = {
   id: number | null
   weight: number | null
-  categoryId: number | null
 }
 
 export type CategoryKeywordSumAggregateOutputType = {
   id: number | null
   weight: number | null
-  categoryId: number | null
 }
 
 export type CategoryKeywordMinAggregateOutputType = {
   id: number | null
   keyword: string | null
   weight: number | null
-  categoryId: number | null
+  categorySlug: string | null
 }
 
 export type CategoryKeywordMaxAggregateOutputType = {
   id: number | null
   keyword: string | null
   weight: number | null
-  categoryId: number | null
+  categorySlug: string | null
 }
 
 export type CategoryKeywordCountAggregateOutputType = {
   id: number
   keyword: number
   weight: number
-  categoryId: number
+  categorySlug: number
   _all: number
 }
 
@@ -64,34 +62,32 @@ export type CategoryKeywordCountAggregateOutputType = {
 export type CategoryKeywordAvgAggregateInputType = {
   id?: true
   weight?: true
-  categoryId?: true
 }
 
 export type CategoryKeywordSumAggregateInputType = {
   id?: true
   weight?: true
-  categoryId?: true
 }
 
 export type CategoryKeywordMinAggregateInputType = {
   id?: true
   keyword?: true
   weight?: true
-  categoryId?: true
+  categorySlug?: true
 }
 
 export type CategoryKeywordMaxAggregateInputType = {
   id?: true
   keyword?: true
   weight?: true
-  categoryId?: true
+  categorySlug?: true
 }
 
 export type CategoryKeywordCountAggregateInputType = {
   id?: true
   keyword?: true
   weight?: true
-  categoryId?: true
+  categorySlug?: true
   _all?: true
 }
 
@@ -185,7 +181,7 @@ export type CategoryKeywordGroupByOutputType = {
   id: number
   keyword: string
   weight: number
-  categoryId: number | null
+  categorySlug: string
   _count: CategoryKeywordCountAggregateOutputType | null
   _avg: CategoryKeywordAvgAggregateOutputType | null
   _sum: CategoryKeywordSumAggregateOutputType | null
@@ -215,35 +211,35 @@ export type CategoryKeywordWhereInput = {
   id?: Prisma.IntFilter<"CategoryKeyword"> | number
   keyword?: Prisma.StringFilter<"CategoryKeyword"> | string
   weight?: Prisma.IntFilter<"CategoryKeyword"> | number
-  categoryId?: Prisma.IntNullableFilter<"CategoryKeyword"> | number | null
-  category?: Prisma.XOR<Prisma.ItemCategoryNullableScalarRelationFilter, Prisma.ItemCategoryWhereInput> | null
+  categorySlug?: Prisma.StringFilter<"CategoryKeyword"> | string
+  category?: Prisma.XOR<Prisma.ItemCategoryScalarRelationFilter, Prisma.ItemCategoryWhereInput>
 }
 
 export type CategoryKeywordOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   keyword?: Prisma.SortOrder
   weight?: Prisma.SortOrder
-  categoryId?: Prisma.SortOrderInput | Prisma.SortOrder
+  categorySlug?: Prisma.SortOrder
   category?: Prisma.ItemCategoryOrderByWithRelationInput
 }
 
 export type CategoryKeywordWhereUniqueInput = Prisma.AtLeast<{
   id?: number
-  keyword_categoryId?: Prisma.CategoryKeywordKeywordCategoryIdCompoundUniqueInput
+  keyword_categorySlug?: Prisma.CategoryKeywordKeywordCategorySlugCompoundUniqueInput
   AND?: Prisma.CategoryKeywordWhereInput | Prisma.CategoryKeywordWhereInput[]
   OR?: Prisma.CategoryKeywordWhereInput[]
   NOT?: Prisma.CategoryKeywordWhereInput | Prisma.CategoryKeywordWhereInput[]
   keyword?: Prisma.StringFilter<"CategoryKeyword"> | string
   weight?: Prisma.IntFilter<"CategoryKeyword"> | number
-  categoryId?: Prisma.IntNullableFilter<"CategoryKeyword"> | number | null
-  category?: Prisma.XOR<Prisma.ItemCategoryNullableScalarRelationFilter, Prisma.ItemCategoryWhereInput> | null
-}, "id" | "keyword_categoryId">
+  categorySlug?: Prisma.StringFilter<"CategoryKeyword"> | string
+  category?: Prisma.XOR<Prisma.ItemCategoryScalarRelationFilter, Prisma.ItemCategoryWhereInput>
+}, "id" | "keyword_categorySlug">
 
 export type CategoryKeywordOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   keyword?: Prisma.SortOrder
   weight?: Prisma.SortOrder
-  categoryId?: Prisma.SortOrderInput | Prisma.SortOrder
+  categorySlug?: Prisma.SortOrder
   _count?: Prisma.CategoryKeywordCountOrderByAggregateInput
   _avg?: Prisma.CategoryKeywordAvgOrderByAggregateInput
   _max?: Prisma.CategoryKeywordMaxOrderByAggregateInput
@@ -258,40 +254,40 @@ export type CategoryKeywordScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"CategoryKeyword"> | number
   keyword?: Prisma.StringWithAggregatesFilter<"CategoryKeyword"> | string
   weight?: Prisma.IntWithAggregatesFilter<"CategoryKeyword"> | number
-  categoryId?: Prisma.IntNullableWithAggregatesFilter<"CategoryKeyword"> | number | null
+  categorySlug?: Prisma.StringWithAggregatesFilter<"CategoryKeyword"> | string
 }
 
 export type CategoryKeywordCreateInput = {
   keyword: string
   weight?: number
-  category?: Prisma.ItemCategoryCreateNestedOneWithoutKeywordsInput
+  category: Prisma.ItemCategoryCreateNestedOneWithoutKeywordsInput
 }
 
 export type CategoryKeywordUncheckedCreateInput = {
   id?: number
   keyword: string
   weight?: number
-  categoryId?: number | null
+  categorySlug: string
 }
 
 export type CategoryKeywordUpdateInput = {
   keyword?: Prisma.StringFieldUpdateOperationsInput | string
   weight?: Prisma.IntFieldUpdateOperationsInput | number
-  category?: Prisma.ItemCategoryUpdateOneWithoutKeywordsNestedInput
+  category?: Prisma.ItemCategoryUpdateOneRequiredWithoutKeywordsNestedInput
 }
 
 export type CategoryKeywordUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   keyword?: Prisma.StringFieldUpdateOperationsInput | string
   weight?: Prisma.IntFieldUpdateOperationsInput | number
-  categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  categorySlug?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type CategoryKeywordCreateManyInput = {
   id?: number
   keyword: string
   weight?: number
-  categoryId?: number | null
+  categorySlug: string
 }
 
 export type CategoryKeywordUpdateManyMutationInput = {
@@ -303,7 +299,7 @@ export type CategoryKeywordUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   keyword?: Prisma.StringFieldUpdateOperationsInput | string
   weight?: Prisma.IntFieldUpdateOperationsInput | number
-  categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  categorySlug?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type CategoryKeywordListRelationFilter = {
@@ -316,42 +312,40 @@ export type CategoryKeywordOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type CategoryKeywordKeywordCategoryIdCompoundUniqueInput = {
+export type CategoryKeywordKeywordCategorySlugCompoundUniqueInput = {
   keyword: string
-  categoryId: number
+  categorySlug: string
 }
 
 export type CategoryKeywordCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   keyword?: Prisma.SortOrder
   weight?: Prisma.SortOrder
-  categoryId?: Prisma.SortOrder
+  categorySlug?: Prisma.SortOrder
 }
 
 export type CategoryKeywordAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   weight?: Prisma.SortOrder
-  categoryId?: Prisma.SortOrder
 }
 
 export type CategoryKeywordMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   keyword?: Prisma.SortOrder
   weight?: Prisma.SortOrder
-  categoryId?: Prisma.SortOrder
+  categorySlug?: Prisma.SortOrder
 }
 
 export type CategoryKeywordMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   keyword?: Prisma.SortOrder
   weight?: Prisma.SortOrder
-  categoryId?: Prisma.SortOrder
+  categorySlug?: Prisma.SortOrder
 }
 
 export type CategoryKeywordSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   weight?: Prisma.SortOrder
-  categoryId?: Prisma.SortOrder
 }
 
 export type CategoryKeywordCreateNestedManyWithoutCategoryInput = {
@@ -440,7 +434,7 @@ export type CategoryKeywordScalarWhereInput = {
   id?: Prisma.IntFilter<"CategoryKeyword"> | number
   keyword?: Prisma.StringFilter<"CategoryKeyword"> | string
   weight?: Prisma.IntFilter<"CategoryKeyword"> | number
-  categoryId?: Prisma.IntNullableFilter<"CategoryKeyword"> | number | null
+  categorySlug?: Prisma.StringFilter<"CategoryKeyword"> | string
 }
 
 export type CategoryKeywordCreateManyCategoryInput = {
@@ -472,54 +466,54 @@ export type CategoryKeywordSelect<ExtArgs extends runtime.Types.Extensions.Inter
   id?: boolean
   keyword?: boolean
   weight?: boolean
-  categoryId?: boolean
-  category?: boolean | Prisma.CategoryKeyword$categoryArgs<ExtArgs>
+  categorySlug?: boolean
+  category?: boolean | Prisma.ItemCategoryDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["categoryKeyword"]>
 
 export type CategoryKeywordSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   keyword?: boolean
   weight?: boolean
-  categoryId?: boolean
-  category?: boolean | Prisma.CategoryKeyword$categoryArgs<ExtArgs>
+  categorySlug?: boolean
+  category?: boolean | Prisma.ItemCategoryDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["categoryKeyword"]>
 
 export type CategoryKeywordSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   keyword?: boolean
   weight?: boolean
-  categoryId?: boolean
-  category?: boolean | Prisma.CategoryKeyword$categoryArgs<ExtArgs>
+  categorySlug?: boolean
+  category?: boolean | Prisma.ItemCategoryDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["categoryKeyword"]>
 
 export type CategoryKeywordSelectScalar = {
   id?: boolean
   keyword?: boolean
   weight?: boolean
-  categoryId?: boolean
+  categorySlug?: boolean
 }
 
-export type CategoryKeywordOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "keyword" | "weight" | "categoryId", ExtArgs["result"]["categoryKeyword"]>
+export type CategoryKeywordOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "keyword" | "weight" | "categorySlug", ExtArgs["result"]["categoryKeyword"]>
 export type CategoryKeywordInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  category?: boolean | Prisma.CategoryKeyword$categoryArgs<ExtArgs>
+  category?: boolean | Prisma.ItemCategoryDefaultArgs<ExtArgs>
 }
 export type CategoryKeywordIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  category?: boolean | Prisma.CategoryKeyword$categoryArgs<ExtArgs>
+  category?: boolean | Prisma.ItemCategoryDefaultArgs<ExtArgs>
 }
 export type CategoryKeywordIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  category?: boolean | Prisma.CategoryKeyword$categoryArgs<ExtArgs>
+  category?: boolean | Prisma.ItemCategoryDefaultArgs<ExtArgs>
 }
 
 export type $CategoryKeywordPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "CategoryKeyword"
   objects: {
-    category: Prisma.$ItemCategoryPayload<ExtArgs> | null
+    category: Prisma.$ItemCategoryPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     keyword: string
     weight: number
-    categoryId: number | null
+    categorySlug: string
   }, ExtArgs["result"]["categoryKeyword"]>
   composites: {}
 }
@@ -914,7 +908,7 @@ readonly fields: CategoryKeywordFieldRefs;
  */
 export interface Prisma__CategoryKeywordClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  category<T extends Prisma.CategoryKeyword$categoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CategoryKeyword$categoryArgs<ExtArgs>>): Prisma.Prisma__ItemCategoryClient<runtime.Types.Result.GetResult<Prisma.$ItemCategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  category<T extends Prisma.ItemCategoryDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ItemCategoryDefaultArgs<ExtArgs>>): Prisma.Prisma__ItemCategoryClient<runtime.Types.Result.GetResult<Prisma.$ItemCategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -947,7 +941,7 @@ export interface CategoryKeywordFieldRefs {
   readonly id: Prisma.FieldRef<"CategoryKeyword", 'Int'>
   readonly keyword: Prisma.FieldRef<"CategoryKeyword", 'String'>
   readonly weight: Prisma.FieldRef<"CategoryKeyword", 'Int'>
-  readonly categoryId: Prisma.FieldRef<"CategoryKeyword", 'Int'>
+  readonly categorySlug: Prisma.FieldRef<"CategoryKeyword", 'String'>
 }
     
 
@@ -1346,25 +1340,6 @@ export type CategoryKeywordDeleteManyArgs<ExtArgs extends runtime.Types.Extensio
    * Limit how many CategoryKeywords to delete.
    */
   limit?: number
-}
-
-/**
- * CategoryKeyword.category
- */
-export type CategoryKeyword$categoryArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the ItemCategory
-   */
-  select?: Prisma.ItemCategorySelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the ItemCategory
-   */
-  omit?: Prisma.ItemCategoryOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ItemCategoryInclude<ExtArgs> | null
-  where?: Prisma.ItemCategoryWhereInput
 }
 
 /**

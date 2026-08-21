@@ -5,8 +5,8 @@ import { useState, useEffect } from "react";
 import { getCategories } from "@/actions/dropdowns";
 
 type dropdownItem = {
-  id: number;
-  name: string;
+  slug: string;
+  displayName: string | null;
 };
 
 export const CategoryDropdown = () => {
@@ -35,8 +35,8 @@ export const CategoryDropdown = () => {
   return (
     <select>
       {categories.map((category) => (
-        <option key={category.id} value={category.id}>
-          {category.name}
+        <option key={category.slug} value={category.slug}>
+          {category.displayName ?? category.slug}
         </option>
       ))}
     </select>

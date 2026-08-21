@@ -1437,7 +1437,7 @@ export const ItemScalarFieldEnum = {
   id: 'id',
   name: 'name',
   type: 'type',
-  categoryId: 'categoryId',
+  categorySlug: 'categorySlug',
   manuallyCategorised: 'manuallyCategorised',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -1447,8 +1447,7 @@ export type ItemScalarFieldEnum = (typeof ItemScalarFieldEnum)[keyof typeof Item
 
 
 export const ItemCategoryScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
+  slug: 'slug',
   displayName: 'displayName',
   userCreated: 'userCreated'
 } as const
@@ -1460,7 +1459,7 @@ export const CategoryKeywordScalarFieldEnum = {
   id: 'id',
   keyword: 'keyword',
   weight: 'weight',
-  categoryId: 'categoryId'
+  categorySlug: 'categorySlug'
 } as const
 
 export type CategoryKeywordScalarFieldEnum = (typeof CategoryKeywordScalarFieldEnum)[keyof typeof CategoryKeywordScalarFieldEnum]
