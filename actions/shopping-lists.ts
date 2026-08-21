@@ -5,7 +5,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import "dotenv/config";
 import { ItemType } from "../app/generated/prisma/enums";
 import { normaliseItemName } from "@/lib/items";
-import { categoryEnumToName, computeCategory } from "@/lib/category";
+import { computeCategory } from "@/lib/category";
 import { dynamicListSort } from "@/lib/shopping-list";
 
 const adapter = new PrismaPg({
@@ -57,7 +57,7 @@ export const getShoppingListGroupedByCategory = async () => {
       const category = item.item.category;
 
       const slug = category?.slug ?? "other";
-      const displayName = category?.displayName ?? "Other";
+      const displayName = category?.displayName ?? category?.slug ?? "Other";
 
       const existing = categories.get(slug);
 
@@ -182,7 +182,7 @@ export const addItemToList = async (
     update: {},
     create: {
       slug: categorySlug,
-      displayName: categoryEnumToName(categorySlug as any) ?? categorySlug,
+      displayName: categorySlug,
     },
   });
 
@@ -372,7 +372,7 @@ const categoriseItem = async (
     update: {},
     create: {
       slug: categorySlug,
-      displayName: categoryEnumToName(categorySlug as any) ?? categorySlug,
+      displayName: categorySlug,
     },
   });
 

@@ -4,55 +4,6 @@ import {
   getManualCategory,
 } from "@/actions/shopping-lists";
 
-export const categoryEnumToName = (catEnum: string | undefined | null) => {
-  switch (catEnum) {
-    case "frozen_foods":
-      return "Frozen Foods";
-    case "dairy_eggs_cheese":
-      return "Dairy, Eggs & Cheese";
-    case "fruit_veg":
-      return "Fruit & Veg";
-    case "household_items":
-      return "Household Items";
-    case "meat":
-      return "Meat";
-    case "coffee_tea":
-      return "Coffee & Tea";
-    case "beverages":
-      return "Beverages";
-    case "breads_cereals":
-      return "Bread & Cereals";
-    case "pasta_rice_beans":
-      return "Pasta, Rice & Beans";
-    case "canned_foods_soups":
-      return "Canned Foods & Soups";
-    case "personal_care_health":
-      return "Personal Care & Health";
-    case "pet_care":
-      return "Pet Care";
-    case "baking_items":
-      return "Baking Items";
-    case "spices_seasonings":
-      return "Spices & Seasonings";
-    case "oils_dressings":
-      return "Oils & Dressings";
-    case "wine_beer_spirits":
-      return "Wine, Beer & Spirits";
-    case "sauces_condiments":
-      return "Sauces & Condiments";
-    case "snacks_sweets":
-      return "Snacks & Sweets";
-    case "deli":
-      return "Deli";
-    case "seafood":
-      return "Seafood";
-    case "stationery":
-      return "Stationery";
-    default:
-      return "Other";
-  }
-};
-
 interface KeywordMatch {
   categorySlug: string;
   weight: number;
