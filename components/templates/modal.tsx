@@ -85,6 +85,17 @@ export const Modal = ({
       return;
     }
 
+    const target = event.target;
+    const isInteractiveElement =
+      target instanceof HTMLElement &&
+      target.closest(
+        "button, input, textarea, select, a, [role='button'], [role='link']",
+      );
+
+    if (isInteractiveElement) {
+      return;
+    }
+
     if (!isChild) {
       const modalEl = modalRef.current;
 
@@ -110,7 +121,7 @@ export const Modal = ({
     const deltaY = event.clientY - dragStart.current.y;
 
     if (isChild) {
-      if (deltaX >= 0 || Math.abs(deltaX) < Math.abs(deltaY)) {
+      if (deltaX <= 0 || Math.abs(deltaX) < Math.abs(deltaY)) {
         return;
       }
 
@@ -133,7 +144,7 @@ export const Modal = ({
     if (!dragStart.current) return;
 
     const delta = dragDelta.current;
-    const shouldClose = isChild ? delta.x < -100 : delta.y > 100;
+    const shouldClose = isChild ? delta.x > 100 : delta.y > 100;
 
     dragStart.current = null;
 

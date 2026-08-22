@@ -193,27 +193,53 @@ export async function updateRecipe(recipeId: number, formData: FormData) {
       },
     });
   });
-  await cleanUpShoppingList();
 }
 
 export async function deleteRecipe(recipeId: number) {
-  await prisma.recipes.delete({
-    where: {
-      id: recipeId,
-    },
-  });
-  await cleanUpShoppingList();
-}
-
-// TODO: this is supposed to remove recipe ingredients when a recipe is deleted... but it deletes the shopping list
-async function cleanUpShoppingList() {
-  await prisma.shoppingListItem.deleteMany({
-    where: {
-      customName: null,
-      shoppingListItemSources: {
-        none: {},
+  await prisma.$transaction(async (tx) => {
+    const items = await tx.shoppingListItem.findMany({
+      where: {
+        shoppingListItemSources: {
+          some: {
+            recipeIngredient: {
+              recipeId,
+            },
+          },
+        },
       },
-    },
+      select: {
+        id: true,
+        shoppingListItemSources: {
+          select: {
+            recipeIngredient: {
+              select: {
+                recipeId: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const itemIdsToDelete = items
+      .filter((item) =>
+        item.shoppingListItemSources.every(
+          (source) => source.recipeIngredient.recipeId === recipeId,
+        ),
+      )
+      .map((item) => item.id);
+
+    await tx.shoppingListItem.deleteMany({
+      where: {
+        id: {
+          in: itemIdsToDelete,
+        },
+      },
+    });
+
+    await tx.recipes.delete({
+      where: { id: recipeId },
+    });
   });
 }
 
