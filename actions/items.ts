@@ -26,3 +26,17 @@ export const getCategories = async () => {
     throw new Error("Failed to fetch item categories");
   }
 };
+
+export const deleteCategory = async (slug: string) => {
+  try {
+    await prisma.itemCategory.delete({
+      where: {
+        slug: slug,
+        userCreated: true,
+      },
+    });
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to delete item category");
+  }
+};

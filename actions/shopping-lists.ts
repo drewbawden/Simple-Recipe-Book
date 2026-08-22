@@ -365,6 +365,7 @@ export const editListItem = async (data: listItem) => {
         create: {
           slug: data.categorySlug,
           displayName: data.categorySlug,
+          userCreated: true,
         },
       });
 

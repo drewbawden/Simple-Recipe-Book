@@ -1,3 +1,4 @@
+import { deleteCategory } from "@/actions/items";
 import { DynamicOptions } from "@/components/templates/options";
 
 interface ChangeCategoryPopupProps {
@@ -13,6 +14,10 @@ export const ChangeCategoryPopup = ({
   const handleOnChange = (newSlug: string) => {
     setSlug(newSlug);
     onClose();
+  };
+
+  const handleDeleteCategory = async (slug: string) => {
+    await deleteCategory(slug);
   };
 
   return (
@@ -42,6 +47,8 @@ export const ChangeCategoryPopup = ({
         listType="categories"
         selected={slug}
         onChange={handleOnChange}
+        deletable="userCreated"
+        onDelete={handleDeleteCategory}
       />
     </div>
   );

@@ -89,7 +89,9 @@ export const ItemEditPopup = ({
           >
             Category
             <div className="w-auto">
-              <span className="text-gray-500 text-sm">{categorySlug}</span>
+              <span className="text-gray-500 text-sm">
+                {categorySlug || ""}
+              </span>
               <ChevronRightIcon className="inline text-gray-500" size={20} />
             </div>
           </button>
