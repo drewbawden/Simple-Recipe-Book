@@ -381,7 +381,6 @@ export const editListItem = async (data: listItem) => {
             update: {
               name: itemName,
               categorySlug: category.slug,
-              manuallyCategorised: true,
             },
           },
         },
