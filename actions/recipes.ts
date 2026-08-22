@@ -205,6 +205,7 @@ export async function deleteRecipe(recipeId: number) {
   await cleanUpShoppingList();
 }
 
+// TODO: this is supposed to remove recipe ingredients when a recipe is deleted... but it deletes the shopping list
 async function cleanUpShoppingList() {
   await prisma.shoppingListItem.deleteMany({
     where: {
