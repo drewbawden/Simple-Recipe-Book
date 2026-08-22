@@ -2,6 +2,7 @@ import { Modal } from "@/components/templates/modal";
 import { listItem } from "@/types/list-item";
 import { Ref, useState } from "react";
 import { ChangeCategoryPopup } from "./category";
+import { ChevronRightIcon } from "lucide-react";
 
 interface ItemEditPopupProps {
   initialData: listItem | null;
@@ -39,7 +40,7 @@ export const ItemEditPopup = ({
     <div>
       <form
         ref={formRef}
-        className="text-gray-900"
+        className="text-gray-900 space-y-2"
         onSubmit={(event) => {
           event.preventDefault();
           onSubmit(new FormData(event.currentTarget));
@@ -77,16 +78,20 @@ export const ItemEditPopup = ({
             className="block p-1 bg-gray-100 rounded w-full"
           />
         </div>
-        <div>
+        {/* <div>
           <h2>List select</h2>
-        </div>
+        </div> */}
         <div>
           <button
             type="button"
-            className="bg-gray-200 p-2 rounded"
+            className="bg-gray-200 p-2 rounded w-full flex flex-row justify-between items-center"
             onClick={() => setIsCategoriesOpen(true)}
           >
-            Change category
+            Category
+            <div className="w-auto">
+              <span className="text-gray-500 text-sm">{categorySlug}</span>
+              <ChevronRightIcon className="inline text-gray-500" size={20} />
+            </div>
           </button>
           <input
             type="hidden"
@@ -95,8 +100,11 @@ export const ItemEditPopup = ({
             id="categorySlug"
           />
         </div>
-        <div className="space-x-2">
-          <label htmlFor="urgent">Urgent</label>
+        <label
+          htmlFor="urgent"
+          className="flex flex-row justify-between bg-gray-200 p-2 rounded"
+        >
+          Urgent
           <input
             type="checkbox"
             name="urgent"
@@ -104,7 +112,7 @@ export const ItemEditPopup = ({
             checked={urgent}
             onChange={() => setUrgent(!urgent)}
           />
-        </div>
+        </label>
       </form>
       <Modal
         isOpen={isCategoriesOpen}
@@ -112,7 +120,11 @@ export const ItemEditPopup = ({
         modalTitle="Change Category"
         isChild
       >
-        <ChangeCategoryPopup slug={categorySlug} setSlug={setCategorySlug} />
+        <ChangeCategoryPopup
+          slug={categorySlug}
+          setSlug={setCategorySlug}
+          onClose={() => setIsCategoriesOpen(false)}
+        />
       </Modal>
     </div>
   );

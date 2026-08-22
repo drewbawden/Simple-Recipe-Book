@@ -123,27 +123,26 @@ export const DynamicOptions = ({
   if (loading) return <p>Loading options...</p>;
 
   return (
-    <div className="space-y-2">
+    <div className="grid grid-cols-1">
       {items.map((option) => (
-        <label
-          key={option.id}
-          className="flex items-center gap-2 bg-gray-200 p-1"
-        >
-          <input
-            type="checkbox"
-            value={option.id}
-            checked={selected === option.id ?? false}
-            onChange={(e) => {
-              if (!onChange) return;
+        <div className="p-2 pb-0 bg-gray-200" key={option.id}>
+          <label className="flex items-center justify-between bg-gray-200 p-1 w-full border-b-1">
+            {option.name.charAt(0).toUpperCase() + option.name.substring(1)}
+            <input
+              {...inputProps}
+              type="checkbox"
+              value={option.id}
+              checked={selected === option.id}
+              onChange={(e) => {
+                if (!onChange) return;
 
-              if (e.target.checked) {
-                onChange(option.id);
-              }
-            }}
-            {...inputProps}
-          />
-          {option.name.charAt(0).toUpperCase() + option.name.substring(1)}
-        </label>
+                if (e.target.checked) {
+                  onChange(option.id);
+                }
+              }}
+            />
+          </label>
+        </div>
       ))}
     </div>
   );

@@ -89,7 +89,7 @@ export const Modal = ({
     const isInteractiveElement =
       target instanceof HTMLElement &&
       target.closest(
-        "button, input, textarea, select, a, [role='button'], [role='link']",
+        "button, input, textarea, select, label, a, [role='button'], [role='link']",
       );
 
     if (isInteractiveElement) {
