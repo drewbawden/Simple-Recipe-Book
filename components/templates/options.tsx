@@ -149,19 +149,7 @@ export const DynamicOptions = ({
       {items.map((option) => (
         <div className="p-2 pb-0 bg-gray-200" key={option.id}>
           <label className="flex items-center justify-between bg-gray-200 p-1 w-full border-b-1">
-            <span className="flex items-center gap-2">
-              {option.deletable ? (
-                <button
-                  type="button"
-                  className="text-red-600 font-bold border-1 rounded-4xl p-1 bg-red-100"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    void handleDelete(option.id);
-                  }}
-                >
-                  <Trash2Icon />
-                </button>
-              ) : null}
+            <span>
               {option.name.charAt(0).toUpperCase() + option.name.substring(1)}
             </span>
             <div className="flex items-center gap-2">
@@ -178,6 +166,18 @@ export const DynamicOptions = ({
                   }
                 }}
               />
+              {option.deletable ? (
+                <button
+                  type="button"
+                  className="inline text-red-600 font-bold border-1 rounded-4xl p-1 px-2 bg-red-100"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    void handleDelete(option.id);
+                  }}
+                >
+                  X
+                </button>
+              ) : null}
             </div>
           </label>
         </div>

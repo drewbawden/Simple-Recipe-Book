@@ -97,7 +97,7 @@ export const ItemEditPopup = ({
           </button>
           <input
             type="hidden"
-            value={categorySlug}
+            value={categorySlug || ""}
             name="categorySlug"
             id="categorySlug"
           />
