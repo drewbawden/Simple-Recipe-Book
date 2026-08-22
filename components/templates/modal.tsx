@@ -13,7 +13,7 @@ interface ModalProps {
   showTick?: boolean;
   modalTitle: string;
   handleTick?: () => void;
-  isChild: boolean;
+  isChild?: boolean;
 }
 
 export const Modal = ({
@@ -25,7 +25,7 @@ export const Modal = ({
   showTick,
   modalTitle,
   handleTick,
-  isChild,
+  isChild = false,
 }: ModalProps) => {
   const [mounted, setMounted] = useState(isOpen);
   const [visible, setVisible] = useState(isOpen);

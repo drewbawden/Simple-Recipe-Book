@@ -177,17 +177,20 @@ export const ShoppingList = () => {
     }, 1500);
   };
 
-  const handleEditSubmit = async () => {
-    const formData = new FormData(editFormRef.current);
-    setEditItem(null);
+  const handleEditSubmit = async (formData: FormData) => {
+    const value = (entry: FormDataEntryValue | null) =>
+      typeof entry === "string" ? entry : entry == null ? "" : String(entry);
+
     const fields = {
       id: Number(formData.get("id")),
-      name: formData.get("name"),
-      notes: formData.get("notes"),
-      url: formData.get("url"),
+      name: value(formData.get("name")),
+      notes: value(formData.get("notes")),
+      url: value(formData.get("url")),
       urgent: formData.get("urgent") === "on",
     };
+
     await editListItem(fields);
+    setEditItem(null);
     await refreshData();
   };
 
@@ -278,9 +281,13 @@ export const ShoppingList = () => {
         size="md"
         modalTitle="Edit Item"
         showTick
-        handleTick={handleEditSubmit}
+        handleTick={() => editFormRef.current?.requestSubmit()}
       >
-        <ItemEditPopup initialData={editItem} formRef={editFormRef} />
+        <ItemEditPopup
+          initialData={editItem}
+          formRef={editFormRef}
+          onSubmit={handleEditSubmit}
+        />
       </Modal>
     </div>
   );

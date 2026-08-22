@@ -2,19 +2,42 @@ import { listItem } from "@/types/list-item";
 import { Ref, useState } from "react";
 
 interface ItemEditPopupProps {
-  initialData: listItem;
+  initialData: listItem | null;
   formRef: Ref<HTMLFormElement>;
+  onSubmit: (formData: FormData) => void | Promise<void>;
 }
-export const ItemEditPopup = ({ initialData, formRef }: ItemEditPopupProps) => {
-  const [name, setName] = useState(initialData.name ?? "");
-  const [notes, setNotes] = useState(initialData.notes ?? "");
-  const [url, setUrl] = useState(initialData.url ?? "");
-  const [urgent, setUrgent] = useState(initialData.urgent);
+export const ItemEditPopup = ({
+  initialData,
+  formRef,
+  onSubmit,
+}: ItemEditPopupProps) => {
+  const fallbackData: listItem = {
+    id: 0,
+    name: "",
+    urgent: false,
+  };
+
+  const resolvedInitialData = initialData ?? fallbackData;
+  const [name, setName] = useState(resolvedInitialData.name ?? "");
+  const [notes, setNotes] = useState(resolvedInitialData.notes ?? "");
+  const [url, setUrl] = useState(resolvedInitialData.url ?? "");
+  const [urgent, setUrgent] = useState(resolvedInitialData.urgent);
+
+  if (!initialData) {
+    return null;
+  }
 
   return (
-    <form ref={formRef} className="text-gray-900">
+    <form
+      ref={formRef}
+      className="text-gray-900"
+      onSubmit={(event) => {
+        event.preventDefault();
+        onSubmit(new FormData(event.currentTarget));
+      }}
+    >
       <div className="border-1 border-gray-200 rounded p-1 space-y-2">
-        <input type="hidden" name="id" id="id" value={initialData.id} />
+        <input type="hidden" name="id" id="id" value={resolvedInitialData.id} />
         <input
           type="text"
           placeholder="Name"
@@ -48,7 +71,13 @@ export const ItemEditPopup = ({ initialData, formRef }: ItemEditPopupProps) => {
       </div>
       <div className="space-x-2">
         <label htmlFor="urgent">Urgent</label>
-        <input type="checkbox" name="urgent" id="urgent" checked={urgent} onChange={() => setUrgent(!urgent)} />
+        <input
+          type="checkbox"
+          name="urgent"
+          id="urgent"
+          checked={urgent}
+          onChange={() => setUrgent(!urgent)}
+        />
       </div>
     </form>
   );
