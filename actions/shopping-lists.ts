@@ -227,30 +227,13 @@ export const setItemCompleted = async (
   listItemId: number,
   completed: boolean,
 ) => {
-  if (!completed) {
-    await prisma.shoppingListItem.updateMany({
-      where: {
-        id: listItemId,
-      },
-      data: {
-        completed,
-      },
-    });
-    return;
-  }
-
-  await prisma.$transaction(async (tx) => {
-    await tx.shoppingListItemSource.deleteMany({
-      where: {
-        shoppingListItemId: listItemId,
-      },
-    });
-
-    await tx.shoppingListItem.deleteMany({
-      where: {
-        id: listItemId,
-      },
-    });
+  await prisma.shoppingListItem.update({
+    where: {
+      id: listItemId,
+    },
+    data: {
+      completed,
+    },
   });
 };
 
@@ -386,7 +369,7 @@ const categoriseItem = async (
 };
 
 export const editListItem = async (data: listItem) => {
-  console.log(data)
+  console.log(data);
   try {
     await prisma.shoppingListItem.update({
       where: {
@@ -399,13 +382,13 @@ export const editListItem = async (data: listItem) => {
 
         item: {
           update: {
-            name: data.name
-          }
-        }
-      }
+            name: data.name,
+          },
+        },
+      },
     });
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to update list item");
   }
-}
+};

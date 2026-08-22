@@ -28,6 +28,7 @@ export const ShoppingList = () => {
   const editFormRef = useRef<HTMLFormElement>(null);
 
   const deleteTimers = useRef<Record<number, NodeJS.Timeout | undefined>>({});
+  const deleteTokens = useRef<Record<number, number>>({});
 
   const refreshData = async () => {
     const [nextList, nextGroupedList] = await Promise.all([
@@ -72,9 +73,12 @@ export const ShoppingList = () => {
       clearTimeout(deleteTimers.current[id]);
       deleteTimers.current[id] = undefined;
     }
+
+    deleteTokens.current[id] = (deleteTokens.current[id] ?? 0) + 1;
   };
 
   const handleItemDeleted = async (id: number) => {
+    console.log("delete item");
     cancelPendingDelete(id);
 
     await deleteItem(id);
@@ -105,6 +109,8 @@ export const ShoppingList = () => {
     e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const completed = e.target.checked;
+    const token = (deleteTokens.current[id] ?? 0) + 1;
+    deleteTokens.current[id] = token;
 
     if (!completed) {
       cancelPendingDelete(id);
@@ -132,37 +138,47 @@ export const ShoppingList = () => {
 
     await setItemCompleted(id, completed);
 
-    if (completed) {
-      deleteTimers.current[id] = setTimeout(async () => {
-        try {
-          await deleteItem(id);
-        } finally {
-          setShoppingList((prev) => {
-            if (!prev) return prev;
-
-            return {
-              ...prev,
-              items: prev.items.filter((item) => item.id !== id),
-            };
-          });
-
-          setGroupedList((prev) =>
-            prev
-              .map((category) => ({
-                ...category,
-                items: category.items.filter((item) => item.id !== id),
-              }))
-              .filter((category) => category.items.length > 0),
-          );
-
-          deleteTimers.current[id] = undefined;
-        }
-      }, 1500);
+    if (deleteTokens.current[id] !== token) {
+      return;
     }
+
+    if (!completed) {
+      return;
+    }
+
+    deleteTimers.current[id] = setTimeout(async () => {
+      if (deleteTokens.current[id] !== token) {
+        return;
+      }
+
+      try {
+        await deleteItem(id);
+
+        setShoppingList((prev) => {
+          if (!prev) return prev;
+
+          return {
+            ...prev,
+            items: prev.items.filter((item) => item.id !== id),
+          };
+        });
+
+        setGroupedList((prev) =>
+          prev
+            .map((category) => ({
+              ...category,
+              items: category.items.filter((item) => item.id !== id),
+            }))
+            .filter((category) => category.items.length > 0),
+        );
+      } finally {
+        deleteTimers.current[id] = undefined;
+      }
+    }, 1500);
   };
 
   const handleEditSubmit = async () => {
-    const formData = new FormData(editFormRef.current)
+    const formData = new FormData(editFormRef.current);
     setEditItem(null);
     const fields = {
       id: Number(formData.get("id")),
@@ -170,8 +186,8 @@ export const ShoppingList = () => {
       notes: formData.get("notes"),
       url: formData.get("url"),
       urgent: formData.get("urgent") === "on",
-    }
-    await editListItem(fields)
+    };
+    await editListItem(fields);
     await refreshData();
   };
 
