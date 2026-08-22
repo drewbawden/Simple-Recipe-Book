@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 
-import { getCategories } from "@/actions/dropdowns";
+import { getCategories } from "@/actions/items";
 
 type dropdownItem = {
   slug: string;

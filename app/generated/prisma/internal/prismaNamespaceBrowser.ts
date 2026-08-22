@@ -113,6 +113,7 @@ export type ItemScalarFieldEnum = (typeof ItemScalarFieldEnum)[keyof typeof Item
 
 export const ItemCategoryScalarFieldEnum = {
   slug: 'slug',
+  orderIndex: 'orderIndex',
   displayName: 'displayName',
   userCreated: 'userCreated'
 } as const

@@ -155,20 +155,6 @@ export const getShoppingList = async () => {
   }
 };
 
-export const getCategories = async () => {
-  try {
-    const categories = await prisma.itemCategory.findMany();
-
-    if (!categories) return null;
-
-    console.log(categories);
-    return categories;
-  } catch (error) {
-    console.error("Database Error:", error);
-    throw new Error("Failed to fetch item categories");
-  }
-};
-
 export const addItemToList = async (
   itemName: string,
   categorySlug: string,
@@ -369,23 +355,37 @@ const categoriseItem = async (
 };
 
 export const editListItem = async (data: listItem) => {
-  console.log(data);
-  try {
-    await prisma.shoppingListItem.update({
-      where: {
-        id: data.id,
-      },
-      data: {
-        notes: data.notes,
-        url: data.url,
-        urgent: data.urgent,
+  const itemName = normaliseItemName(data.name);
 
-        item: {
-          update: {
-            name: data.name,
+  try {
+    await prisma.$transaction(async (tx) => {
+      const category = await tx.itemCategory.upsert({
+        where: { slug: data.categorySlug },
+        update: {},
+        create: {
+          slug: data.categorySlug,
+          displayName: data.categorySlug,
+        },
+      });
+
+      await tx.shoppingListItem.update({
+        where: {
+          id: data.id,
+        },
+        data: {
+          notes: data.notes,
+          url: data.url,
+          urgent: data.urgent,
+
+          item: {
+            update: {
+              name: itemName,
+              categorySlug: category.slug,
+              manuallyCategorised: true,
+            },
           },
         },
-      },
+      });
     });
   } catch (error) {
     console.error("Database Error:", error);

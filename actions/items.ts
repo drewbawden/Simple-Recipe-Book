@@ -1,6 +1,6 @@
 "use server";
 
-import { PrismaClient, Prisma } from "../app/generated/prisma/client";
+import { PrismaClient } from "../app/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import "dotenv/config";
 
@@ -12,11 +12,17 @@ const prisma = new PrismaClient({
   adapter,
 });
 
-export async function getCategories() {
+export const getCategories = async () => {
   try {
-    return await prisma.itemCategory.findMany();
+    const categories = await prisma.itemCategory.findMany({
+      orderBy: {
+        orderIndex: "asc",
+      },
+    });
+    if (!categories) return null;
+    return categories;
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch item categories");
   }
-}
+};

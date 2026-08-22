@@ -187,6 +187,7 @@ export const ShoppingList = () => {
       notes: value(formData.get("notes")),
       url: value(formData.get("url")),
       urgent: formData.get("urgent") === "on",
+      categorySlug: value(formData.get("categorySlug")),
     };
 
     await editListItem(fields);
@@ -244,6 +245,7 @@ export const ShoppingList = () => {
                       notes: listItem.notes ?? undefined,
                       url: listItem.url ?? undefined,
                       urgent: listItem.urgent,
+                      categorySlug: listItem.item.category?.slug,
                     })
                   }
                 />

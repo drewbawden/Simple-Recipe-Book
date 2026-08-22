@@ -4,4 +4,5 @@ export interface listItem {
   notes?: string;
   url?: string;
   urgent: boolean;
+  categorySlug: string;
 }

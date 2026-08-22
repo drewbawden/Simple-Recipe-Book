@@ -2,7 +2,7 @@
 
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { insertNewRecipe, updateRecipe } from "@/actions/recipes";
-import { EnumOptions } from "@/components/templates/enums";
+import { EnumOptions } from "@/components/templates/options";
 import imageCompression from "browser-image-compression";
 import Form from "next/form";
 import { Modal } from "@/components/templates/modal";

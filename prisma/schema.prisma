@@ -51,6 +51,7 @@ model Item {
 
 model ItemCategory {
   slug        String            @id @unique
+  orderIndex  Int               @default(autoincrement())
   displayName String?
   userCreated Boolean           @default(false)
   items       Item[]
