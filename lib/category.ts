@@ -61,11 +61,14 @@ const checkAgainstKeywords = async (productName: string) => {
 
 export const computeCategory = async (
   productName: string,
+  ignoreManual: boolean,
 ): Promise<string | null> => {
   // 100% confidence
-  const manualCategory = await getManualCategory(productName);
-  if (manualCategory?.category?.slug) {
-    return manualCategory.category.slug;
+  if (!ignoreManual) {
+    const manualCategory = await getManualCategory(productName);
+    if (manualCategory?.category?.slug) {
+      return manualCategory.category.slug;
+    }
   }
 
   // Default to keywords

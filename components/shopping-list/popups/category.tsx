@@ -1,15 +1,18 @@
 import { deleteCategory } from "@/actions/items";
 import { DynamicOptions } from "@/components/templates/options";
+import { computeCategory } from "@/lib/category";
 
 interface ChangeCategoryPopupProps {
-  slug: string;
-  setSlug: (slug: string) => void;
+  slug: string | null;
+  setSlug: (slug: string | null) => void;
   onClose: () => void;
+  itemName: string;
 }
 export const ChangeCategoryPopup = ({
   slug,
   setSlug,
   onClose,
+  itemName,
 }: ChangeCategoryPopupProps) => {
   const handleOnChange = (newSlug: string) => {
     setSlug(newSlug);
@@ -18,6 +21,13 @@ export const ChangeCategoryPopup = ({
 
   const handleDeleteCategory = async (slug: string) => {
     await deleteCategory(slug);
+  };
+
+  const handleAutoCategorise = async () => {
+    const autoSlug = await computeCategory(itemName, true);
+    console.log(autoSlug);
+    setSlug(autoSlug);
+    onClose();
   };
 
   return (
@@ -43,6 +53,19 @@ export const ChangeCategoryPopup = ({
           <input type="submit" hidden />
         </label>
       </form>
+      <div className="p-2 bg-gray-200">
+        <label className="flex items-center justify-between bg-gray-200 p-1 w-full border-y-1">
+          <span>Auto Categorise</span>
+          <input
+            type="checkbox"
+            onChange={(e) => {
+              if (e.target.checked) {
+                handleAutoCategorise();
+              }
+            }}
+          />
+        </label>
+      </div>
       <DynamicOptions
         listType="categories"
         selected={slug}

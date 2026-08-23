@@ -26,7 +26,7 @@ export const ItemEditPopup = ({
   const [notes, setNotes] = useState(resolvedInitialData.notes ?? "");
   const [url, setUrl] = useState(resolvedInitialData.url ?? "");
   const [urgent, setUrgent] = useState(resolvedInitialData.urgent);
-  const [categorySlug, setCategorySlug] = useState(
+  const [categorySlug, setCategorySlug] = useState<string | null>(
     resolvedInitialData.categorySlug,
   );
 
@@ -126,6 +126,7 @@ export const ItemEditPopup = ({
           slug={categorySlug}
           setSlug={setCategorySlug}
           onClose={() => setIsCategoriesOpen(false)}
+          itemName={resolvedInitialData.name}
         />
       </Modal>
     </div>
