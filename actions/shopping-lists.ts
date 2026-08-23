@@ -157,28 +157,31 @@ export const getShoppingList = async () => {
 
 export const addItemToList = async (
   itemName: string,
-  categorySlug: string,
+  categorySlug: string | null,
   manuallyAdded?: boolean,
   shoppingListId = 1,
   itemType = ItemType.FOOD,
 ) => {
   itemName = normaliseItemName(itemName);
 
-  const category = await prisma.itemCategory.upsert({
-    where: { slug: categorySlug },
-    update: {},
-    create: {
-      slug: categorySlug,
-      displayName: categorySlug,
-    },
-  });
+  let category = null;
+  if (categorySlug) {
+    category = await prisma.itemCategory.upsert({
+      where: { slug: categorySlug },
+      update: {},
+      create: {
+        slug: categorySlug,
+        displayName: categorySlug,
+      },
+    });
+  }
 
   const item = await prisma.item.upsert({
     where: {
       name: itemName,
     },
     update: {
-      categorySlug: category.slug,
+      categorySlug: category ? category.slug : null,
       ...(manuallyAdded !== undefined
         ? { manuallyCategorised: manuallyAdded }
         : {}),
@@ -186,7 +189,7 @@ export const addItemToList = async (
     create: {
       name: itemName,
       type: itemType,
-      categorySlug: category.slug,
+      categorySlug: category ? category.slug : null,
       ...(manuallyAdded !== undefined
         ? { manuallyCategorised: manuallyAdded }
         : {}),
@@ -337,6 +340,13 @@ const categoriseItem = async (
 ) => {
   const categorySlug = await computeCategory(itemName);
 
+  if (!categorySlug) {
+    return tx.item.update({
+      where: { id: itemId },
+      data: { categorySlug: null },
+    });
+  }
+
   const category = await tx.itemCategory.upsert({
     where: { slug: categorySlug },
     update: {},
@@ -359,15 +369,18 @@ export const editListItem = async (data: listItem) => {
 
   try {
     await prisma.$transaction(async (tx) => {
-      const category = await tx.itemCategory.upsert({
-        where: { slug: data.categorySlug },
-        update: {},
-        create: {
-          slug: data.categorySlug,
-          displayName: data.categorySlug,
-          userCreated: true,
-        },
-      });
+      let category = null;
+      if (data.categorySlug && data.categorySlug !== "other") {
+        category = await tx.itemCategory.upsert({
+          where: { slug: data.categorySlug },
+          update: {},
+          create: {
+            slug: data.categorySlug,
+            displayName: data.categorySlug,
+            userCreated: true,
+          },
+        });
+      }
 
       await tx.shoppingListItem.update({
         where: {
@@ -381,7 +394,8 @@ export const editListItem = async (data: listItem) => {
           item: {
             update: {
               name: itemName,
-              categorySlug: category.slug,
+              categorySlug: category ? category.slug : null,
+              ...(category ? { manuallyCategorised: true } : {}),
             },
           },
         },

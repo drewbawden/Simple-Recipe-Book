@@ -59,7 +59,9 @@ const checkAgainstKeywords = async (productName: string) => {
   );
 };
 
-export const computeCategory = async (productName: string) => {
+export const computeCategory = async (
+  productName: string,
+): Promise<string | null> => {
   // 100% confidence
   const manualCategory = await getManualCategory(productName);
   if (manualCategory?.category?.slug) {
@@ -89,5 +91,5 @@ export const computeCategory = async (productName: string) => {
     console.error("Failed to categorise with ZSL model");
   }
 
-  return "other";
+  return null;
 };
