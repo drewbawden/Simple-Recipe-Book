@@ -250,12 +250,17 @@ export const ShoppingList = () => {
       </div>
       <hr className="h-0.5 bg-black pb-2" />
       <ShoppingListItemInput refreshData={refreshData} />
-      <div className="space-y-2">
+      <div className="space-y-2 my-4">
         {groupedList.map((category) => (
           <ul key={category.slug} className="bg-gray-800 p-2 rounded space-y-2">
             <div className="flex">
-              <h1 className="text-2xl text-left font-bold bg-black p-1 rounded">
-                {category.displayName ?? category.slug}
+              <h1 className="bg-black p-1 rounded w-full flex justify-between gap-2 items-center">
+                <span className="text-2xl font-bold ">
+                  {category.displayName ?? category.slug}
+                </span>
+                <span className="text-md italic">
+                  ({category.items.length})
+                </span>
               </h1>
             </div>
             {category.items.map((listItem) => (
@@ -302,7 +307,7 @@ export const ShoppingList = () => {
               </div>
             ) : (
               <button
-                className="bg-gray-400 text-2xl rounded px-10 py-1"
+                className="bg-gray-400 text-2xl rounded px-10 py-1 w-full"
                 onClick={() => setAddToCategory(category.slug)}
               >
                 +

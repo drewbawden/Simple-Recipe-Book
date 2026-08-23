@@ -44,19 +44,26 @@ export const ShoppingListItemInput = ({
   };
 
   return (
-    <div>
+    <div className="w-full flex flex-row justify-center">
       <form
         onSubmit={(e) => {
           e.preventDefault();
           handleInputSubmit(inputValue);
         }}
+        className="bg-gray-400 p-2 w-min items-center rounded"
       >
+        <label
+          htmlFor="productInput"
+          className="text-lg font-bold text-gray-900"
+        >
+          Add an item
+        </label>
         <AutocompleteInput
           modelType="items"
-          name="productName"
-          id="productName"
-          className="bg-gray-500 my-5 p-1 text-white"
-          placeholder="enter item"
+          name="productInput"
+          id="productInput"
+          className="bg-gray-500 p-1 text-white rounded"
+          placeholder="Enter an item"
           value={inputValue}
           onChange={setInputValue}
           onEnter={handleInputSubmit}
