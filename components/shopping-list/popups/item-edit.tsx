@@ -78,9 +78,6 @@ export const ItemEditPopup = ({
             className="block p-1 bg-gray-100 rounded w-full"
           />
         </div>
-        {/* <div>
-          <h2>List select</h2>
-        </div> */}
         <div>
           <button
             type="button"

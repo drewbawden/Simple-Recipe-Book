@@ -6,12 +6,18 @@ import {
   clearShoppingList,
   editListItem,
 } from "@/actions/shopping-lists";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/templates/context-menu";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { ListItemCard } from "@/components/shopping-list/item-card";
 import { computeQuantity } from "@/lib/shopping-list";
 import { ShoppingListItemInput } from "@/components/shopping-list/item-input";
-import { XIcon } from "lucide-react";
+import { SettingsIcon, XIcon } from "lucide-react";
 import { Modal } from "@/components/templates/modal";
 import { ItemEditPopup } from "@/components/shopping-list/popups/item-edit";
 import { listItem } from "@/types/list-item";
@@ -205,15 +211,43 @@ export const ShoppingList = () => {
       </Link>
       <h1 className="mb-6 text-4xl font-bold">{shoppingList.name}</h1>
       <hr className="h-0.5 bg-black pb-2" />
-      <button
-        className="bg-red-400 w-fit p-2"
-        onClick={async () => {
-          await clearShoppingList();
-          refreshData();
-        }}
-      >
-        Clear List
-      </button>
+      <div className="grid grid-cols-[1fr_auto_1fr] items-center px-2">
+        <button
+          className="bg-gray-500 w-fit p-2 rounded font-bold justify-self-start"
+          onClick={async () => {
+            await clearShoppingList();
+            refreshData();
+          }}
+        >
+          Clear List
+        </button>
+        <span className="bg-gray-500 p-2 rounded italic text-gray-300 justify-self-center">
+          {shoppingList.items.length} Item
+          {shoppingList.items.length != 1 && "s"}
+        </span>
+        <div className="justify-self-end">
+          <ContextMenu>
+            <ContextMenuTrigger>
+              <SettingsIcon />
+            </ContextMenuTrigger>
+            <ContextMenuContent align="right" className="text-gray-900 w-50">
+              <ContextMenuItem onSelect={() => {}}>
+                Edit List Info
+              </ContextMenuItem>
+              <hr />
+              <ContextMenuItem onSelect={() => {}}>Sort By</ContextMenuItem>
+              <hr />
+              <ContextMenuItem onSelect={() => {}}>
+                Manage Categories
+              </ContextMenuItem>
+              <hr />
+              <ContextMenuItem className="text-red-500" onSelect={() => {}}>
+                Delete List
+              </ContextMenuItem>
+            </ContextMenuContent>
+          </ContextMenu>
+        </div>
+      </div>
       <hr className="h-0.5 bg-black pb-2" />
       <ShoppingListItemInput refreshData={refreshData} />
       <div className="space-y-2">
