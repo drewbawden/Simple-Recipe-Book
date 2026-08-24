@@ -1560,6 +1560,8 @@ export type RecipeInstructionStepScalarFieldEnum = (typeof RecipeInstructionStep
 export const ShoppingListScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  categorySortOrder: 'categorySortOrder',
+  itemSortOrder: 'itemSortOrder',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1766,6 +1768,34 @@ export type EnumStandardUnitFieldRefInput<$PrismaModel> = FieldRefInputType<$Pri
  * Reference to a field of type 'StandardUnit[]'
  */
 export type ListEnumStandardUnitFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StandardUnit[]'>
+    
+
+
+/**
+ * Reference to a field of type 'ShoppingListSortOption'
+ */
+export type EnumShoppingListSortOptionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ShoppingListSortOption'>
+    
+
+
+/**
+ * Reference to a field of type 'ShoppingListSortOption[]'
+ */
+export type ListEnumShoppingListSortOptionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ShoppingListSortOption[]'>
+    
+
+
+/**
+ * Reference to a field of type 'ListItemSortOption'
+ */
+export type EnumListItemSortOptionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ListItemSortOption'>
+    
+
+
+/**
+ * Reference to a field of type 'ListItemSortOption[]'
+ */
+export type ListEnumListItemSortOptionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ListItemSortOption[]'>
     
 
 

@@ -1,4 +1,7 @@
-import { NormalUnit } from "@/app/generated/prisma/enums";
+import {
+  NormalUnit,
+  ShoppingListSortOption,
+} from "@/app/generated/prisma/enums";
 
 export const computeQuantity = (sources: any) => {
   let totalNormalQuantity = 0.0;
@@ -77,7 +80,7 @@ export const computeQuantity = (sources: any) => {
   };
 };
 
-export const dynamicListSort = (property: string) => {
+const alphabeticalListSort = (property: string) => {
   let sortOrder = 1;
   if (property[0] === "-") {
     sortOrder = -1;
@@ -88,4 +91,28 @@ export const dynamicListSort = (property: string) => {
       a[property] < b[property] ? -1 : a[property] > b[property] ? 1 : 0;
     return result * sortOrder;
   };
+};
+
+const manualListSort = (property: string) => {
+  return (a: any, b: any) => {
+    return a[property] - b[property];
+  };
+};
+
+export const sortShoppingList = (ShoppingList, categories) => {
+  switch (ShoppingList.categorySortOrder) {
+    case ShoppingListSortOption.ALPHABETICAL:
+      categories.sort(alphabeticalListSort("slug"));
+      break;
+    case ShoppingListSortOption.REVERSE_ALPHABETICAL:
+      categories.sort(alphabeticalListSort("-slug"));
+      break;
+    case ShoppingListSortOption.MANUAL:
+      categories.sort(manualListSort("orderIndex"));
+      break;
+    case ShoppingListSortOption.AUTOMATIC:
+      // TODO
+      break;
+  }
+  return categories;
 };

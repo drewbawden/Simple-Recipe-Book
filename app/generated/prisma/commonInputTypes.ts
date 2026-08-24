@@ -358,6 +358,40 @@ export type EnumStandardUnitNullableWithAggregatesFilter<$PrismaModel = never> =
   _max?: Prisma.NestedEnumStandardUnitNullableFilter<$PrismaModel>
 }
 
+export type EnumShoppingListSortOptionFilter<$PrismaModel = never> = {
+  equals?: $Enums.ShoppingListSortOption | Prisma.EnumShoppingListSortOptionFieldRefInput<$PrismaModel>
+  in?: $Enums.ShoppingListSortOption[] | Prisma.ListEnumShoppingListSortOptionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ShoppingListSortOption[] | Prisma.ListEnumShoppingListSortOptionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumShoppingListSortOptionFilter<$PrismaModel> | $Enums.ShoppingListSortOption
+}
+
+export type EnumListItemSortOptionFilter<$PrismaModel = never> = {
+  equals?: $Enums.ListItemSortOption | Prisma.EnumListItemSortOptionFieldRefInput<$PrismaModel>
+  in?: $Enums.ListItemSortOption[] | Prisma.ListEnumListItemSortOptionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ListItemSortOption[] | Prisma.ListEnumListItemSortOptionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumListItemSortOptionFilter<$PrismaModel> | $Enums.ListItemSortOption
+}
+
+export type EnumShoppingListSortOptionWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ShoppingListSortOption | Prisma.EnumShoppingListSortOptionFieldRefInput<$PrismaModel>
+  in?: $Enums.ShoppingListSortOption[] | Prisma.ListEnumShoppingListSortOptionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ShoppingListSortOption[] | Prisma.ListEnumShoppingListSortOptionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumShoppingListSortOptionWithAggregatesFilter<$PrismaModel> | $Enums.ShoppingListSortOption
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumShoppingListSortOptionFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumShoppingListSortOptionFilter<$PrismaModel>
+}
+
+export type EnumListItemSortOptionWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ListItemSortOption | Prisma.EnumListItemSortOptionFieldRefInput<$PrismaModel>
+  in?: $Enums.ListItemSortOption[] | Prisma.ListEnumListItemSortOptionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ListItemSortOption[] | Prisma.ListEnumListItemSortOptionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumListItemSortOptionWithAggregatesFilter<$PrismaModel> | $Enums.ListItemSortOption
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumListItemSortOptionFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumListItemSortOptionFilter<$PrismaModel>
+}
+
 export type NestedIntFilter<$PrismaModel = never> = {
   equals?: number | Prisma.IntFieldRefInput<$PrismaModel>
   in?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
@@ -713,6 +747,40 @@ export type NestedEnumStandardUnitNullableWithAggregatesFilter<$PrismaModel = ne
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedEnumStandardUnitNullableFilter<$PrismaModel>
   _max?: Prisma.NestedEnumStandardUnitNullableFilter<$PrismaModel>
+}
+
+export type NestedEnumShoppingListSortOptionFilter<$PrismaModel = never> = {
+  equals?: $Enums.ShoppingListSortOption | Prisma.EnumShoppingListSortOptionFieldRefInput<$PrismaModel>
+  in?: $Enums.ShoppingListSortOption[] | Prisma.ListEnumShoppingListSortOptionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ShoppingListSortOption[] | Prisma.ListEnumShoppingListSortOptionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumShoppingListSortOptionFilter<$PrismaModel> | $Enums.ShoppingListSortOption
+}
+
+export type NestedEnumListItemSortOptionFilter<$PrismaModel = never> = {
+  equals?: $Enums.ListItemSortOption | Prisma.EnumListItemSortOptionFieldRefInput<$PrismaModel>
+  in?: $Enums.ListItemSortOption[] | Prisma.ListEnumListItemSortOptionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ListItemSortOption[] | Prisma.ListEnumListItemSortOptionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumListItemSortOptionFilter<$PrismaModel> | $Enums.ListItemSortOption
+}
+
+export type NestedEnumShoppingListSortOptionWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ShoppingListSortOption | Prisma.EnumShoppingListSortOptionFieldRefInput<$PrismaModel>
+  in?: $Enums.ShoppingListSortOption[] | Prisma.ListEnumShoppingListSortOptionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ShoppingListSortOption[] | Prisma.ListEnumShoppingListSortOptionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumShoppingListSortOptionWithAggregatesFilter<$PrismaModel> | $Enums.ShoppingListSortOption
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumShoppingListSortOptionFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumShoppingListSortOptionFilter<$PrismaModel>
+}
+
+export type NestedEnumListItemSortOptionWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ListItemSortOption | Prisma.EnumListItemSortOptionFieldRefInput<$PrismaModel>
+  in?: $Enums.ListItemSortOption[] | Prisma.ListEnumListItemSortOptionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ListItemSortOption[] | Prisma.ListEnumListItemSortOptionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumListItemSortOptionWithAggregatesFilter<$PrismaModel> | $Enums.ListItemSortOption
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumListItemSortOptionFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumListItemSortOptionFilter<$PrismaModel>
 }
 
 

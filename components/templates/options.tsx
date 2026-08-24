@@ -4,24 +4,28 @@ import { useState, useEffect } from "react";
 
 import { getEnums, enumType } from "@/actions/enums";
 import { getCategories } from "@/actions/items";
-import { Trash2Icon, XIcon } from "lucide-react";
 
-type EnumOptionsProps = {
-  enumType: enumType;
-  selected?: string[];
-  onChange?: (selected: string[]) => void;
-} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange">;
-
-type enumItem = {
+interface enumItem {
   id: string;
   name: string;
   deletable?: boolean;
-};
+}
+
+interface EnumOptionsProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "onChange"
+> {
+  enumType: enumType;
+  selected?: string[];
+  onChange?: (selected: string[]) => void;
+  selectMultiple?: boolean;
+}
 
 export const EnumOptions = ({
   enumType,
-  selected,
+  selected = [],
   onChange,
+  selectMultiple = false,
   ...inputProps
 }: EnumOptionsProps) => {
   const [enums, setEnums] = useState<enumItem[]>([]);
@@ -31,6 +35,7 @@ export const EnumOptions = ({
     const fetchEnums = async (enumType: enumType) => {
       try {
         const data = await getEnums(enumType);
+
         if (data === undefined) {
           throw new Error();
         }
@@ -44,7 +49,22 @@ export const EnumOptions = ({
     };
 
     fetchEnums(enumType);
-  }, []);
+  }, [enumType]);
+
+  const handleChange = (optionId: string, checked: boolean) => {
+    if (!onChange) return;
+
+    if (!selectMultiple) {
+      onChange(checked ? [optionId] : []);
+      return;
+    }
+
+    if (checked) {
+      onChange([...selected, optionId]);
+    } else {
+      onChange(selected.filter((id) => id !== optionId));
+    }
+  };
 
   if (loading) {
     return <p>Loading options...</p>;
@@ -53,24 +73,22 @@ export const EnumOptions = ({
   return (
     <div>
       {enums.map((option) => (
-        <label key={option.id} className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            value={option.id}
-            checked={selected?.includes(option.id) ?? false}
-            onChange={(e) => {
-              if (!onChange) return;
+        <div key={option.id} className="p-2 pb-0 bg-gray-200" key={option.id}>
+          <label className="flex items-center justify-between bg-gray-200 p-1 w-full border-b-1">
+            {option.name.charAt(0).toUpperCase() + option.name.substring(1)}
 
-              if (e.target.checked) {
-                onChange([...selected!, option.id]);
-              } else {
-                onChange(selected!.filter((id) => id !== option.id));
+            <input
+              {...inputProps}
+              type={selectMultiple ? "checkbox" : "radio"}
+              value={option.id}
+              checked={selected.includes(option.id)}
+              onChange={(e) => handleChange(option.id, e.target.checked)}
+              name={
+                selectMultiple ? inputProps.name : (inputProps.name ?? enumType)
               }
-            }}
-            {...inputProps}
-          />
-          {option.name.charAt(0).toUpperCase() + option.name.substring(1)}
-        </label>
+            />
+          </label>
+        </div>
       ))}
     </div>
   );
@@ -78,13 +96,16 @@ export const EnumOptions = ({
 
 type dynamicListType = "categories";
 
-type DynamicOptionsProps = {
+interface DynamicOptionsProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "onChange"
+> {
   listType: dynamicListType;
   selected?: string;
   onChange?: (selected: string) => void;
   deletable?: string;
   onDelete?: (id: string) => void;
-} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange">;
+}
 
 export const DynamicOptions = ({
   listType,
@@ -155,7 +176,7 @@ export const DynamicOptions = ({
             <div className="flex items-center gap-2">
               <input
                 {...inputProps}
-                type="checkbox"
+                type="radio"
                 value={option.id}
                 checked={selected === option.id}
                 onChange={(e) => {

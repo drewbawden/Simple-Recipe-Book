@@ -5,6 +5,7 @@ import {
   Locations,
   NormalUnit,
   StandardUnit,
+  ShoppingListSortOption,
 } from "../app/generated/prisma/enums";
 
 function formatEnum(enumObj: Record<string, string>) {
@@ -19,13 +20,15 @@ const enumMaps = {
   standardUnits: formatEnum(StandardUnit),
   recipeType: formatEnum(RecipeType),
   locations: formatEnum(Locations),
+  listSortOptions: formatEnum(ShoppingListSortOption),
 };
 
 export type enumType =
   | "normalUnits"
   | "standardUnits"
   | "recipeType"
-  | "locations";
+  | "locations"
+  | "listSortOptions";
 
 export async function getEnums(type: enumType, query = "") {
   const targetEnum = enumMaps[type];

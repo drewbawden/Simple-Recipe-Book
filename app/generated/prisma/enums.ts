@@ -75,3 +75,24 @@ export const ItemUsageType = {
 } as const
 
 export type ItemUsageType = (typeof ItemUsageType)[keyof typeof ItemUsageType]
+
+
+export const ShoppingListSortOption = {
+  ALPHABETICAL: 'ALPHABETICAL',
+  REVERSE_ALPHABETICAL: 'REVERSE_ALPHABETICAL',
+  MANUAL: 'MANUAL',
+  AUTOMATIC: 'AUTOMATIC'
+} as const
+
+export type ShoppingListSortOption = (typeof ShoppingListSortOption)[keyof typeof ShoppingListSortOption]
+
+
+export const ListItemSortOption = {
+  ALPHABETICAL: 'ALPHABETICAL',
+  REVERSE_ALPHABETICAL: 'REVERSE_ALPHABETICAL',
+  CREATION_DATE: 'CREATION_DATE',
+  REVERSE_CREATION_DATE: 'REVERSE_CREATION_DATE',
+  PRIORITY: 'PRIORITY'
+} as const
+
+export type ListItemSortOption = (typeof ListItemSortOption)[keyof typeof ListItemSortOption]

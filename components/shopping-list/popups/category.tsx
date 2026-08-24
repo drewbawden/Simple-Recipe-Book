@@ -57,7 +57,7 @@ export const ChangeCategoryPopup = ({
         <label className="flex items-center justify-between bg-gray-200 p-1 w-full border-y-1">
           <span>Auto Categorise</span>
           <input
-            type="checkbox"
+            type="radio"
             onChange={(e) => {
               if (e.target.checked) {
                 handleAutoCategorise();

@@ -170,11 +170,13 @@ model RecipeInstructionStep {
 }
 
 model ShoppingList {
-  id        Int                @id @default(autoincrement())
-  name      String
-  items     ShoppingListItem[]
-  createdAt DateTime           @default(now())
-  updatedAt DateTime           @default(now()) @updatedAt
+  id                Int                    @id @default(autoincrement())
+  name              String
+  items             ShoppingListItem[]
+  categorySortOrder ShoppingListSortOption @default(ALPHABETICAL)
+  itemSortOrder     ListItemSortOption     @default(CREATION_DATE)
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @default(now()) @updatedAt
 }
 
 model ShoppingListItem {
@@ -262,4 +264,19 @@ enum ItemType {
 enum ItemUsageType {
   RECIPE
   SHOPPING_LIST
+}
+
+enum ShoppingListSortOption {
+  ALPHABETICAL
+  REVERSE_ALPHABETICAL
+  MANUAL // user defined order
+  AUTOMATIC // auto sort based on recent usage
+}
+
+enum ListItemSortOption {
+  ALPHABETICAL
+  REVERSE_ALPHABETICAL
+  CREATION_DATE
+  REVERSE_CREATION_DATE
+  PRIORITY
 }

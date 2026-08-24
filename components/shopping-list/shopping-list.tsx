@@ -5,6 +5,7 @@ import {
   getShoppingListGroupedByCategory,
   clearShoppingList,
   editListItem,
+  updateCategorySortOrder,
 } from "@/actions/shopping-lists";
 import {
   ContextMenu,
@@ -21,6 +22,8 @@ import { SettingsIcon, XIcon } from "lucide-react";
 import { Modal } from "@/components/templates/modal";
 import { ItemEditPopup } from "@/components/shopping-list/popups/item-edit";
 import { listItem } from "@/types/list-item";
+import { ChangeSortOrderPopup, EditInfoPopup } from "./popups/list-edit";
+import { ShoppingListSortOption } from "@/app/generated/prisma/enums";
 
 export const ShoppingList = () => {
   const [loading, setLoading] = useState(true);
@@ -30,8 +33,13 @@ export const ShoppingList = () => {
     Awaited<ReturnType<typeof getShoppingListGroupedByCategory>>
   >([]);
   const [addToCategory, setAddToCategory] = useState<string | null>(null);
+
   const [editItem, setEditItem] = useState<listItem | null>(null);
-  const editFormRef = useRef<HTMLFormElement>(null);
+  const [editList, setEditList] = useState(false);
+  const [editCategorySortOrder, setEditCategorySortOrder] = useState(false);
+  const itemEditFormRef = useRef<HTMLFormElement>(null);
+  const listEditFormRef = useRef<HTMLFormElement>(null);
+  const categorySortEditFormRef = useRef<HTMLFormElement>(null);
 
   const deleteTimers = useRef<Record<number, NodeJS.Timeout | undefined>>({});
   const deleteTokens = useRef<Record<number, number>>({});
@@ -183,7 +191,7 @@ export const ShoppingList = () => {
     }, 1500);
   };
 
-  const handleEditSubmit = async (formData: FormData) => {
+  const handleItemEditSubmit = async (formData: FormData) => {
     const value = (entry: FormDataEntryValue | null) =>
       typeof entry === "string" ? entry : entry == null ? "" : String(entry);
 
@@ -198,6 +206,14 @@ export const ShoppingList = () => {
 
     await editListItem(fields);
     setEditItem(null);
+    await refreshData();
+  };
+
+  const handleCategorySortSubmit = async (formData: FormData) => {
+    const order = formData.get("sortOrder") as ShoppingListSortOption;
+    await updateCategorySortOrder(shoppingList.id, order);
+
+    setEditCategorySortOrder(false);
     await refreshData();
   };
 
@@ -231,14 +247,20 @@ export const ShoppingList = () => {
               <SettingsIcon />
             </ContextMenuTrigger>
             <ContextMenuContent align="right" className="text-gray-900 w-50">
-              <ContextMenuItem onSelect={() => {}}>
+              <ContextMenuItem
+                onSelect={() => {
+                  setEditList(true);
+                }}
+              >
                 Edit List Info
               </ContextMenuItem>
               <hr />
-              <ContextMenuItem onSelect={() => {}}>Sort By</ContextMenuItem>
-              <hr />
-              <ContextMenuItem onSelect={() => {}}>
-                Manage Categories
+              <ContextMenuItem
+                onSelect={() => {
+                  setEditCategorySortOrder(true);
+                }}
+              >
+                Sort By
               </ContextMenuItem>
               <hr />
               <ContextMenuItem className="text-red-500" onSelect={() => {}}>
@@ -322,12 +344,40 @@ export const ShoppingList = () => {
         size="md"
         modalTitle="Edit Item"
         showTick
-        handleTick={() => editFormRef.current?.requestSubmit()}
+        handleTick={() => itemEditFormRef.current?.requestSubmit()}
       >
         <ItemEditPopup
           initialData={editItem}
-          formRef={editFormRef}
-          onSubmit={handleEditSubmit}
+          formRef={itemEditFormRef}
+          onSubmit={handleItemEditSubmit}
+        />
+      </Modal>
+      <Modal
+        isOpen={editList}
+        onClose={() => setEditList(false)}
+        size="md"
+        modalTitle="Edit Shopping List"
+        showTick
+        handleTick={() => listEditFormRef.current?.requestSubmit()}
+      >
+        <EditInfoPopup
+          initialData={shoppingList}
+          formRef={listEditFormRef}
+          onSubmit={() => {}}
+        />
+      </Modal>
+      <Modal
+        isOpen={editCategorySortOrder}
+        onClose={() => setEditCategorySortOrder(false)}
+        size="md"
+        modalTitle="Sort By"
+        showTick
+        handleTick={() => categorySortEditFormRef.current?.requestSubmit()}
+      >
+        <ChangeSortOrderPopup
+          initialData={shoppingList.categorySortOrder}
+          formRef={categorySortEditFormRef}
+          onSubmit={handleCategorySortSubmit}
         />
       </Modal>
     </div>

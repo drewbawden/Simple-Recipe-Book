@@ -225,6 +225,8 @@ export type RecipeInstructionStepScalarFieldEnum = (typeof RecipeInstructionStep
 export const ShoppingListScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  categorySortOrder: 'categorySortOrder',
+  itemSortOrder: 'itemSortOrder',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

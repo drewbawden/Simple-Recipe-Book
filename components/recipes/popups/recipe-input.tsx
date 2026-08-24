@@ -411,6 +411,7 @@ export const RecipeInputPopup = ({
               enumType="recipeType"
               selected={types}
               onChange={setTypes}
+              selectMultiple
             />
           </div>
         </div>

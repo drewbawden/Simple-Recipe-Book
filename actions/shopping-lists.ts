@@ -3,10 +3,13 @@
 import { PrismaClient } from "../app/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import "dotenv/config";
-import { ItemType } from "../app/generated/prisma/enums";
+import {
+  ItemType,
+  ShoppingListSortOption,
+} from "../app/generated/prisma/enums";
 import { normaliseItemName } from "@/lib/items";
 import { computeCategory } from "@/lib/category";
-import { dynamicListSort } from "@/lib/shopping-list";
+import { sortShoppingList } from "@/lib/shopping-list";
 import { listItem } from "@/types/list-item";
 
 const adapter = new PrismaPg({
@@ -51,6 +54,7 @@ export const getShoppingListGroupedByCategory = async () => {
         slug: string;
         displayName: string | null;
         items: typeof shoppingList.items;
+        orderIndex: number;
       }
     >();
 
@@ -62,6 +66,8 @@ export const getShoppingListGroupedByCategory = async () => {
 
       const existing = categories.get(slug);
 
+      const orderIndex = category?.orderIndex;
+
       if (existing) {
         existing.items.push(item);
       } else {
@@ -69,6 +75,7 @@ export const getShoppingListGroupedByCategory = async () => {
           slug,
           displayName,
           items: [item],
+          orderIndex,
         });
       }
     }
@@ -94,9 +101,8 @@ export const getShoppingListGroupedByCategory = async () => {
       })),
     }));
 
-    categoriesArray.sort(dynamicListSort("slug"));
-
-    return categoriesArray;
+    const sortedCategories = sortShoppingList(shoppingList, categoriesArray);
+    return sortedCategories;
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch grouped shopping list");
@@ -404,5 +410,24 @@ export const editListItem = async (data: listItem) => {
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to update list item");
+  }
+};
+
+export const updateCategorySortOrder = async (
+  listId: number,
+  sortOrder: ShoppingListSortOption,
+) => {
+  try {
+    await prisma.shoppingList.update({
+      where: {
+        id: listId,
+      },
+      data: {
+        categorySortOrder: sortOrder,
+      },
+    });
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to update list sort order");
   }
 };

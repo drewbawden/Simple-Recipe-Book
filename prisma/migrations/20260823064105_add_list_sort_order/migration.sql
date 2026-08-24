@@ -1,0 +1,5 @@
+-- CreateEnum
+CREATE TYPE "ShoppingListSortOption" AS ENUM ('ALPHABETICAL', 'REV_ALPHABETICAL', 'MANUAL', 'CREATION_DATE', 'REV_CREATION_DATE', 'PRIORITY');
+
+-- AlterTable
+ALTER TABLE "ShoppingList" ADD COLUMN     "sortOrder" "ShoppingListSortOption" NOT NULL DEFAULT 'ALPHABETICAL';
