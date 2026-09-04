@@ -1,6 +1,9 @@
 import { getCategories } from "@/actions/items";
 import { ShoppingList } from "@/app/generated/prisma/client";
-import { ShoppingListSortOption } from "@/app/generated/prisma/enums";
+import {
+  ListItemSortOption,
+  ShoppingListSortOption,
+} from "@/app/generated/prisma/enums";
 import { EnumOptions } from "@/components/templates/options";
 import { DraggableList } from "@/components/templates/reorderable-list";
 import { Ref, useEffect, useState } from "react";
@@ -16,7 +19,7 @@ export const EditInfoPopup = ({
   onSubmit,
 }: EditInfoPopupProps) => {
   if (!initialData) {
-    console.error("No initialData for ChangeSortOrderPopup");
+    console.error("No initialData for EditInfoPopup");
     return;
   }
 
@@ -27,7 +30,7 @@ export const EditInfoPopup = ({
   );
 };
 
-interface ChangeSortOrderPopupProps {
+interface CategorySortOrderPopupProps {
   initialData: ShoppingListSortOption | null;
   formRef: Ref<HTMLFormElement>;
   onSubmit: (formData: FormData) => void | Promise<void>;
@@ -36,9 +39,9 @@ export const CategorySortOrderPopup = ({
   initialData,
   formRef,
   onSubmit,
-}: ChangeSortOrderPopupProps) => {
+}: CategorySortOrderPopupProps) => {
   if (!initialData) {
-    console.error("No initialData for ChangeSortOrderPopup");
+    console.error("No initialData for CategorySortOrderPopup");
     return;
   }
 
@@ -112,30 +115,30 @@ export const CategorySortOrderPopup = ({
   );
 };
 
+interface ItemSortOrderPopupProps {
+  initialData: ListItemSortOption | null;
+  formRef: Ref<HTMLFormElement>;
+  onSubmit: (formData: FormData) => void | Promise<void>;
+}
 export const ItemSortOrderPopup = ({
   initialData,
   formRef,
   onSubmit,
-}: ChangeSortOrderPopupProps) => {
+}: ItemSortOrderPopupProps) => {
   if (!initialData) {
     console.error("No initialData for ChangeSortOrderPopup");
     return;
   }
 
   const [sortOrder, setSortOrder] = useState(initialData);
-  const [loading, setLoading] = useState(true);
 
   const handleSortOptionSelected = (sortOptionArray: string[]) => {
     if (sortOptionArray.length < 1) {
       return;
     }
-    const sortOption = sortOptionArray[0] as ShoppingListSortOption;
+    const sortOption = sortOptionArray[0] as ListItemSortOption;
     setSortOrder(sortOption);
   };
-
-  if (loading) {
-    return <p>Loading Items...</p>;
-  }
 
   return (
     <form
@@ -148,7 +151,7 @@ export const ItemSortOrderPopup = ({
       }}
     >
       <EnumOptions
-        enumType="listSortOptions"
+        enumType="itemSortOptions"
         selected={[sortOrder]}
         onChange={handleSortOptionSelected}
       />

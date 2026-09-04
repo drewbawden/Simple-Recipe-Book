@@ -1,4 +1,5 @@
 import {
+  ListItemSortOption,
   NormalUnit,
   ShoppingListSortOption,
 } from "@/app/generated/prisma/enums";
@@ -80,17 +81,18 @@ export const computeQuantity = (sources: any) => {
   };
 };
 
-const alphabeticalListSort = (property: string) => {
-  let sortOrder = 1;
-  if (property[0] === "-") {
-    sortOrder = -1;
-    property = property.substring(1);
-  }
-  return function (a: any, b: any) {
-    const result =
-      a[property] < b[property] ? -1 : a[property] > b[property] ? 1 : 0;
-    return result * sortOrder;
-  };
+const alphabeticalSort = <T>(getValue: (item: T) => string) => {
+  return (a: T, b: T) =>
+    getValue(a).localeCompare(getValue(b), undefined, {
+      sensitivity: "base",
+    });
+};
+
+const reverseAlphabeticalSort = <T>(getValue: (item: T) => string) => {
+  return (a: T, b: T) =>
+    getValue(b).localeCompare(getValue(a), undefined, {
+      sensitivity: "base",
+    });
 };
 
 const manualListSort = (property: string) => {
@@ -102,10 +104,10 @@ const manualListSort = (property: string) => {
 export const sortShoppingList = (ShoppingList, categories) => {
   switch (ShoppingList.categorySortOrder) {
     case ShoppingListSortOption.ALPHABETICAL:
-      categories.sort(alphabeticalListSort("slug"));
+      categories.sort(alphabeticalSort((category) => category.slug));
       break;
     case ShoppingListSortOption.REVERSE_ALPHABETICAL:
-      categories.sort(alphabeticalListSort("-slug"));
+      categories.sort(alphabeticalSort((category) => category.slug));
       break;
     case ShoppingListSortOption.MANUAL:
       categories.sort(manualListSort("orderIndex"));
@@ -115,4 +117,45 @@ export const sortShoppingList = (ShoppingList, categories) => {
       break;
   }
   return categories;
+};
+
+export const sortShoppingListItems = (shoppingList, categories) => {
+  return categories.map((category) => {
+    const items = [...category.items];
+
+    switch (shoppingList.itemSortOrder) {
+      case ListItemSortOption.ALPHABETICAL:
+        items.sort(alphabeticalSort((item) => item.item.name));
+        break;
+
+      case ListItemSortOption.REVERSE_ALPHABETICAL:
+        items.sort(reverseAlphabeticalSort((item) => item.item.name));
+        break;
+
+      case ListItemSortOption.CREATION_DATE:
+        items.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+        break;
+
+      case ListItemSortOption.REVERSE_CREATION_DATE:
+        items.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+        break;
+
+      case ListItemSortOption.PRIORITY:
+        items.sort((a, b) => {
+          if (a.urgent !== b.urgent) {
+            return a.urgent ? -1 : 1;
+          }
+          if (a.completed !== b.completed) {
+            return a.completed ? 1 : -1;
+          }
+          return 0;
+        });
+        break;
+    }
+
+    return {
+      ...category,
+      items,
+    };
+  });
 };

@@ -6,6 +6,7 @@ import {
   clearShoppingList,
   editListItem,
   updateCategorySortOrder,
+  updateItemSortOrder,
 } from "@/actions/shopping-lists";
 import {
   ContextMenu,
@@ -22,8 +23,15 @@ import { SettingsIcon, XIcon } from "lucide-react";
 import { Modal } from "@/components/templates/modal";
 import { ItemEditPopup } from "@/components/shopping-list/popups/item-edit";
 import { listItem } from "@/types/list-item";
-import { CategorySortOrderPopup, EditInfoPopup } from "./popups/list-edit";
-import { ShoppingListSortOption } from "@/app/generated/prisma/enums";
+import {
+  CategorySortOrderPopup,
+  EditInfoPopup,
+  ItemSortOrderPopup,
+} from "./popups/list-edit";
+import {
+  ListItemSortOption,
+  ShoppingListSortOption,
+} from "@/app/generated/prisma/enums";
 import { updateCategoryIndices } from "@/actions/items";
 
 export const ShoppingList = () => {
@@ -38,9 +46,11 @@ export const ShoppingList = () => {
   const [editItem, setEditItem] = useState<listItem | null>(null);
   const [editList, setEditList] = useState(false);
   const [editCategorySortOrder, setEditCategorySortOrder] = useState(false);
+  const [editItemSortOrder, setEditItemSortOrder] = useState(false);
   const itemEditFormRef = useRef<HTMLFormElement>(null);
   const listEditFormRef = useRef<HTMLFormElement>(null);
   const categorySortEditFormRef = useRef<HTMLFormElement>(null);
+  const itemSortEditFormRef = useRef<HTMLFormElement>(null);
 
   const deleteTimers = useRef<Record<number, NodeJS.Timeout | undefined>>({});
   const deleteTokens = useRef<Record<number, number>>({});
@@ -220,6 +230,14 @@ export const ShoppingList = () => {
     await refreshData();
   };
 
+  const handleItemSortSubmit = async (formData: FormData) => {
+    const order = formData.get("sortOrder") as ListItemSortOption;
+    await updateItemSortOrder(shoppingList.id, order);
+
+    setEditItemSortOrder(false);
+    await refreshData();
+  };
+
   return (
     <div className="mx-auto max-w-xl p-6 flex flex-col text-center space-y-1">
       <Link
@@ -266,7 +284,13 @@ export const ShoppingList = () => {
                 Sort Categories
               </ContextMenuItem>
               <hr />
-              <ContextMenuItem onSelect={() => {}}>Sort Items</ContextMenuItem>
+              <ContextMenuItem
+                onSelect={() => {
+                  setEditItemSortOrder(true);
+                }}
+              >
+                Sort Items
+              </ContextMenuItem>
               <hr />
               <ContextMenuItem className="text-red-500" onSelect={() => {}}>
                 Delete List
@@ -375,7 +399,7 @@ export const ShoppingList = () => {
         isOpen={editCategorySortOrder}
         onClose={() => setEditCategorySortOrder(false)}
         size="md"
-        modalTitle="Sort By"
+        modalTitle="Sort Categories"
         showTick
         handleTick={() => categorySortEditFormRef.current?.requestSubmit()}
       >
@@ -383,6 +407,20 @@ export const ShoppingList = () => {
           initialData={shoppingList.categorySortOrder}
           formRef={categorySortEditFormRef}
           onSubmit={handleCategorySortSubmit}
+        />
+      </Modal>
+      <Modal
+        isOpen={editItemSortOrder}
+        onClose={() => setEditItemSortOrder(false)}
+        size="md"
+        modalTitle="Sort Items"
+        showTick
+        handleTick={() => itemSortEditFormRef.current?.requestSubmit()}
+      >
+        <ItemSortOrderPopup
+          initialData={shoppingList.itemSortOrder}
+          formRef={itemSortEditFormRef}
+          onSubmit={handleItemSortSubmit}
         />
       </Modal>
     </div>

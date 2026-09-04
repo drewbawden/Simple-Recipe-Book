@@ -507,6 +507,7 @@ export const categoryKeywords = [
   { keyword: "ginger ale", weight: 3, categorySlug: "beverages" },
   { keyword: "ginger beer", weight: 3, categorySlug: "beverages" },
   // Juices & fruit drinks
+  { keyword: "juice", weight: 2, categorySlug: "beverages" },
   { keyword: "fruit juice", weight: 3, categorySlug: "beverages" },
   { keyword: "orange juice", weight: 3, categorySlug: "beverages" },
   { keyword: "apple juice", weight: 3, categorySlug: "beverages" },
@@ -562,7 +563,7 @@ export const categoryKeywords = [
   { keyword: "tortillas", weight: 2, categorySlug: "breads_cereals" },
   // Breakfast cereals & oats
   { keyword: "cereal", weight: 3, categorySlug: "breads_cereals" },
-  { keyword: "breakfast cereal", weight: 3, categorySlug: "breads_cereals" },
+  { keyword: "breakfast cereal", weight: 2, categorySlug: "breads_cereals" },
   { keyword: "corn flakes", weight: 3, categorySlug: "breads_cereals" },
   { keyword: "rice bubbles", weight: 3, categorySlug: "breads_cereals" },
   { keyword: "weetbix", weight: 3, categorySlug: "breads_cereals" },

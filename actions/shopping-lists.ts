@@ -5,11 +5,12 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import "dotenv/config";
 import {
   ItemType,
+  ListItemSortOption,
   ShoppingListSortOption,
 } from "../app/generated/prisma/enums";
 import { normaliseItemName } from "@/lib/items";
 import { computeCategory } from "@/lib/category";
-import { sortShoppingList } from "@/lib/shopping-list";
+import { sortShoppingList, sortShoppingListItems } from "@/lib/shopping-list";
 import { listItem } from "@/types/list-item";
 
 const adapter = new PrismaPg({
@@ -102,7 +103,8 @@ export const getShoppingListGroupedByCategory = async () => {
     }));
 
     const sortedCategories = sortShoppingList(shoppingList, categoriesArray);
-    return sortedCategories;
+    const finalSorted = sortShoppingListItems(shoppingList, sortedCategories);
+    return finalSorted;
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch grouped shopping list");
@@ -424,6 +426,25 @@ export const updateCategorySortOrder = async (
       },
       data: {
         categorySortOrder: sortOrder,
+      },
+    });
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to update list sort order");
+  }
+};
+
+export const updateItemSortOrder = async (
+  listId: number,
+  sortOrder: ListItemSortOption,
+) => {
+  try {
+    await prisma.shoppingList.update({
+      where: {
+        id: listId,
+      },
+      data: {
+        itemSortOrder: sortOrder,
       },
     });
   } catch (error) {
