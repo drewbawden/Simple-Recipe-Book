@@ -22,8 +22,9 @@ import { SettingsIcon, XIcon } from "lucide-react";
 import { Modal } from "@/components/templates/modal";
 import { ItemEditPopup } from "@/components/shopping-list/popups/item-edit";
 import { listItem } from "@/types/list-item";
-import { ChangeSortOrderPopup, EditInfoPopup } from "./popups/list-edit";
+import { CategorySortOrderPopup, EditInfoPopup } from "./popups/list-edit";
 import { ShoppingListSortOption } from "@/app/generated/prisma/enums";
+import { updateCategoryIndices } from "@/actions/items";
 
 export const ShoppingList = () => {
   const [loading, setLoading] = useState(true);
@@ -211,7 +212,9 @@ export const ShoppingList = () => {
 
   const handleCategorySortSubmit = async (formData: FormData) => {
     const order = formData.get("sortOrder") as ShoppingListSortOption;
+    const categoryOrder = JSON.parse(formData.get("categoryOrder") as string);
     await updateCategorySortOrder(shoppingList.id, order);
+    await updateCategoryIndices(categoryOrder);
 
     setEditCategorySortOrder(false);
     await refreshData();
@@ -260,8 +263,10 @@ export const ShoppingList = () => {
                   setEditCategorySortOrder(true);
                 }}
               >
-                Sort By
+                Sort Categories
               </ContextMenuItem>
+              <hr />
+              <ContextMenuItem onSelect={() => {}}>Sort Items</ContextMenuItem>
               <hr />
               <ContextMenuItem className="text-red-500" onSelect={() => {}}>
                 Delete List
@@ -374,7 +379,7 @@ export const ShoppingList = () => {
         showTick
         handleTick={() => categorySortEditFormRef.current?.requestSubmit()}
       >
-        <ChangeSortOrderPopup
+        <CategorySortOrderPopup
           initialData={shoppingList.categorySortOrder}
           formRef={categorySortEditFormRef}
           onSubmit={handleCategorySortSubmit}

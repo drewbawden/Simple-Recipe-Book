@@ -71,10 +71,18 @@ export const EnumOptions = ({
   }
 
   return (
-    <div>
+    <ul>
       {enums.map((option) => (
-        <div key={option.id} className="p-2 pb-0 bg-gray-200" key={option.id}>
-          <label className="flex items-center justify-between bg-gray-200 p-1 w-full border-b-1">
+        <li
+          key={option.id}
+          className="p-2 pb-0 bg-gray-200
+                    first:rounded-t-xl
+                    last:rounded-b-xl
+                    first:last:rounded-xl
+                    last:after:hidden
+        "
+        >
+          <label className="flex items-center justify-between bg-gray-200 p-1 w-full">
             {option.name.charAt(0).toUpperCase() + option.name.substring(1)}
 
             <input
@@ -88,9 +96,9 @@ export const EnumOptions = ({
               }
             />
           </label>
-        </div>
+        </li>
       ))}
-    </div>
+    </ul>
   );
 };
 

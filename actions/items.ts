@@ -40,3 +40,20 @@ export const deleteCategory = async (slug: string) => {
     throw new Error("Failed to delete item category");
   }
 };
+
+interface OrderCategory {
+  id: string;
+  label: string;
+}
+export const updateCategoryIndices = async (categories: OrderCategory[]) => {
+  for (const [index, category] of categories.entries()) {
+    await prisma.itemCategory.update({
+      where: {
+        slug: category.id,
+      },
+      data: {
+        orderIndex: index,
+      },
+    });
+  }
+};
