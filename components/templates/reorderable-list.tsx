@@ -1,8 +1,14 @@
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useMemo } from "react";
 import { DragDropProvider } from "@dnd-kit/react";
 import { useSortable, isSortable } from "@dnd-kit/react/sortable";
-import { AutoScroller } from "@dnd-kit/dom";
+import {
+  DragDropManager,
+  PointerActivationConstraints,
+  PointerSensor,
+  Scroller,
+} from "@dnd-kit/dom";
 import { RestrictToVerticalAxis } from "@dnd-kit/abstract/modifiers";
+import { GripHorizontalIcon } from "lucide-react";
 
 interface ReorderableItem {
   id: string;
@@ -16,7 +22,7 @@ interface SortableProps {
 }
 
 const Sortable = ({ id, index, label }: SortableProps) => {
-  const { ref } = useSortable({
+  const { ref, handleRef } = useSortable({
     id,
     index,
     modifiers: [RestrictToVerticalAxis],
@@ -26,7 +32,7 @@ const Sortable = ({ id, index, label }: SortableProps) => {
     <li
       ref={ref}
       className="
-        relative bg-gray-200 px-2 py-1
+        relative bg-gray-200 px-2 py-2.5 flex flex-row items-center
         first:rounded-t-xl
         last:rounded-b-xl
         first:last:rounded-xl
@@ -36,6 +42,13 @@ const Sortable = ({ id, index, label }: SortableProps) => {
       style={{ touchAction: "pan-y" }}
     >
       {label}
+      <button
+        ref={handleRef}
+        type="button"
+        className="absolute right-0 py-2 px-4"
+      >
+        <GripHorizontalIcon size={24} className="text-gray-500" />
+      </button>
     </li>
   );
 };
@@ -51,11 +64,55 @@ export const DraggableList = ({
   setItems,
   display = true,
 }: DraggableListProps) => {
-  if (!display) return;
+  const manager = useMemo(() => {
+    const nextManager = new DragDropManager({
+      sensors: [
+        PointerSensor.configure({
+          activationConstraints: [
+            new PointerActivationConstraints.Delay({
+              value: 1,
+              tolerance: 10,
+            }),
+          ],
+        }),
+      ],
+    });
+
+    const scroller = nextManager.registry.plugins.get(Scroller);
+
+    if (scroller) {
+      const getScrollableElements = scroller.getScrollableElements;
+
+      scroller.getScrollableElements = () => {
+        const elements = getScrollableElements();
+
+        if (!elements) return null;
+
+        const documentScrollElements = new Set<Element>([
+          document.body,
+          document.documentElement,
+        ]);
+
+        if (document.scrollingElement) {
+          documentScrollElements.add(document.scrollingElement);
+        }
+
+        return new Set(
+          [...elements].filter(
+            (element) => !documentScrollElements.has(element),
+          ),
+        );
+      };
+    }
+
+    return nextManager;
+  }, []);
+
+  if (!display) return null;
 
   return (
     <DragDropProvider
-      plugins={(plugins) => plugins.filter((plugin) => plugin !== AutoScroller)}
+      manager={manager}
       onDragEnd={(event) => {
         if (event.canceled) return;
 

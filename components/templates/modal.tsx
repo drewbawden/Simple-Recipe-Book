@@ -1,6 +1,9 @@
+"use client";
+
 import React, { useEffect, useRef, useState } from "react";
 import Image, { ImageProps } from "next/image";
 import { CheckIcon, ChevronLeftIcon, XIcon } from "lucide-react";
+import { createPortal } from "react-dom";
 
 type ModalSize = "xs" | "sm" | "md" | "lg" | "xl" | "xxl" | "xxxl";
 
@@ -27,7 +30,7 @@ export const Modal = ({
   handleTick,
   isChild = false,
 }: ModalProps) => {
-  const [mounted, setMounted] = useState(isOpen);
+  const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(isOpen);
   const [dragging, setDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -39,30 +42,44 @@ export const Modal = ({
   useEffect(() => {
     if (!isOpen) return;
 
-    setMounted(true);
-    setDragOffset({ x: 0, y: 0 });
-
+    let revealFrame: number | undefined;
     const frame = requestAnimationFrame(() => {
-      setVisible(true);
+      setMounted(true);
+      setDragOffset({ x: 0, y: 0 });
+
+      revealFrame = requestAnimationFrame(() => {
+        setVisible(true);
+      });
     });
 
-    return () => cancelAnimationFrame(frame);
+    return () => {
+      cancelAnimationFrame(frame);
+      if (revealFrame !== undefined) {
+        cancelAnimationFrame(revealFrame);
+      }
+    };
   }, [isOpen]);
 
   useEffect(() => {
     if (isOpen) return;
 
-    setVisible(false);
-    setDragging(false);
-    setDragOffset({ x: 0, y: 0 });
     dragStart.current = null;
     dragDelta.current = { x: 0, y: 0 };
+
+    const frame = requestAnimationFrame(() => {
+      setVisible(false);
+      setDragging(false);
+      setDragOffset({ x: 0, y: 0 });
+    });
 
     const timer = window.setTimeout(() => {
       setMounted(false);
     }, 220);
 
-    return () => window.clearTimeout(timer);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.clearTimeout(timer);
+    };
   }, [isOpen]);
 
   useEffect(() => {
@@ -197,7 +214,7 @@ export const Modal = ({
     ? `translate3d(${baseOffset + dragOffset.x}px, 0, 0)`
     : `translate3d(0, ${baseOffset + dragOffset.y}px, 0)`;
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-50">
       <div
         className={`absolute inset-0 ${!isChild ? "bg-black/50" : ""}`}
@@ -325,7 +342,8 @@ export const Modal = ({
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };
 
