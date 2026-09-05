@@ -75,10 +75,11 @@ export const EnumOptions = ({
       {enums.map((option) => (
         <li
           key={option.id}
-          className="p-2 pb-0 bg-gray-200
+          className="relative p-2 bg-gray-200
                     first:rounded-t-xl
                     last:rounded-b-xl
                     first:last:rounded-xl
+                    after:absolute after:bottom-0 after:left-3 after:right-3 after:h-px after:bg-black/10
                     last:after:hidden
         "
         >
@@ -174,10 +175,19 @@ export const DynamicOptions = ({
   if (loading) return <p>Loading options...</p>;
 
   return (
-    <div className="grid grid-cols-1">
+    <ul className="grid grid-cols-1">
       {items.map((option) => (
-        <div className="p-2 pb-0 bg-gray-200" key={option.id}>
-          <label className="flex items-center justify-between bg-gray-200 p-1 w-full border-b-1">
+        <li
+          key={option.id}
+          className="relative p-1.5 bg-gray-200
+                    first:rounded-t-xl
+                    last:rounded-b-xl
+                    first:last:rounded-xl
+                    after:absolute after:bottom-0 after:left-3 after:right-3 after:h-px after:bg-black/10
+                    last:after:hidden
+        "
+        >
+          <label className="flex items-center justify-between bg-gray-200 p-1 w-full">
             <span>
               {option.name.charAt(0).toUpperCase() + option.name.substring(1)}
             </span>
@@ -209,8 +219,8 @@ export const DynamicOptions = ({
               ) : null}
             </div>
           </label>
-        </div>
+        </li>
       ))}
-    </div>
+    </ul>
   );
 };
