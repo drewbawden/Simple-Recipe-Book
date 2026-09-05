@@ -4,7 +4,6 @@ import { PrismaClient } from "../app/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import "dotenv/config";
 import {
-  ItemType,
   ListItemSortOption,
   ShoppingListSortOption,
 } from "../app/generated/prisma/enums";
@@ -171,7 +170,6 @@ interface addItemToListProps {
   categorySlug: string | null;
   manuallyAdded?: boolean;
   shoppingListId?: number;
-  itemType?: ItemType;
   tagId?: number;
 }
 export const addItemToList = async ({
@@ -179,7 +177,6 @@ export const addItemToList = async ({
   categorySlug,
   manuallyAdded,
   shoppingListId = 1,
-  itemType = ItemType.FOOD,
   tagId,
 }: addItemToListProps) => {
   itemName = normaliseItemName(itemName);
@@ -210,7 +207,6 @@ export const addItemToList = async ({
     },
     create: {
       name: itemName,
-      type: itemType,
       categorySlug: category ? category.slug : null,
       ...(manuallyAdded !== undefined
         ? { manuallyCategorised: manuallyAdded }

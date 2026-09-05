@@ -3,7 +3,6 @@
 import {
   PrismaClient,
   RecipeType,
-  ItemType,
   Prisma,
 } from "../app/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
@@ -161,7 +160,6 @@ export async function updateRecipe(recipeId: number, formData: FormData) {
                 update: {},
                 create: {
                   name: normalisedName,
-                  type: ItemType.FOOD,
                 },
               });
 
@@ -277,7 +275,6 @@ export async function insertNewRecipe(formData: FormData) {
                 update: {},
                 create: {
                   name: normalisedName,
-                  type: ItemType.FOOD,
                 },
               });
 

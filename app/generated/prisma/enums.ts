@@ -61,14 +61,6 @@ export const RecipeType = {
 export type RecipeType = (typeof RecipeType)[keyof typeof RecipeType]
 
 
-export const ItemType = {
-  FOOD: 'FOOD',
-  HOUSEHOLD: 'HOUSEHOLD'
-} as const
-
-export type ItemType = (typeof ItemType)[keyof typeof ItemType]
-
-
 export const ItemUsageType = {
   RECIPE: 'RECIPE',
   SHOPPING_LIST: 'SHOPPING_LIST'

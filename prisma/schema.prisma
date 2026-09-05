@@ -32,9 +32,8 @@ model StoreProduct {
 
 // such as "Peanut butter", "Toilet paper"
 model Item {
-  id   Int      @id @default(autoincrement())
-  name String   @unique
-  type ItemType
+  id   Int    @id @default(autoincrement())
+  name String @unique
 
   category            ItemCategory? @relation(fields: [categorySlug], references: [slug])
   categorySlug        String?
@@ -271,11 +270,6 @@ enum RecipeType {
   DESSERT
   SNACK
   SIDE
-}
-
-enum ItemType {
-  FOOD
-  HOUSEHOLD
 }
 
 enum ItemUsageType {

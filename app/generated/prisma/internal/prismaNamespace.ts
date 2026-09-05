@@ -1511,7 +1511,6 @@ export type StoreProductScalarFieldEnum = (typeof StoreProductScalarFieldEnum)[k
 export const ItemScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  type: 'type',
   categorySlug: 'categorySlug',
   manuallyCategorised: 'manuallyCategorised',
   createdAt: 'createdAt',
@@ -1777,20 +1776,6 @@ export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
  * Reference to a field of type 'DateTime[]'
  */
 export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
-    
-
-
-/**
- * Reference to a field of type 'ItemType'
- */
-export type EnumItemTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ItemType'>
-    
-
-
-/**
- * Reference to a field of type 'ItemType[]'
- */
-export type ListEnumItemTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ItemType[]'>
     
 
 

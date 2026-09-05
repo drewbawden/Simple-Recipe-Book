@@ -102,7 +102,6 @@ export type StoreProductScalarFieldEnum = (typeof StoreProductScalarFieldEnum)[k
 export const ItemScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  type: 'type',
   categorySlug: 'categorySlug',
   manuallyCategorised: 'manuallyCategorised',
   createdAt: 'createdAt',
