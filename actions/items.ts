@@ -57,3 +57,14 @@ export const updateCategoryIndices = async (categories: OrderCategory[]) => {
     });
   }
 };
+
+export const getItemTags = async () => {
+  try {
+    const tags = await prisma.shoppingListTag.findMany();
+    if (!tags) return null;
+    return tags;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch item tags");
+  }
+};

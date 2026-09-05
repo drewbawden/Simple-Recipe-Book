@@ -11,7 +11,8 @@ import {
 import { normaliseItemName } from "@/lib/items";
 import { computeCategory } from "@/lib/category";
 import { sortShoppingList, sortShoppingListItems } from "@/lib/shopping-list";
-import { listItem } from "@/types/list-item";
+import { ListItem } from "@/types/list-item";
+import { EditableTag } from "@/types/list-item";
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
@@ -42,6 +43,7 @@ export const getShoppingListGroupedByCategory = async () => {
                 },
               },
             },
+            tag: true,
           },
         },
       },
@@ -121,6 +123,7 @@ export const getShoppingList = async () => {
         items: {
           include: {
             item: true,
+            tag: true,
             shoppingListItemSources: {
               include: {
                 recipeIngredient: {
@@ -135,8 +138,6 @@ export const getShoppingList = async () => {
         tags: true,
       },
     });
-
-    console.log(shoppingList);
 
     if (!shoppingList) return null;
 
@@ -375,7 +376,16 @@ const categoriseItem = async (
   });
 };
 
-export const editListItem = async (data: listItem) => {
+interface EditListItemData {
+  id: number;
+  name: string;
+  notes: string;
+  url: string;
+  urgent: boolean;
+  categorySlug: string;
+  tagId: number | null;
+}
+export const editListItem = async (data: EditListItemData) => {
   const itemName = normaliseItemName(data.name);
 
   try {
@@ -393,7 +403,7 @@ export const editListItem = async (data: listItem) => {
         });
       }
 
-      await tx.shoppingListItem.update({
+      const listItem = await tx.shoppingListItem.update({
         where: {
           id: data.id,
         },
@@ -401,14 +411,21 @@ export const editListItem = async (data: listItem) => {
           notes: data.notes,
           url: data.url,
           urgent: data.urgent,
+          tagId: data.tagId,
+        },
+        select: {
+          itemId: true,
+        },
+      });
 
-          item: {
-            update: {
-              name: itemName,
-              categorySlug: category ? category.slug : null,
-              ...(category ? { manuallyCategorised: true } : {}),
-            },
-          },
+      await tx.item.update({
+        where: {
+          id: listItem.itemId,
+        },
+        data: {
+          name: itemName,
+          categorySlug: category ? category.slug : null,
+          ...(category ? { manuallyCategorised: true } : {}),
         },
       });
     });
@@ -455,3 +472,58 @@ export const updateItemSortOrder = async (
     throw new Error("Failed to update list sort order");
   }
 };
+
+export async function updateTags(shoppingListId: number, tags: EditableTag[]) {
+  await prisma.$transaction(async (tx) => {
+    const existingTags = await tx.shoppingListTag.findMany({
+      where: {
+        shoppingListId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    const existingIds = new Set(existingTags.map((tag) => tag.id));
+    const submittedIds = new Set(
+      tags.map((tag) => tag.id).filter((id): id is number => id !== undefined),
+    );
+
+    const idsToDelete = [...existingIds].filter((id) => !submittedIds.has(id));
+    if (idsToDelete.length > 0) {
+      await tx.shoppingListTag.deleteMany({
+        where: {
+          id: {
+            in: idsToDelete,
+          },
+          shoppingListId,
+        },
+      });
+    }
+
+    for (const tag of tags) {
+      if (tag.id !== undefined && existingIds.has(tag.id)) {
+        await tx.shoppingListTag.update({
+          where: {
+            id: tag.id,
+          },
+          data: {
+            name: tag.name,
+            colour: tag.colour,
+          },
+        });
+      }
+    }
+
+    const newTags = tags.filter((tag) => tag.id === undefined);
+    if (newTags.length > 0) {
+      await tx.shoppingListTag.createMany({
+        data: newTags.map((tag) => ({
+          name: tag.name,
+          colour: tag.colour,
+          shoppingListId,
+        })),
+      });
+    }
+  });
+}

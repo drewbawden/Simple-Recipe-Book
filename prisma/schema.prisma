@@ -196,6 +196,9 @@ model ShoppingListItem {
   urgent    Boolean @default(false)
   completed Boolean @default(false)
 
+  tag   ShoppingListTag? @relation(fields: [tagId], references: [id], onDelete: SetNull)
+  tagId Int?
+
   shoppingListItemSources ShoppingListItemSource[]
 
   createdAt DateTime @default(now())
@@ -220,8 +223,10 @@ model ShoppingListTag {
   name   String
   colour String
 
-  shoppingList   ShoppingList? @relation(fields: [shoppingListId], references: [id])
-  shoppingListId Int?
+  shoppingList   ShoppingList @relation(fields: [shoppingListId], references: [id], onDelete: Cascade)
+  shoppingListId Int
+
+  shoppingListItems ShoppingListItem[]
 }
 
 enum Locations {

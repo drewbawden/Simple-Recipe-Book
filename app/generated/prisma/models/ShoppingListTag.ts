@@ -181,7 +181,7 @@ export type ShoppingListTagGroupByOutputType = {
   id: number
   name: string
   colour: string
-  shoppingListId: number | null
+  shoppingListId: number
   _count: ShoppingListTagCountAggregateOutputType | null
   _avg: ShoppingListTagAvgAggregateOutputType | null
   _sum: ShoppingListTagSumAggregateOutputType | null
@@ -211,16 +211,18 @@ export type ShoppingListTagWhereInput = {
   id?: Prisma.IntFilter<"ShoppingListTag"> | number
   name?: Prisma.StringFilter<"ShoppingListTag"> | string
   colour?: Prisma.StringFilter<"ShoppingListTag"> | string
-  shoppingListId?: Prisma.IntNullableFilter<"ShoppingListTag"> | number | null
-  shoppingList?: Prisma.XOR<Prisma.ShoppingListNullableScalarRelationFilter, Prisma.ShoppingListWhereInput> | null
+  shoppingListId?: Prisma.IntFilter<"ShoppingListTag"> | number
+  shoppingList?: Prisma.XOR<Prisma.ShoppingListScalarRelationFilter, Prisma.ShoppingListWhereInput>
+  shoppingListItems?: Prisma.ShoppingListItemListRelationFilter
 }
 
 export type ShoppingListTagOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   colour?: Prisma.SortOrder
-  shoppingListId?: Prisma.SortOrderInput | Prisma.SortOrder
+  shoppingListId?: Prisma.SortOrder
   shoppingList?: Prisma.ShoppingListOrderByWithRelationInput
+  shoppingListItems?: Prisma.ShoppingListItemOrderByRelationAggregateInput
 }
 
 export type ShoppingListTagWhereUniqueInput = Prisma.AtLeast<{
@@ -230,15 +232,16 @@ export type ShoppingListTagWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ShoppingListTagWhereInput | Prisma.ShoppingListTagWhereInput[]
   name?: Prisma.StringFilter<"ShoppingListTag"> | string
   colour?: Prisma.StringFilter<"ShoppingListTag"> | string
-  shoppingListId?: Prisma.IntNullableFilter<"ShoppingListTag"> | number | null
-  shoppingList?: Prisma.XOR<Prisma.ShoppingListNullableScalarRelationFilter, Prisma.ShoppingListWhereInput> | null
+  shoppingListId?: Prisma.IntFilter<"ShoppingListTag"> | number
+  shoppingList?: Prisma.XOR<Prisma.ShoppingListScalarRelationFilter, Prisma.ShoppingListWhereInput>
+  shoppingListItems?: Prisma.ShoppingListItemListRelationFilter
 }, "id">
 
 export type ShoppingListTagOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   colour?: Prisma.SortOrder
-  shoppingListId?: Prisma.SortOrderInput | Prisma.SortOrder
+  shoppingListId?: Prisma.SortOrder
   _count?: Prisma.ShoppingListTagCountOrderByAggregateInput
   _avg?: Prisma.ShoppingListTagAvgOrderByAggregateInput
   _max?: Prisma.ShoppingListTagMaxOrderByAggregateInput
@@ -253,40 +256,44 @@ export type ShoppingListTagScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"ShoppingListTag"> | number
   name?: Prisma.StringWithAggregatesFilter<"ShoppingListTag"> | string
   colour?: Prisma.StringWithAggregatesFilter<"ShoppingListTag"> | string
-  shoppingListId?: Prisma.IntNullableWithAggregatesFilter<"ShoppingListTag"> | number | null
+  shoppingListId?: Prisma.IntWithAggregatesFilter<"ShoppingListTag"> | number
 }
 
 export type ShoppingListTagCreateInput = {
   name: string
   colour: string
-  shoppingList?: Prisma.ShoppingListCreateNestedOneWithoutTagsInput
+  shoppingList: Prisma.ShoppingListCreateNestedOneWithoutTagsInput
+  shoppingListItems?: Prisma.ShoppingListItemCreateNestedManyWithoutTagInput
 }
 
 export type ShoppingListTagUncheckedCreateInput = {
   id?: number
   name: string
   colour: string
-  shoppingListId?: number | null
+  shoppingListId: number
+  shoppingListItems?: Prisma.ShoppingListItemUncheckedCreateNestedManyWithoutTagInput
 }
 
 export type ShoppingListTagUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   colour?: Prisma.StringFieldUpdateOperationsInput | string
-  shoppingList?: Prisma.ShoppingListUpdateOneWithoutTagsNestedInput
+  shoppingList?: Prisma.ShoppingListUpdateOneRequiredWithoutTagsNestedInput
+  shoppingListItems?: Prisma.ShoppingListItemUpdateManyWithoutTagNestedInput
 }
 
 export type ShoppingListTagUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   colour?: Prisma.StringFieldUpdateOperationsInput | string
-  shoppingListId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shoppingListId?: Prisma.IntFieldUpdateOperationsInput | number
+  shoppingListItems?: Prisma.ShoppingListItemUncheckedUpdateManyWithoutTagNestedInput
 }
 
 export type ShoppingListTagCreateManyInput = {
   id?: number
   name: string
   colour: string
-  shoppingListId?: number | null
+  shoppingListId: number
 }
 
 export type ShoppingListTagUpdateManyMutationInput = {
@@ -298,7 +305,7 @@ export type ShoppingListTagUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   colour?: Prisma.StringFieldUpdateOperationsInput | string
-  shoppingListId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shoppingListId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type ShoppingListTagListRelationFilter = {
@@ -309,6 +316,11 @@ export type ShoppingListTagListRelationFilter = {
 
 export type ShoppingListTagOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type ShoppingListTagNullableScalarRelationFilter = {
+  is?: Prisma.ShoppingListTagWhereInput | null
+  isNot?: Prisma.ShoppingListTagWhereInput | null
 }
 
 export type ShoppingListTagCountOrderByAggregateInput = {
@@ -384,15 +396,33 @@ export type ShoppingListTagUncheckedUpdateManyWithoutShoppingListNestedInput = {
   deleteMany?: Prisma.ShoppingListTagScalarWhereInput | Prisma.ShoppingListTagScalarWhereInput[]
 }
 
+export type ShoppingListTagCreateNestedOneWithoutShoppingListItemsInput = {
+  create?: Prisma.XOR<Prisma.ShoppingListTagCreateWithoutShoppingListItemsInput, Prisma.ShoppingListTagUncheckedCreateWithoutShoppingListItemsInput>
+  connectOrCreate?: Prisma.ShoppingListTagCreateOrConnectWithoutShoppingListItemsInput
+  connect?: Prisma.ShoppingListTagWhereUniqueInput
+}
+
+export type ShoppingListTagUpdateOneWithoutShoppingListItemsNestedInput = {
+  create?: Prisma.XOR<Prisma.ShoppingListTagCreateWithoutShoppingListItemsInput, Prisma.ShoppingListTagUncheckedCreateWithoutShoppingListItemsInput>
+  connectOrCreate?: Prisma.ShoppingListTagCreateOrConnectWithoutShoppingListItemsInput
+  upsert?: Prisma.ShoppingListTagUpsertWithoutShoppingListItemsInput
+  disconnect?: Prisma.ShoppingListTagWhereInput | boolean
+  delete?: Prisma.ShoppingListTagWhereInput | boolean
+  connect?: Prisma.ShoppingListTagWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ShoppingListTagUpdateToOneWithWhereWithoutShoppingListItemsInput, Prisma.ShoppingListTagUpdateWithoutShoppingListItemsInput>, Prisma.ShoppingListTagUncheckedUpdateWithoutShoppingListItemsInput>
+}
+
 export type ShoppingListTagCreateWithoutShoppingListInput = {
   name: string
   colour: string
+  shoppingListItems?: Prisma.ShoppingListItemCreateNestedManyWithoutTagInput
 }
 
 export type ShoppingListTagUncheckedCreateWithoutShoppingListInput = {
   id?: number
   name: string
   colour: string
+  shoppingListItems?: Prisma.ShoppingListItemUncheckedCreateNestedManyWithoutTagInput
 }
 
 export type ShoppingListTagCreateOrConnectWithoutShoppingListInput = {
@@ -428,7 +458,49 @@ export type ShoppingListTagScalarWhereInput = {
   id?: Prisma.IntFilter<"ShoppingListTag"> | number
   name?: Prisma.StringFilter<"ShoppingListTag"> | string
   colour?: Prisma.StringFilter<"ShoppingListTag"> | string
-  shoppingListId?: Prisma.IntNullableFilter<"ShoppingListTag"> | number | null
+  shoppingListId?: Prisma.IntFilter<"ShoppingListTag"> | number
+}
+
+export type ShoppingListTagCreateWithoutShoppingListItemsInput = {
+  name: string
+  colour: string
+  shoppingList: Prisma.ShoppingListCreateNestedOneWithoutTagsInput
+}
+
+export type ShoppingListTagUncheckedCreateWithoutShoppingListItemsInput = {
+  id?: number
+  name: string
+  colour: string
+  shoppingListId: number
+}
+
+export type ShoppingListTagCreateOrConnectWithoutShoppingListItemsInput = {
+  where: Prisma.ShoppingListTagWhereUniqueInput
+  create: Prisma.XOR<Prisma.ShoppingListTagCreateWithoutShoppingListItemsInput, Prisma.ShoppingListTagUncheckedCreateWithoutShoppingListItemsInput>
+}
+
+export type ShoppingListTagUpsertWithoutShoppingListItemsInput = {
+  update: Prisma.XOR<Prisma.ShoppingListTagUpdateWithoutShoppingListItemsInput, Prisma.ShoppingListTagUncheckedUpdateWithoutShoppingListItemsInput>
+  create: Prisma.XOR<Prisma.ShoppingListTagCreateWithoutShoppingListItemsInput, Prisma.ShoppingListTagUncheckedCreateWithoutShoppingListItemsInput>
+  where?: Prisma.ShoppingListTagWhereInput
+}
+
+export type ShoppingListTagUpdateToOneWithWhereWithoutShoppingListItemsInput = {
+  where?: Prisma.ShoppingListTagWhereInput
+  data: Prisma.XOR<Prisma.ShoppingListTagUpdateWithoutShoppingListItemsInput, Prisma.ShoppingListTagUncheckedUpdateWithoutShoppingListItemsInput>
+}
+
+export type ShoppingListTagUpdateWithoutShoppingListItemsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  colour?: Prisma.StringFieldUpdateOperationsInput | string
+  shoppingList?: Prisma.ShoppingListUpdateOneRequiredWithoutTagsNestedInput
+}
+
+export type ShoppingListTagUncheckedUpdateWithoutShoppingListItemsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  colour?: Prisma.StringFieldUpdateOperationsInput | string
+  shoppingListId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type ShoppingListTagCreateManyShoppingListInput = {
@@ -440,12 +512,14 @@ export type ShoppingListTagCreateManyShoppingListInput = {
 export type ShoppingListTagUpdateWithoutShoppingListInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   colour?: Prisma.StringFieldUpdateOperationsInput | string
+  shoppingListItems?: Prisma.ShoppingListItemUpdateManyWithoutTagNestedInput
 }
 
 export type ShoppingListTagUncheckedUpdateWithoutShoppingListInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   colour?: Prisma.StringFieldUpdateOperationsInput | string
+  shoppingListItems?: Prisma.ShoppingListItemUncheckedUpdateManyWithoutTagNestedInput
 }
 
 export type ShoppingListTagUncheckedUpdateManyWithoutShoppingListInput = {
@@ -455,13 +529,44 @@ export type ShoppingListTagUncheckedUpdateManyWithoutShoppingListInput = {
 }
 
 
+/**
+ * Count Type ShoppingListTagCountOutputType
+ */
+
+export type ShoppingListTagCountOutputType = {
+  shoppingListItems: number
+}
+
+export type ShoppingListTagCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  shoppingListItems?: boolean | ShoppingListTagCountOutputTypeCountShoppingListItemsArgs
+}
+
+/**
+ * ShoppingListTagCountOutputType without action
+ */
+export type ShoppingListTagCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ShoppingListTagCountOutputType
+   */
+  select?: Prisma.ShoppingListTagCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * ShoppingListTagCountOutputType without action
+ */
+export type ShoppingListTagCountOutputTypeCountShoppingListItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ShoppingListItemWhereInput
+}
+
 
 export type ShoppingListTagSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
   colour?: boolean
   shoppingListId?: boolean
-  shoppingList?: boolean | Prisma.ShoppingListTag$shoppingListArgs<ExtArgs>
+  shoppingList?: boolean | Prisma.ShoppingListDefaultArgs<ExtArgs>
+  shoppingListItems?: boolean | Prisma.ShoppingListTag$shoppingListItemsArgs<ExtArgs>
+  _count?: boolean | Prisma.ShoppingListTagCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["shoppingListTag"]>
 
 export type ShoppingListTagSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -469,7 +574,7 @@ export type ShoppingListTagSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   name?: boolean
   colour?: boolean
   shoppingListId?: boolean
-  shoppingList?: boolean | Prisma.ShoppingListTag$shoppingListArgs<ExtArgs>
+  shoppingList?: boolean | Prisma.ShoppingListDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["shoppingListTag"]>
 
 export type ShoppingListTagSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -477,7 +582,7 @@ export type ShoppingListTagSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   name?: boolean
   colour?: boolean
   shoppingListId?: boolean
-  shoppingList?: boolean | Prisma.ShoppingListTag$shoppingListArgs<ExtArgs>
+  shoppingList?: boolean | Prisma.ShoppingListDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["shoppingListTag"]>
 
 export type ShoppingListTagSelectScalar = {
@@ -489,25 +594,28 @@ export type ShoppingListTagSelectScalar = {
 
 export type ShoppingListTagOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "colour" | "shoppingListId", ExtArgs["result"]["shoppingListTag"]>
 export type ShoppingListTagInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  shoppingList?: boolean | Prisma.ShoppingListTag$shoppingListArgs<ExtArgs>
+  shoppingList?: boolean | Prisma.ShoppingListDefaultArgs<ExtArgs>
+  shoppingListItems?: boolean | Prisma.ShoppingListTag$shoppingListItemsArgs<ExtArgs>
+  _count?: boolean | Prisma.ShoppingListTagCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ShoppingListTagIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  shoppingList?: boolean | Prisma.ShoppingListTag$shoppingListArgs<ExtArgs>
+  shoppingList?: boolean | Prisma.ShoppingListDefaultArgs<ExtArgs>
 }
 export type ShoppingListTagIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  shoppingList?: boolean | Prisma.ShoppingListTag$shoppingListArgs<ExtArgs>
+  shoppingList?: boolean | Prisma.ShoppingListDefaultArgs<ExtArgs>
 }
 
 export type $ShoppingListTagPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ShoppingListTag"
   objects: {
-    shoppingList: Prisma.$ShoppingListPayload<ExtArgs> | null
+    shoppingList: Prisma.$ShoppingListPayload<ExtArgs>
+    shoppingListItems: Prisma.$ShoppingListItemPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     name: string
     colour: string
-    shoppingListId: number | null
+    shoppingListId: number
   }, ExtArgs["result"]["shoppingListTag"]>
   composites: {}
 }
@@ -902,7 +1010,8 @@ readonly fields: ShoppingListTagFieldRefs;
  */
 export interface Prisma__ShoppingListTagClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  shoppingList<T extends Prisma.ShoppingListTag$shoppingListArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ShoppingListTag$shoppingListArgs<ExtArgs>>): Prisma.Prisma__ShoppingListClient<runtime.Types.Result.GetResult<Prisma.$ShoppingListPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  shoppingList<T extends Prisma.ShoppingListDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ShoppingListDefaultArgs<ExtArgs>>): Prisma.Prisma__ShoppingListClient<runtime.Types.Result.GetResult<Prisma.$ShoppingListPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  shoppingListItems<T extends Prisma.ShoppingListTag$shoppingListItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ShoppingListTag$shoppingListItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ShoppingListItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1337,22 +1446,27 @@ export type ShoppingListTagDeleteManyArgs<ExtArgs extends runtime.Types.Extensio
 }
 
 /**
- * ShoppingListTag.shoppingList
+ * ShoppingListTag.shoppingListItems
  */
-export type ShoppingListTag$shoppingListArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type ShoppingListTag$shoppingListItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the ShoppingList
+   * Select specific fields to fetch from the ShoppingListItem
    */
-  select?: Prisma.ShoppingListSelect<ExtArgs> | null
+  select?: Prisma.ShoppingListItemSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the ShoppingList
+   * Omit specific fields from the ShoppingListItem
    */
-  omit?: Prisma.ShoppingListOmit<ExtArgs> | null
+  omit?: Prisma.ShoppingListItemOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.ShoppingListInclude<ExtArgs> | null
-  where?: Prisma.ShoppingListWhereInput
+  include?: Prisma.ShoppingListItemInclude<ExtArgs> | null
+  where?: Prisma.ShoppingListItemWhereInput
+  orderBy?: Prisma.ShoppingListItemOrderByWithRelationInput | Prisma.ShoppingListItemOrderByWithRelationInput[]
+  cursor?: Prisma.ShoppingListItemWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ShoppingListItemScalarFieldEnum | Prisma.ShoppingListItemScalarFieldEnum[]
 }
 
 /**

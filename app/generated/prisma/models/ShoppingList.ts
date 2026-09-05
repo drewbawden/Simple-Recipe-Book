@@ -387,11 +387,6 @@ export type ShoppingListScalarRelationFilter = {
   isNot?: Prisma.ShoppingListWhereInput
 }
 
-export type ShoppingListNullableScalarRelationFilter = {
-  is?: Prisma.ShoppingListWhereInput | null
-  isNot?: Prisma.ShoppingListWhereInput | null
-}
-
 export type EnumShoppingListSortOptionFieldUpdateOperationsInput = {
   set?: $Enums.ShoppingListSortOption
 }
@@ -420,12 +415,10 @@ export type ShoppingListCreateNestedOneWithoutTagsInput = {
   connect?: Prisma.ShoppingListWhereUniqueInput
 }
 
-export type ShoppingListUpdateOneWithoutTagsNestedInput = {
+export type ShoppingListUpdateOneRequiredWithoutTagsNestedInput = {
   create?: Prisma.XOR<Prisma.ShoppingListCreateWithoutTagsInput, Prisma.ShoppingListUncheckedCreateWithoutTagsInput>
   connectOrCreate?: Prisma.ShoppingListCreateOrConnectWithoutTagsInput
   upsert?: Prisma.ShoppingListUpsertWithoutTagsInput
-  disconnect?: Prisma.ShoppingListWhereInput | boolean
-  delete?: Prisma.ShoppingListWhereInput | boolean
   connect?: Prisma.ShoppingListWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.ShoppingListUpdateToOneWithWhereWithoutTagsInput, Prisma.ShoppingListUpdateWithoutTagsInput>, Prisma.ShoppingListUncheckedUpdateWithoutTagsInput>
 }

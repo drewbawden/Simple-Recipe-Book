@@ -55,12 +55,17 @@ export const ListItemCard = ({
           <div className="text-left">
             <label
               htmlFor={`item-${listItem.id}`}
-              className={`font-medium cursor-pointer select-none ${
+              className={`font-medium cursor-pointer select-none flex flex-row gap-2 items-center ${
                 listItem.completed
                   ? "line-through text-muted-foreground opacity-70"
                   : "text-foreground"
               }`}
             >
+              {listItem.tag && (
+                <svg height="14" width="14">
+                  <circle cx="7" cy="7" r="7" fill={listItem.tag.colour} />
+                </svg>
+              )}
               {listItem.item.name}
             </label>
             <p className="text-sm text-gray-400">{listItem.notes}</p>

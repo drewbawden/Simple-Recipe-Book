@@ -7,6 +7,7 @@ import {
   editListItem,
   updateCategorySortOrder,
   updateItemSortOrder,
+  updateTags,
 } from "@/actions/shopping-lists";
 import {
   ContextMenu,
@@ -22,7 +23,7 @@ import { ShoppingListItemInput } from "@/components/shopping-list/item-input";
 import { SettingsIcon, XIcon } from "lucide-react";
 import { Modal } from "@/components/templates/modal";
 import { ItemEditPopup } from "@/components/shopping-list/popups/item-edit";
-import { listItem } from "@/types/list-item";
+import { ListItem } from "@/types/list-item";
 import {
   CategorySortOrderPopup,
   EditInfoPopup,
@@ -44,7 +45,7 @@ export const ShoppingList = () => {
   >([]);
   const [addToCategory, setAddToCategory] = useState<string | null>(null);
 
-  const [editItem, setEditItem] = useState<listItem | null>(null);
+  const [editItem, setEditItem] = useState<ListItem | null>(null);
   const [editList, setEditList] = useState(false);
   const [editCategorySortOrder, setEditCategorySortOrder] = useState(false);
   const [editItemSortOrder, setEditItemSortOrder] = useState(false);
@@ -208,6 +209,7 @@ export const ShoppingList = () => {
   const handleItemEditSubmit = async (formData: FormData) => {
     const value = (entry: FormDataEntryValue | null) =>
       typeof entry === "string" ? entry : entry == null ? "" : String(entry);
+    const tagId = formData.get("tagValue");
 
     const fields = {
       id: Number(formData.get("id")),
@@ -216,6 +218,7 @@ export const ShoppingList = () => {
       url: value(formData.get("url")),
       urgent: formData.get("urgent") === "on",
       categorySlug: value(formData.get("categorySlug")),
+      tagId: tagId ? Number(tagId) : null,
     };
 
     await editListItem(fields);
@@ -241,7 +244,14 @@ export const ShoppingList = () => {
     await refreshData();
   };
 
-  const handleTagEditSubmit = async () => {};
+  const handleTagEditSubmit = async (formData: FormData) => {
+    const tags = JSON.parse(formData.get("tags") as string);
+
+    await updateTags(shoppingList.id, tags);
+
+    setEditTags(false);
+    await refreshData();
+  };
 
   return (
     <div className="mx-auto max-w-xl p-6 flex flex-col text-center space-y-1">
@@ -349,6 +359,7 @@ export const ShoppingList = () => {
                       url: listItem.url ?? undefined,
                       urgent: listItem.urgent,
                       categorySlug: listItem.item.category?.slug,
+                      tag: listItem.tag ?? undefined,
                     })
                   }
                 />
@@ -446,8 +457,8 @@ export const ShoppingList = () => {
       >
         <TagsEditPopup
           initialData={shoppingList.tags}
-          formRef={itemSortEditFormRef}
-          onSubmit={handleItemSortSubmit}
+          formRef={tagEditFormRef}
+          onSubmit={handleTagEditSubmit}
         />
       </Modal>
     </div>

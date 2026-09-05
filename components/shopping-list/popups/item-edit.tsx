@@ -1,11 +1,13 @@
 import { Modal } from "@/components/templates/modal";
-import { listItem } from "@/types/list-item";
-import { Ref, useState } from "react";
+import { ListItem, Tag } from "@/types/list-item";
+import { Ref, useEffect, useState } from "react";
 import { ChangeCategoryPopup } from "./category";
 import { ChevronRightIcon } from "lucide-react";
+import { getItemTags } from "@/actions/items";
+import { TagSelect } from "../tag-select";
 
 interface ItemEditPopupProps {
-  initialData: listItem | null;
+  initialData: ListItem | null;
   formRef: Ref<HTMLFormElement>;
   onSubmit: (formData: FormData) => void | Promise<void>;
 }
@@ -14,7 +16,7 @@ export const ItemEditPopup = ({
   formRef,
   onSubmit,
 }: ItemEditPopupProps) => {
-  const fallbackData: listItem = {
+  const fallbackData: ListItem = {
     id: 0,
     name: "",
     urgent: false,
@@ -24,13 +26,27 @@ export const ItemEditPopup = ({
   const resolvedInitialData = initialData ?? fallbackData;
   const [name, setName] = useState(resolvedInitialData.name ?? "");
   const [notes, setNotes] = useState(resolvedInitialData.notes ?? "");
+  const [tag, setTag] = useState(resolvedInitialData.tag ?? null);
   const [url, setUrl] = useState(resolvedInitialData.url ?? "");
   const [urgent, setUrgent] = useState(resolvedInitialData.urgent);
   const [categorySlug, setCategorySlug] = useState<string | null>(
     resolvedInitialData.categorySlug,
   );
-
+  const [availableTags, setAvailableTags] = useState<Tag[] | null>(null);
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchList = async () => {
+      try {
+        const tags = await getItemTags();
+        setAvailableTags(tags);
+      } catch (error) {
+        console.error("Error fetching available tags:", error);
+      }
+    };
+
+    fetchList();
+  }, []);
 
   if (!initialData) {
     return null;
@@ -76,6 +92,13 @@ export const ItemEditPopup = ({
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             className="block p-1 bg-gray-100 rounded w-full"
+          />
+          <TagSelect tag={tag} setTag={setTag} availableTags={availableTags} />
+          <input
+            type="hidden"
+            name="tagValue"
+            id="tagValue"
+            value={tag?.id || ""}
           />
         </div>
         <div>
