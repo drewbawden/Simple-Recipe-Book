@@ -1,19 +1,45 @@
 import { Tag } from "@/types/list-item";
 import { ChevronRightIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface TagSelectProps {
   tag: Tag | null;
   setTag: React.Dispatch<React.SetStateAction<Tag | null>>;
   availableTags: Tag[] | null;
+  placeholder?: string;
+  containerClass?: string;
 }
-export const TagSelect = ({ tag, setTag, availableTags }: TagSelectProps) => {
+export const TagSelect = ({
+  tag,
+  setTag,
+  availableTags,
+  placeholder = "Select a tag",
+  containerClass,
+}: TagSelectProps) => {
   const [isTagOpen, setIsTagOpen] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const selectedTag =
     availableTags?.find((tagOption) => tagOption.id === tag?.id) ?? null;
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(event.target as Node)
+      ) {
+        setIsTagOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="relative">
+    <div ref={wrapperRef} className={`relative min-w-25 ${containerClass}`}>
       <button
         type="button"
         onClick={() => setIsTagOpen((open) => !open)}
@@ -29,7 +55,7 @@ export const TagSelect = ({ tag, setTag, availableTags }: TagSelectProps) => {
               <span>{selectedTag.name}</span>
             </>
           ) : (
-            <span className="text-gray-500">Select a tag</span>
+            <span className="text-gray-500">{placeholder}</span>
           )}
         </div>
 

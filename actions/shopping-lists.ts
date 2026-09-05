@@ -11,7 +11,6 @@ import {
 import { normaliseItemName } from "@/lib/items";
 import { computeCategory } from "@/lib/category";
 import { sortShoppingList, sortShoppingListItems } from "@/lib/shopping-list";
-import { ListItem } from "@/types/list-item";
 import { EditableTag } from "@/types/list-item";
 
 const adapter = new PrismaPg({
@@ -167,14 +166,25 @@ export const getShoppingList = async () => {
   }
 };
 
-export const addItemToList = async (
-  itemName: string,
-  categorySlug: string | null,
-  manuallyAdded?: boolean,
+interface addItemToListProps {
+  itemName: string;
+  categorySlug: string | null;
+  manuallyAdded?: boolean;
+  shoppingListId?: number;
+  itemType?: ItemType;
+  tagId?: number;
+}
+export const addItemToList = async ({
+  itemName,
+  categorySlug,
+  manuallyAdded,
   shoppingListId = 1,
   itemType = ItemType.FOOD,
-) => {
+  tagId,
+}: addItemToListProps) => {
   itemName = normaliseItemName(itemName);
+
+  console.log(tagId);
 
   let category = null;
   if (categorySlug) {
@@ -213,6 +223,7 @@ export const addItemToList = async (
       shoppingListId,
       itemId: item.id,
       completed: false,
+      tagId: tagId,
     },
     include: {
       item: {

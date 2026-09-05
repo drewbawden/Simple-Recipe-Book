@@ -61,7 +61,7 @@ const checkAgainstKeywords = async (productName: string) => {
 
 export const computeCategory = async (
   productName: string,
-  ignoreManual: boolean,
+  ignoreManual = false,
 ): Promise<string | null> => {
   // 100% confidence
   if (!ignoreManual) {
