@@ -76,9 +76,9 @@ export const EnumOptions = ({
         <li
           key={option.id}
           className="relative p-2 bg-gray-200
-                    first:rounded-t-xl
-                    last:rounded-b-xl
-                    first:last:rounded-xl
+                    first:rounded-t
+                    last:rounded-b
+                    first:last:rounded
                     after:absolute after:bottom-0 after:left-3 after:right-3 after:h-px after:bg-black/10
                     last:after:hidden
         "
@@ -180,9 +180,9 @@ export const DynamicOptions = ({
         <li
           key={option.id}
           className="relative p-1.5 bg-gray-200
-                    first:rounded-t-xl
-                    last:rounded-b-xl
-                    first:last:rounded-xl
+                    first:rounded-t
+                    last:rounded-b
+                    first:last:rounded
                     after:absolute after:bottom-0 after:left-3 after:right-3 after:h-px after:bg-black/10
                     last:after:hidden
         "

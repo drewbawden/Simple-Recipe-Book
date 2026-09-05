@@ -53,8 +53,8 @@ export const ChangeCategoryPopup = ({
           <input type="submit" hidden />
         </label>
       </form>
-      <div className="p-2 bg-gray-200">
-        <label className="flex items-center justify-between bg-gray-200 p-1 w-full border-y-1">
+      <div className="p-2 bg-gray-200 rounded">
+        <label className="flex items-center justify-between bg-gray-200 p-1 w-full border-y-1 border-gray-300">
           <span>Auto Categorise</span>
           <input
             type="radio"

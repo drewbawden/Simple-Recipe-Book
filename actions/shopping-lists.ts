@@ -132,8 +132,11 @@ export const getShoppingList = async () => {
             },
           },
         },
+        tags: true,
       },
     });
+
+    console.log(shoppingList);
 
     if (!shoppingList) return null;
 

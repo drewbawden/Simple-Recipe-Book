@@ -175,8 +175,10 @@ model ShoppingList {
   items             ShoppingListItem[]
   categorySortOrder ShoppingListSortOption @default(ALPHABETICAL)
   itemSortOrder     ListItemSortOption     @default(CREATION_DATE)
-  createdAt         DateTime               @default(now())
-  updatedAt         DateTime               @default(now()) @updatedAt
+  tags              ShoppingListTag[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model ShoppingListItem {
@@ -210,6 +212,16 @@ model ShoppingListItemSource {
   recipeIngredientId Int
 
   dateAdded DateTime @default(now())
+}
+
+model ShoppingListTag {
+  id Int @id @default(autoincrement())
+
+  name   String
+  colour String
+
+  shoppingList   ShoppingList? @relation(fields: [shoppingListId], references: [id])
+  shoppingListId Int?
 }
 
 enum Locations {

@@ -27,6 +27,7 @@ import {
   CategorySortOrderPopup,
   EditInfoPopup,
   ItemSortOrderPopup,
+  TagsEditPopup,
 } from "./popups/list-edit";
 import {
   ListItemSortOption,
@@ -47,10 +48,12 @@ export const ShoppingList = () => {
   const [editList, setEditList] = useState(false);
   const [editCategorySortOrder, setEditCategorySortOrder] = useState(false);
   const [editItemSortOrder, setEditItemSortOrder] = useState(false);
+  const [editTags, setEditTags] = useState(false);
   const itemEditFormRef = useRef<HTMLFormElement>(null);
   const listEditFormRef = useRef<HTMLFormElement>(null);
   const categorySortEditFormRef = useRef<HTMLFormElement>(null);
   const itemSortEditFormRef = useRef<HTMLFormElement>(null);
+  const tagEditFormRef = useRef<HTMLFormElement>(null);
 
   const deleteTimers = useRef<Record<number, NodeJS.Timeout | undefined>>({});
   const deleteTokens = useRef<Record<number, number>>({});
@@ -238,6 +241,8 @@ export const ShoppingList = () => {
     await refreshData();
   };
 
+  const handleTagEditSubmit = async () => {};
+
   return (
     <div className="mx-auto max-w-xl p-6 flex flex-col text-center space-y-1">
       <Link
@@ -290,6 +295,14 @@ export const ShoppingList = () => {
                 }}
               >
                 Sort Items
+              </ContextMenuItem>
+              <hr />
+              <ContextMenuItem
+                onSelect={() => {
+                  setEditTags(true);
+                }}
+              >
+                Edit Tags
               </ContextMenuItem>
               <hr />
               <ContextMenuItem className="text-red-500" onSelect={() => {}}>
@@ -419,6 +432,20 @@ export const ShoppingList = () => {
       >
         <ItemSortOrderPopup
           initialData={shoppingList.itemSortOrder}
+          formRef={itemSortEditFormRef}
+          onSubmit={handleItemSortSubmit}
+        />
+      </Modal>
+      <Modal
+        isOpen={editTags}
+        onClose={() => setEditTags(false)}
+        size="md"
+        modalTitle="Edit Tags"
+        showTick
+        handleTick={() => tagEditFormRef.current?.requestSubmit()}
+      >
+        <TagsEditPopup
+          initialData={shoppingList.tags}
           formRef={itemSortEditFormRef}
           onSubmit={handleItemSortSubmit}
         />

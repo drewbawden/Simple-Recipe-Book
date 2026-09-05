@@ -33,9 +33,9 @@ const Sortable = ({ id, index, label }: SortableProps) => {
       ref={ref}
       className="
         relative bg-gray-200 px-2 py-2.5 flex flex-row items-center
-        first:rounded-t-xl
-        last:rounded-b-xl
-        first:last:rounded-xl
+        first:rounded-t
+        last:rounded-b
+        first:last:rounded
         after:absolute after:bottom-0 after:left-3 after:right-3 after:h-px after:bg-black/10
         last:after:hidden
   "

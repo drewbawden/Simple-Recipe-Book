@@ -63,7 +63,8 @@ export const ModelName = {
   RecipeInstructionStep: 'RecipeInstructionStep',
   ShoppingList: 'ShoppingList',
   ShoppingListItem: 'ShoppingListItem',
-  ShoppingListItemSource: 'ShoppingListItemSource'
+  ShoppingListItemSource: 'ShoppingListItemSource',
+  ShoppingListTag: 'ShoppingListTag'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -257,6 +258,16 @@ export const ShoppingListItemSourceScalarFieldEnum = {
 } as const
 
 export type ShoppingListItemSourceScalarFieldEnum = (typeof ShoppingListItemSourceScalarFieldEnum)[keyof typeof ShoppingListItemSourceScalarFieldEnum]
+
+
+export const ShoppingListTagScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  colour: 'colour',
+  shoppingListId: 'shoppingListId'
+} as const
+
+export type ShoppingListTagScalarFieldEnum = (typeof ShoppingListTagScalarFieldEnum)[keyof typeof ShoppingListTagScalarFieldEnum]
 
 
 export const SortOrder = {

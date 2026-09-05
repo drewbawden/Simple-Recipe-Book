@@ -396,7 +396,8 @@ export const ModelName = {
   RecipeInstructionStep: 'RecipeInstructionStep',
   ShoppingList: 'ShoppingList',
   ShoppingListItem: 'ShoppingListItem',
-  ShoppingListItemSource: 'ShoppingListItemSource'
+  ShoppingListItemSource: 'ShoppingListItemSource',
+  ShoppingListTag: 'ShoppingListTag'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -412,7 +413,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "storeProduct" | "item" | "itemCategory" | "categoryKeyword" | "itemUsage" | "inventory" | "nutrition" | "recipes" | "recipeIngredient" | "recipeInstructionStep" | "shoppingList" | "shoppingListItem" | "shoppingListItemSource"
+    modelProps: "storeProduct" | "item" | "itemCategory" | "categoryKeyword" | "itemUsage" | "inventory" | "nutrition" | "recipes" | "recipeIngredient" | "recipeInstructionStep" | "shoppingList" | "shoppingListItem" | "shoppingListItemSource" | "shoppingListTag"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1378,6 +1379,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ShoppingListTag: {
+      payload: Prisma.$ShoppingListTagPayload<ExtArgs>
+      fields: Prisma.ShoppingListTagFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ShoppingListTagFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShoppingListTagPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ShoppingListTagFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShoppingListTagPayload>
+        }
+        findFirst: {
+          args: Prisma.ShoppingListTagFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShoppingListTagPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ShoppingListTagFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShoppingListTagPayload>
+        }
+        findMany: {
+          args: Prisma.ShoppingListTagFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShoppingListTagPayload>[]
+        }
+        create: {
+          args: Prisma.ShoppingListTagCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShoppingListTagPayload>
+        }
+        createMany: {
+          args: Prisma.ShoppingListTagCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ShoppingListTagCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShoppingListTagPayload>[]
+        }
+        delete: {
+          args: Prisma.ShoppingListTagDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShoppingListTagPayload>
+        }
+        update: {
+          args: Prisma.ShoppingListTagUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShoppingListTagPayload>
+        }
+        deleteMany: {
+          args: Prisma.ShoppingListTagDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ShoppingListTagUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ShoppingListTagUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShoppingListTagPayload>[]
+        }
+        upsert: {
+          args: Prisma.ShoppingListTagUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShoppingListTagPayload>
+        }
+        aggregate: {
+          args: Prisma.ShoppingListTagAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateShoppingListTag>
+        }
+        groupBy: {
+          args: Prisma.ShoppingListTagGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ShoppingListTagGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ShoppingListTagCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ShoppingListTagCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1592,6 +1667,16 @@ export const ShoppingListItemSourceScalarFieldEnum = {
 } as const
 
 export type ShoppingListItemSourceScalarFieldEnum = (typeof ShoppingListItemSourceScalarFieldEnum)[keyof typeof ShoppingListItemSourceScalarFieldEnum]
+
+
+export const ShoppingListTagScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  colour: 'colour',
+  shoppingListId: 'shoppingListId'
+} as const
+
+export type ShoppingListTagScalarFieldEnum = (typeof ShoppingListTagScalarFieldEnum)[keyof typeof ShoppingListTagScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1920,6 +2005,7 @@ export type GlobalOmitConfig = {
   shoppingList?: Prisma.ShoppingListOmit
   shoppingListItem?: Prisma.ShoppingListItemOmit
   shoppingListItemSource?: Prisma.ShoppingListItemSourceOmit
+  shoppingListTag?: Prisma.ShoppingListTagOmit
 }
 
 /* Types for Logging */

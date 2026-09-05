@@ -6,6 +6,7 @@ import {
 } from "@/app/generated/prisma/enums";
 import { EnumOptions } from "@/components/templates/options";
 import { DraggableList } from "@/components/templates/reorderable-list";
+import { Tag } from "@/types/list-item";
 import { Ref, useEffect, useState } from "react";
 
 interface EditInfoPopupProps {
@@ -156,6 +157,36 @@ export const ItemSortOrderPopup = ({
         onChange={handleSortOptionSelected}
       />
       <input type="hidden" value={sortOrder} name="sortOrder" id="sortOrder" />
+    </form>
+  );
+};
+
+interface TagsEditPopupProps {
+  initialData: Tag[] | null;
+  formRef: Ref<HTMLFormElement>;
+  onSubmit: (formData: FormData) => void | Promise<void>;
+}
+export const TagsEditPopup = ({
+  initialData,
+  formRef,
+  onSubmit,
+}: TagsEditPopupProps) => {
+  if (!initialData) {
+    console.error("No initialData for TagsEditPopupProps");
+    return;
+  }
+
+  return (
+    <form
+      ref={formRef}
+      className="text-gray-900 space-y-5"
+      onSubmit={(event) => {
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
+        onSubmit(formData);
+      }}
+    >
+      <p>test</p>
     </form>
   );
 };
