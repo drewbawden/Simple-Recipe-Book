@@ -47,7 +47,7 @@ export const computeQuantity = (sources: any) => {
     totalUnit = "mixed units";
   }
   // no normal or standard units
-  else if (firstStandard === null) {
+  else if (standardUnits.size === 0) {
     totalQuantity = totalStandardQuantity;
   }
   // one normal unit, but multiple standards
