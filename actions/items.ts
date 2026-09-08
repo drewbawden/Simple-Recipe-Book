@@ -68,3 +68,21 @@ export const getItemTags = async () => {
     throw new Error("Failed to fetch item tags");
   }
 };
+
+export const incrementItemUsage = async (itemId: number) => {
+  try {
+    await prisma.item.update({
+      where: {
+        id: itemId,
+      },
+      data: {
+        usageCount: {
+          increment: 1,
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to increment item usage");
+  }
+};

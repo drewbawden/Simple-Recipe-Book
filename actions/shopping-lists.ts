@@ -11,6 +11,7 @@ import { normaliseItemName } from "@/lib/items";
 import { computeCategory } from "@/lib/category";
 import { sortShoppingList, sortShoppingListItems } from "@/lib/shopping-list";
 import { EditableTag } from "@/types/list-item";
+import { incrementItemUsage } from "./items";
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
@@ -230,6 +231,8 @@ export const addItemToList = async ({
       },
     },
   });
+
+  await incrementItemUsage(item.id);
 };
 
 export const setItemCompleted = async (

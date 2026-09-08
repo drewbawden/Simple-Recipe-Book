@@ -61,14 +61,6 @@ export const RecipeType = {
 export type RecipeType = (typeof RecipeType)[keyof typeof RecipeType]
 
 
-export const ItemUsageType = {
-  RECIPE: 'RECIPE',
-  SHOPPING_LIST: 'SHOPPING_LIST'
-} as const
-
-export type ItemUsageType = (typeof ItemUsageType)[keyof typeof ItemUsageType]
-
-
 export const ShoppingListSortOption = {
   ALPHABETICAL: 'ALPHABETICAL',
   REVERSE_ALPHABETICAL: 'REVERSE_ALPHABETICAL',

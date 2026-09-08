@@ -38,11 +38,11 @@ model Item {
   category            ItemCategory? @relation(fields: [categorySlug], references: [slug])
   categorySlug        String?
   manuallyCategorised Boolean       @default(false)
+  usageCount          Int           @default(0)
 
   products          StoreProduct[]
   ingredients       RecipeIngredient[]
   shoppingListItems ShoppingListItem[]
-  itemUsages        ItemUsage[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -66,23 +66,6 @@ model CategoryKeyword {
 
   @@unique([keyword, categorySlug])
   @@index([categorySlug])
-}
-
-// for autosuggest weighting
-model ItemUsage {
-  id Int @id @default(autoincrement())
-
-  item   Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
-  itemId Int
-
-  type ItemUsageType
-
-  targetId Int? // id of what the item was added to
-
-  createdAt DateTime @default(now())
-
-  @@index([itemId, createdAt])
-  @@index([itemId, type, createdAt])
 }
 
 // such as "Bega peanut butter, 500g, expires 10/10/2005"
@@ -270,11 +253,6 @@ enum RecipeType {
   DESSERT
   SNACK
   SIDE
-}
-
-enum ItemUsageType {
-  RECIPE
-  SHOPPING_LIST
 }
 
 enum ShoppingListSortOption {

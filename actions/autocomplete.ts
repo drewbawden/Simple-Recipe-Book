@@ -53,6 +53,7 @@ const autocompleteMap: Record<
   items: async (q) =>
     prisma.item.findMany({
       where: { name: { contains: q, mode: "insensitive" } },
+      orderBy: { usageCount: "desc" },
       take: 8,
       select: { id: true, name: true },
     }),

@@ -388,7 +388,6 @@ export const ModelName = {
   Item: 'Item',
   ItemCategory: 'ItemCategory',
   CategoryKeyword: 'CategoryKeyword',
-  ItemUsage: 'ItemUsage',
   Inventory: 'Inventory',
   Nutrition: 'Nutrition',
   Recipes: 'Recipes',
@@ -413,7 +412,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "storeProduct" | "item" | "itemCategory" | "categoryKeyword" | "itemUsage" | "inventory" | "nutrition" | "recipes" | "recipeIngredient" | "recipeInstructionStep" | "shoppingList" | "shoppingListItem" | "shoppingListItemSource" | "shoppingListTag"
+    modelProps: "storeProduct" | "item" | "itemCategory" | "categoryKeyword" | "inventory" | "nutrition" | "recipes" | "recipeIngredient" | "recipeInstructionStep" | "shoppingList" | "shoppingListItem" | "shoppingListItemSource" | "shoppingListTag"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -710,80 +709,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.CategoryKeywordCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.CategoryKeywordCountAggregateOutputType> | number
-        }
-      }
-    }
-    ItemUsage: {
-      payload: Prisma.$ItemUsagePayload<ExtArgs>
-      fields: Prisma.ItemUsageFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.ItemUsageFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ItemUsagePayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.ItemUsageFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ItemUsagePayload>
-        }
-        findFirst: {
-          args: Prisma.ItemUsageFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ItemUsagePayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.ItemUsageFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ItemUsagePayload>
-        }
-        findMany: {
-          args: Prisma.ItemUsageFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ItemUsagePayload>[]
-        }
-        create: {
-          args: Prisma.ItemUsageCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ItemUsagePayload>
-        }
-        createMany: {
-          args: Prisma.ItemUsageCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.ItemUsageCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ItemUsagePayload>[]
-        }
-        delete: {
-          args: Prisma.ItemUsageDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ItemUsagePayload>
-        }
-        update: {
-          args: Prisma.ItemUsageUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ItemUsagePayload>
-        }
-        deleteMany: {
-          args: Prisma.ItemUsageDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.ItemUsageUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.ItemUsageUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ItemUsagePayload>[]
-        }
-        upsert: {
-          args: Prisma.ItemUsageUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ItemUsagePayload>
-        }
-        aggregate: {
-          args: Prisma.ItemUsageAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateItemUsage>
-        }
-        groupBy: {
-          args: Prisma.ItemUsageGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.ItemUsageGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.ItemUsageCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.ItemUsageCountAggregateOutputType> | number
         }
       }
     }
@@ -1513,6 +1438,7 @@ export const ItemScalarFieldEnum = {
   name: 'name',
   categorySlug: 'categorySlug',
   manuallyCategorised: 'manuallyCategorised',
+  usageCount: 'usageCount',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1538,17 +1464,6 @@ export const CategoryKeywordScalarFieldEnum = {
 } as const
 
 export type CategoryKeywordScalarFieldEnum = (typeof CategoryKeywordScalarFieldEnum)[keyof typeof CategoryKeywordScalarFieldEnum]
-
-
-export const ItemUsageScalarFieldEnum = {
-  id: 'id',
-  itemId: 'itemId',
-  type: 'type',
-  targetId: 'targetId',
-  createdAt: 'createdAt'
-} as const
-
-export type ItemUsageScalarFieldEnum = (typeof ItemUsageScalarFieldEnum)[keyof typeof ItemUsageScalarFieldEnum]
 
 
 export const InventoryScalarFieldEnum = {
@@ -1787,20 +1702,6 @@ export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
- * Reference to a field of type 'ItemUsageType'
- */
-export type EnumItemUsageTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ItemUsageType'>
-    
-
-
-/**
- * Reference to a field of type 'ItemUsageType[]'
- */
-export type ListEnumItemUsageTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ItemUsageType[]'>
-    
-
-
-/**
  * Reference to a field of type 'Locations'
  */
 export type EnumLocationsFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Locations'>
@@ -1982,7 +1883,6 @@ export type GlobalOmitConfig = {
   item?: Prisma.ItemOmit
   itemCategory?: Prisma.ItemCategoryOmit
   categoryKeyword?: Prisma.CategoryKeywordOmit
-  itemUsage?: Prisma.ItemUsageOmit
   inventory?: Prisma.InventoryOmit
   nutrition?: Prisma.NutritionOmit
   recipes?: Prisma.RecipesOmit

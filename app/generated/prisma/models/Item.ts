@@ -28,10 +28,12 @@ export type AggregateItem = {
 
 export type ItemAvgAggregateOutputType = {
   id: number | null
+  usageCount: number | null
 }
 
 export type ItemSumAggregateOutputType = {
   id: number | null
+  usageCount: number | null
 }
 
 export type ItemMinAggregateOutputType = {
@@ -39,6 +41,7 @@ export type ItemMinAggregateOutputType = {
   name: string | null
   categorySlug: string | null
   manuallyCategorised: boolean | null
+  usageCount: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -48,6 +51,7 @@ export type ItemMaxAggregateOutputType = {
   name: string | null
   categorySlug: string | null
   manuallyCategorised: boolean | null
+  usageCount: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -57,6 +61,7 @@ export type ItemCountAggregateOutputType = {
   name: number
   categorySlug: number
   manuallyCategorised: number
+  usageCount: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -65,10 +70,12 @@ export type ItemCountAggregateOutputType = {
 
 export type ItemAvgAggregateInputType = {
   id?: true
+  usageCount?: true
 }
 
 export type ItemSumAggregateInputType = {
   id?: true
+  usageCount?: true
 }
 
 export type ItemMinAggregateInputType = {
@@ -76,6 +83,7 @@ export type ItemMinAggregateInputType = {
   name?: true
   categorySlug?: true
   manuallyCategorised?: true
+  usageCount?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -85,6 +93,7 @@ export type ItemMaxAggregateInputType = {
   name?: true
   categorySlug?: true
   manuallyCategorised?: true
+  usageCount?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -94,6 +103,7 @@ export type ItemCountAggregateInputType = {
   name?: true
   categorySlug?: true
   manuallyCategorised?: true
+  usageCount?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -190,6 +200,7 @@ export type ItemGroupByOutputType = {
   name: string
   categorySlug: string | null
   manuallyCategorised: boolean
+  usageCount: number
   createdAt: Date
   updatedAt: Date
   _count: ItemCountAggregateOutputType | null
@@ -222,13 +233,13 @@ export type ItemWhereInput = {
   name?: Prisma.StringFilter<"Item"> | string
   categorySlug?: Prisma.StringNullableFilter<"Item"> | string | null
   manuallyCategorised?: Prisma.BoolFilter<"Item"> | boolean
+  usageCount?: Prisma.IntFilter<"Item"> | number
   createdAt?: Prisma.DateTimeFilter<"Item"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Item"> | Date | string
   category?: Prisma.XOR<Prisma.ItemCategoryNullableScalarRelationFilter, Prisma.ItemCategoryWhereInput> | null
   products?: Prisma.StoreProductListRelationFilter
   ingredients?: Prisma.RecipeIngredientListRelationFilter
   shoppingListItems?: Prisma.ShoppingListItemListRelationFilter
-  itemUsages?: Prisma.ItemUsageListRelationFilter
 }
 
 export type ItemOrderByWithRelationInput = {
@@ -236,13 +247,13 @@ export type ItemOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   categorySlug?: Prisma.SortOrderInput | Prisma.SortOrder
   manuallyCategorised?: Prisma.SortOrder
+  usageCount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   category?: Prisma.ItemCategoryOrderByWithRelationInput
   products?: Prisma.StoreProductOrderByRelationAggregateInput
   ingredients?: Prisma.RecipeIngredientOrderByRelationAggregateInput
   shoppingListItems?: Prisma.ShoppingListItemOrderByRelationAggregateInput
-  itemUsages?: Prisma.ItemUsageOrderByRelationAggregateInput
 }
 
 export type ItemWhereUniqueInput = Prisma.AtLeast<{
@@ -253,13 +264,13 @@ export type ItemWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ItemWhereInput | Prisma.ItemWhereInput[]
   categorySlug?: Prisma.StringNullableFilter<"Item"> | string | null
   manuallyCategorised?: Prisma.BoolFilter<"Item"> | boolean
+  usageCount?: Prisma.IntFilter<"Item"> | number
   createdAt?: Prisma.DateTimeFilter<"Item"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Item"> | Date | string
   category?: Prisma.XOR<Prisma.ItemCategoryNullableScalarRelationFilter, Prisma.ItemCategoryWhereInput> | null
   products?: Prisma.StoreProductListRelationFilter
   ingredients?: Prisma.RecipeIngredientListRelationFilter
   shoppingListItems?: Prisma.ShoppingListItemListRelationFilter
-  itemUsages?: Prisma.ItemUsageListRelationFilter
 }, "id" | "name">
 
 export type ItemOrderByWithAggregationInput = {
@@ -267,6 +278,7 @@ export type ItemOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   categorySlug?: Prisma.SortOrderInput | Prisma.SortOrder
   manuallyCategorised?: Prisma.SortOrder
+  usageCount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.ItemCountOrderByAggregateInput
@@ -284,6 +296,7 @@ export type ItemScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"Item"> | string
   categorySlug?: Prisma.StringNullableWithAggregatesFilter<"Item"> | string | null
   manuallyCategorised?: Prisma.BoolWithAggregatesFilter<"Item"> | boolean
+  usageCount?: Prisma.IntWithAggregatesFilter<"Item"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Item"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Item"> | Date | string
 }
@@ -291,13 +304,13 @@ export type ItemScalarWhereWithAggregatesInput = {
 export type ItemCreateInput = {
   name: string
   manuallyCategorised?: boolean
+  usageCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   category?: Prisma.ItemCategoryCreateNestedOneWithoutItemsInput
   products?: Prisma.StoreProductCreateNestedManyWithoutItemInput
   ingredients?: Prisma.RecipeIngredientCreateNestedManyWithoutItemInput
   shoppingListItems?: Prisma.ShoppingListItemCreateNestedManyWithoutItemInput
-  itemUsages?: Prisma.ItemUsageCreateNestedManyWithoutItemInput
 }
 
 export type ItemUncheckedCreateInput = {
@@ -305,24 +318,24 @@ export type ItemUncheckedCreateInput = {
   name: string
   categorySlug?: string | null
   manuallyCategorised?: boolean
+  usageCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   products?: Prisma.StoreProductUncheckedCreateNestedManyWithoutItemInput
   ingredients?: Prisma.RecipeIngredientUncheckedCreateNestedManyWithoutItemInput
   shoppingListItems?: Prisma.ShoppingListItemUncheckedCreateNestedManyWithoutItemInput
-  itemUsages?: Prisma.ItemUsageUncheckedCreateNestedManyWithoutItemInput
 }
 
 export type ItemUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   manuallyCategorised?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usageCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   category?: Prisma.ItemCategoryUpdateOneWithoutItemsNestedInput
   products?: Prisma.StoreProductUpdateManyWithoutItemNestedInput
   ingredients?: Prisma.RecipeIngredientUpdateManyWithoutItemNestedInput
   shoppingListItems?: Prisma.ShoppingListItemUpdateManyWithoutItemNestedInput
-  itemUsages?: Prisma.ItemUsageUpdateManyWithoutItemNestedInput
 }
 
 export type ItemUncheckedUpdateInput = {
@@ -330,12 +343,12 @@ export type ItemUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   categorySlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   manuallyCategorised?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usageCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   products?: Prisma.StoreProductUncheckedUpdateManyWithoutItemNestedInput
   ingredients?: Prisma.RecipeIngredientUncheckedUpdateManyWithoutItemNestedInput
   shoppingListItems?: Prisma.ShoppingListItemUncheckedUpdateManyWithoutItemNestedInput
-  itemUsages?: Prisma.ItemUsageUncheckedUpdateManyWithoutItemNestedInput
 }
 
 export type ItemCreateManyInput = {
@@ -343,6 +356,7 @@ export type ItemCreateManyInput = {
   name: string
   categorySlug?: string | null
   manuallyCategorised?: boolean
+  usageCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -350,6 +364,7 @@ export type ItemCreateManyInput = {
 export type ItemUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   manuallyCategorised?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usageCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -359,6 +374,7 @@ export type ItemUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   categorySlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   manuallyCategorised?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usageCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -373,12 +389,14 @@ export type ItemCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   categorySlug?: Prisma.SortOrder
   manuallyCategorised?: Prisma.SortOrder
+  usageCount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type ItemAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  usageCount?: Prisma.SortOrder
 }
 
 export type ItemMaxOrderByAggregateInput = {
@@ -386,6 +404,7 @@ export type ItemMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   categorySlug?: Prisma.SortOrder
   manuallyCategorised?: Prisma.SortOrder
+  usageCount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -395,12 +414,14 @@ export type ItemMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   categorySlug?: Prisma.SortOrder
   manuallyCategorised?: Prisma.SortOrder
+  usageCount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type ItemSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  usageCount?: Prisma.SortOrder
 }
 
 export type ItemListRelationFilter = {
@@ -480,20 +501,6 @@ export type ItemUncheckedUpdateManyWithoutCategoryNestedInput = {
   deleteMany?: Prisma.ItemScalarWhereInput | Prisma.ItemScalarWhereInput[]
 }
 
-export type ItemCreateNestedOneWithoutItemUsagesInput = {
-  create?: Prisma.XOR<Prisma.ItemCreateWithoutItemUsagesInput, Prisma.ItemUncheckedCreateWithoutItemUsagesInput>
-  connectOrCreate?: Prisma.ItemCreateOrConnectWithoutItemUsagesInput
-  connect?: Prisma.ItemWhereUniqueInput
-}
-
-export type ItemUpdateOneRequiredWithoutItemUsagesNestedInput = {
-  create?: Prisma.XOR<Prisma.ItemCreateWithoutItemUsagesInput, Prisma.ItemUncheckedCreateWithoutItemUsagesInput>
-  connectOrCreate?: Prisma.ItemCreateOrConnectWithoutItemUsagesInput
-  upsert?: Prisma.ItemUpsertWithoutItemUsagesInput
-  connect?: Prisma.ItemWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ItemUpdateToOneWithWhereWithoutItemUsagesInput, Prisma.ItemUpdateWithoutItemUsagesInput>, Prisma.ItemUncheckedUpdateWithoutItemUsagesInput>
-}
-
 export type ItemCreateNestedOneWithoutIngredientsInput = {
   create?: Prisma.XOR<Prisma.ItemCreateWithoutIngredientsInput, Prisma.ItemUncheckedCreateWithoutIngredientsInput>
   connectOrCreate?: Prisma.ItemCreateOrConnectWithoutIngredientsInput
@@ -525,12 +532,12 @@ export type ItemUpdateOneRequiredWithoutShoppingListItemsNestedInput = {
 export type ItemCreateWithoutProductsInput = {
   name: string
   manuallyCategorised?: boolean
+  usageCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   category?: Prisma.ItemCategoryCreateNestedOneWithoutItemsInput
   ingredients?: Prisma.RecipeIngredientCreateNestedManyWithoutItemInput
   shoppingListItems?: Prisma.ShoppingListItemCreateNestedManyWithoutItemInput
-  itemUsages?: Prisma.ItemUsageCreateNestedManyWithoutItemInput
 }
 
 export type ItemUncheckedCreateWithoutProductsInput = {
@@ -538,11 +545,11 @@ export type ItemUncheckedCreateWithoutProductsInput = {
   name: string
   categorySlug?: string | null
   manuallyCategorised?: boolean
+  usageCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   ingredients?: Prisma.RecipeIngredientUncheckedCreateNestedManyWithoutItemInput
   shoppingListItems?: Prisma.ShoppingListItemUncheckedCreateNestedManyWithoutItemInput
-  itemUsages?: Prisma.ItemUsageUncheckedCreateNestedManyWithoutItemInput
 }
 
 export type ItemCreateOrConnectWithoutProductsInput = {
@@ -564,12 +571,12 @@ export type ItemUpdateToOneWithWhereWithoutProductsInput = {
 export type ItemUpdateWithoutProductsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   manuallyCategorised?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usageCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   category?: Prisma.ItemCategoryUpdateOneWithoutItemsNestedInput
   ingredients?: Prisma.RecipeIngredientUpdateManyWithoutItemNestedInput
   shoppingListItems?: Prisma.ShoppingListItemUpdateManyWithoutItemNestedInput
-  itemUsages?: Prisma.ItemUsageUpdateManyWithoutItemNestedInput
 }
 
 export type ItemUncheckedUpdateWithoutProductsInput = {
@@ -577,34 +584,34 @@ export type ItemUncheckedUpdateWithoutProductsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   categorySlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   manuallyCategorised?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usageCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ingredients?: Prisma.RecipeIngredientUncheckedUpdateManyWithoutItemNestedInput
   shoppingListItems?: Prisma.ShoppingListItemUncheckedUpdateManyWithoutItemNestedInput
-  itemUsages?: Prisma.ItemUsageUncheckedUpdateManyWithoutItemNestedInput
 }
 
 export type ItemCreateWithoutCategoryInput = {
   name: string
   manuallyCategorised?: boolean
+  usageCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   products?: Prisma.StoreProductCreateNestedManyWithoutItemInput
   ingredients?: Prisma.RecipeIngredientCreateNestedManyWithoutItemInput
   shoppingListItems?: Prisma.ShoppingListItemCreateNestedManyWithoutItemInput
-  itemUsages?: Prisma.ItemUsageCreateNestedManyWithoutItemInput
 }
 
 export type ItemUncheckedCreateWithoutCategoryInput = {
   id?: number
   name: string
   manuallyCategorised?: boolean
+  usageCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   products?: Prisma.StoreProductUncheckedCreateNestedManyWithoutItemInput
   ingredients?: Prisma.RecipeIngredientUncheckedCreateNestedManyWithoutItemInput
   shoppingListItems?: Prisma.ShoppingListItemUncheckedCreateNestedManyWithoutItemInput
-  itemUsages?: Prisma.ItemUsageUncheckedCreateNestedManyWithoutItemInput
 }
 
 export type ItemCreateOrConnectWithoutCategoryInput = {
@@ -641,81 +648,20 @@ export type ItemScalarWhereInput = {
   name?: Prisma.StringFilter<"Item"> | string
   categorySlug?: Prisma.StringNullableFilter<"Item"> | string | null
   manuallyCategorised?: Prisma.BoolFilter<"Item"> | boolean
+  usageCount?: Prisma.IntFilter<"Item"> | number
   createdAt?: Prisma.DateTimeFilter<"Item"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Item"> | Date | string
-}
-
-export type ItemCreateWithoutItemUsagesInput = {
-  name: string
-  manuallyCategorised?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  category?: Prisma.ItemCategoryCreateNestedOneWithoutItemsInput
-  products?: Prisma.StoreProductCreateNestedManyWithoutItemInput
-  ingredients?: Prisma.RecipeIngredientCreateNestedManyWithoutItemInput
-  shoppingListItems?: Prisma.ShoppingListItemCreateNestedManyWithoutItemInput
-}
-
-export type ItemUncheckedCreateWithoutItemUsagesInput = {
-  id?: number
-  name: string
-  categorySlug?: string | null
-  manuallyCategorised?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  products?: Prisma.StoreProductUncheckedCreateNestedManyWithoutItemInput
-  ingredients?: Prisma.RecipeIngredientUncheckedCreateNestedManyWithoutItemInput
-  shoppingListItems?: Prisma.ShoppingListItemUncheckedCreateNestedManyWithoutItemInput
-}
-
-export type ItemCreateOrConnectWithoutItemUsagesInput = {
-  where: Prisma.ItemWhereUniqueInput
-  create: Prisma.XOR<Prisma.ItemCreateWithoutItemUsagesInput, Prisma.ItemUncheckedCreateWithoutItemUsagesInput>
-}
-
-export type ItemUpsertWithoutItemUsagesInput = {
-  update: Prisma.XOR<Prisma.ItemUpdateWithoutItemUsagesInput, Prisma.ItemUncheckedUpdateWithoutItemUsagesInput>
-  create: Prisma.XOR<Prisma.ItemCreateWithoutItemUsagesInput, Prisma.ItemUncheckedCreateWithoutItemUsagesInput>
-  where?: Prisma.ItemWhereInput
-}
-
-export type ItemUpdateToOneWithWhereWithoutItemUsagesInput = {
-  where?: Prisma.ItemWhereInput
-  data: Prisma.XOR<Prisma.ItemUpdateWithoutItemUsagesInput, Prisma.ItemUncheckedUpdateWithoutItemUsagesInput>
-}
-
-export type ItemUpdateWithoutItemUsagesInput = {
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  manuallyCategorised?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  category?: Prisma.ItemCategoryUpdateOneWithoutItemsNestedInput
-  products?: Prisma.StoreProductUpdateManyWithoutItemNestedInput
-  ingredients?: Prisma.RecipeIngredientUpdateManyWithoutItemNestedInput
-  shoppingListItems?: Prisma.ShoppingListItemUpdateManyWithoutItemNestedInput
-}
-
-export type ItemUncheckedUpdateWithoutItemUsagesInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  categorySlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  manuallyCategorised?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  products?: Prisma.StoreProductUncheckedUpdateManyWithoutItemNestedInput
-  ingredients?: Prisma.RecipeIngredientUncheckedUpdateManyWithoutItemNestedInput
-  shoppingListItems?: Prisma.ShoppingListItemUncheckedUpdateManyWithoutItemNestedInput
 }
 
 export type ItemCreateWithoutIngredientsInput = {
   name: string
   manuallyCategorised?: boolean
+  usageCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   category?: Prisma.ItemCategoryCreateNestedOneWithoutItemsInput
   products?: Prisma.StoreProductCreateNestedManyWithoutItemInput
   shoppingListItems?: Prisma.ShoppingListItemCreateNestedManyWithoutItemInput
-  itemUsages?: Prisma.ItemUsageCreateNestedManyWithoutItemInput
 }
 
 export type ItemUncheckedCreateWithoutIngredientsInput = {
@@ -723,11 +669,11 @@ export type ItemUncheckedCreateWithoutIngredientsInput = {
   name: string
   categorySlug?: string | null
   manuallyCategorised?: boolean
+  usageCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   products?: Prisma.StoreProductUncheckedCreateNestedManyWithoutItemInput
   shoppingListItems?: Prisma.ShoppingListItemUncheckedCreateNestedManyWithoutItemInput
-  itemUsages?: Prisma.ItemUsageUncheckedCreateNestedManyWithoutItemInput
 }
 
 export type ItemCreateOrConnectWithoutIngredientsInput = {
@@ -749,12 +695,12 @@ export type ItemUpdateToOneWithWhereWithoutIngredientsInput = {
 export type ItemUpdateWithoutIngredientsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   manuallyCategorised?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usageCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   category?: Prisma.ItemCategoryUpdateOneWithoutItemsNestedInput
   products?: Prisma.StoreProductUpdateManyWithoutItemNestedInput
   shoppingListItems?: Prisma.ShoppingListItemUpdateManyWithoutItemNestedInput
-  itemUsages?: Prisma.ItemUsageUpdateManyWithoutItemNestedInput
 }
 
 export type ItemUncheckedUpdateWithoutIngredientsInput = {
@@ -762,22 +708,22 @@ export type ItemUncheckedUpdateWithoutIngredientsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   categorySlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   manuallyCategorised?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usageCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   products?: Prisma.StoreProductUncheckedUpdateManyWithoutItemNestedInput
   shoppingListItems?: Prisma.ShoppingListItemUncheckedUpdateManyWithoutItemNestedInput
-  itemUsages?: Prisma.ItemUsageUncheckedUpdateManyWithoutItemNestedInput
 }
 
 export type ItemCreateWithoutShoppingListItemsInput = {
   name: string
   manuallyCategorised?: boolean
+  usageCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   category?: Prisma.ItemCategoryCreateNestedOneWithoutItemsInput
   products?: Prisma.StoreProductCreateNestedManyWithoutItemInput
   ingredients?: Prisma.RecipeIngredientCreateNestedManyWithoutItemInput
-  itemUsages?: Prisma.ItemUsageCreateNestedManyWithoutItemInput
 }
 
 export type ItemUncheckedCreateWithoutShoppingListItemsInput = {
@@ -785,11 +731,11 @@ export type ItemUncheckedCreateWithoutShoppingListItemsInput = {
   name: string
   categorySlug?: string | null
   manuallyCategorised?: boolean
+  usageCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   products?: Prisma.StoreProductUncheckedCreateNestedManyWithoutItemInput
   ingredients?: Prisma.RecipeIngredientUncheckedCreateNestedManyWithoutItemInput
-  itemUsages?: Prisma.ItemUsageUncheckedCreateNestedManyWithoutItemInput
 }
 
 export type ItemCreateOrConnectWithoutShoppingListItemsInput = {
@@ -811,12 +757,12 @@ export type ItemUpdateToOneWithWhereWithoutShoppingListItemsInput = {
 export type ItemUpdateWithoutShoppingListItemsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   manuallyCategorised?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usageCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   category?: Prisma.ItemCategoryUpdateOneWithoutItemsNestedInput
   products?: Prisma.StoreProductUpdateManyWithoutItemNestedInput
   ingredients?: Prisma.RecipeIngredientUpdateManyWithoutItemNestedInput
-  itemUsages?: Prisma.ItemUsageUpdateManyWithoutItemNestedInput
 }
 
 export type ItemUncheckedUpdateWithoutShoppingListItemsInput = {
@@ -824,17 +770,18 @@ export type ItemUncheckedUpdateWithoutShoppingListItemsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   categorySlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   manuallyCategorised?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usageCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   products?: Prisma.StoreProductUncheckedUpdateManyWithoutItemNestedInput
   ingredients?: Prisma.RecipeIngredientUncheckedUpdateManyWithoutItemNestedInput
-  itemUsages?: Prisma.ItemUsageUncheckedUpdateManyWithoutItemNestedInput
 }
 
 export type ItemCreateManyCategoryInput = {
   id?: number
   name: string
   manuallyCategorised?: boolean
+  usageCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -842,30 +789,31 @@ export type ItemCreateManyCategoryInput = {
 export type ItemUpdateWithoutCategoryInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   manuallyCategorised?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usageCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   products?: Prisma.StoreProductUpdateManyWithoutItemNestedInput
   ingredients?: Prisma.RecipeIngredientUpdateManyWithoutItemNestedInput
   shoppingListItems?: Prisma.ShoppingListItemUpdateManyWithoutItemNestedInput
-  itemUsages?: Prisma.ItemUsageUpdateManyWithoutItemNestedInput
 }
 
 export type ItemUncheckedUpdateWithoutCategoryInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   manuallyCategorised?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usageCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   products?: Prisma.StoreProductUncheckedUpdateManyWithoutItemNestedInput
   ingredients?: Prisma.RecipeIngredientUncheckedUpdateManyWithoutItemNestedInput
   shoppingListItems?: Prisma.ShoppingListItemUncheckedUpdateManyWithoutItemNestedInput
-  itemUsages?: Prisma.ItemUsageUncheckedUpdateManyWithoutItemNestedInput
 }
 
 export type ItemUncheckedUpdateManyWithoutCategoryInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   manuallyCategorised?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usageCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -879,14 +827,12 @@ export type ItemCountOutputType = {
   products: number
   ingredients: number
   shoppingListItems: number
-  itemUsages: number
 }
 
 export type ItemCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   products?: boolean | ItemCountOutputTypeCountProductsArgs
   ingredients?: boolean | ItemCountOutputTypeCountIngredientsArgs
   shoppingListItems?: boolean | ItemCountOutputTypeCountShoppingListItemsArgs
-  itemUsages?: boolean | ItemCountOutputTypeCountItemUsagesArgs
 }
 
 /**
@@ -920,26 +866,19 @@ export type ItemCountOutputTypeCountShoppingListItemsArgs<ExtArgs extends runtim
   where?: Prisma.ShoppingListItemWhereInput
 }
 
-/**
- * ItemCountOutputType without action
- */
-export type ItemCountOutputTypeCountItemUsagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ItemUsageWhereInput
-}
-
 
 export type ItemSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
   categorySlug?: boolean
   manuallyCategorised?: boolean
+  usageCount?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   category?: boolean | Prisma.Item$categoryArgs<ExtArgs>
   products?: boolean | Prisma.Item$productsArgs<ExtArgs>
   ingredients?: boolean | Prisma.Item$ingredientsArgs<ExtArgs>
   shoppingListItems?: boolean | Prisma.Item$shoppingListItemsArgs<ExtArgs>
-  itemUsages?: boolean | Prisma.Item$itemUsagesArgs<ExtArgs>
   _count?: boolean | Prisma.ItemCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["item"]>
 
@@ -948,6 +887,7 @@ export type ItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   name?: boolean
   categorySlug?: boolean
   manuallyCategorised?: boolean
+  usageCount?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   category?: boolean | Prisma.Item$categoryArgs<ExtArgs>
@@ -958,6 +898,7 @@ export type ItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   name?: boolean
   categorySlug?: boolean
   manuallyCategorised?: boolean
+  usageCount?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   category?: boolean | Prisma.Item$categoryArgs<ExtArgs>
@@ -968,17 +909,17 @@ export type ItemSelectScalar = {
   name?: boolean
   categorySlug?: boolean
   manuallyCategorised?: boolean
+  usageCount?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "categorySlug" | "manuallyCategorised" | "createdAt" | "updatedAt", ExtArgs["result"]["item"]>
+export type ItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "categorySlug" | "manuallyCategorised" | "usageCount" | "createdAt" | "updatedAt", ExtArgs["result"]["item"]>
 export type ItemInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   category?: boolean | Prisma.Item$categoryArgs<ExtArgs>
   products?: boolean | Prisma.Item$productsArgs<ExtArgs>
   ingredients?: boolean | Prisma.Item$ingredientsArgs<ExtArgs>
   shoppingListItems?: boolean | Prisma.Item$shoppingListItemsArgs<ExtArgs>
-  itemUsages?: boolean | Prisma.Item$itemUsagesArgs<ExtArgs>
   _count?: boolean | Prisma.ItemCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ItemIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -995,13 +936,13 @@ export type $ItemPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     products: Prisma.$StoreProductPayload<ExtArgs>[]
     ingredients: Prisma.$RecipeIngredientPayload<ExtArgs>[]
     shoppingListItems: Prisma.$ShoppingListItemPayload<ExtArgs>[]
-    itemUsages: Prisma.$ItemUsagePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     name: string
     categorySlug: string | null
     manuallyCategorised: boolean
+    usageCount: number
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["item"]>
@@ -1402,7 +1343,6 @@ export interface Prisma__ItemClient<T, Null = never, ExtArgs extends runtime.Typ
   products<T extends Prisma.Item$productsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Item$productsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StoreProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   ingredients<T extends Prisma.Item$ingredientsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Item$ingredientsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RecipeIngredientPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   shoppingListItems<T extends Prisma.Item$shoppingListItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Item$shoppingListItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ShoppingListItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  itemUsages<T extends Prisma.Item$itemUsagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Item$itemUsagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ItemUsagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1436,6 +1376,7 @@ export interface ItemFieldRefs {
   readonly name: Prisma.FieldRef<"Item", 'String'>
   readonly categorySlug: Prisma.FieldRef<"Item", 'String'>
   readonly manuallyCategorised: Prisma.FieldRef<"Item", 'Boolean'>
+  readonly usageCount: Prisma.FieldRef<"Item", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Item", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Item", 'DateTime'>
 }
@@ -1927,30 +1868,6 @@ export type Item$shoppingListItemsArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.ShoppingListItemScalarFieldEnum | Prisma.ShoppingListItemScalarFieldEnum[]
-}
-
-/**
- * Item.itemUsages
- */
-export type Item$itemUsagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the ItemUsage
-   */
-  select?: Prisma.ItemUsageSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the ItemUsage
-   */
-  omit?: Prisma.ItemUsageOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ItemUsageInclude<ExtArgs> | null
-  where?: Prisma.ItemUsageWhereInput
-  orderBy?: Prisma.ItemUsageOrderByWithRelationInput | Prisma.ItemUsageOrderByWithRelationInput[]
-  cursor?: Prisma.ItemUsageWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ItemUsageScalarFieldEnum | Prisma.ItemUsageScalarFieldEnum[]
 }
 
 /**
