@@ -64,6 +64,7 @@ export const fetchExternalSite = async (url: string) => {
     return null;
   }
   if (!response.ok) {
+    console.warn(`Response: ${response.status}`)
     return null;
   }
 
@@ -86,6 +87,7 @@ export const fetchExternalSite = async (url: string) => {
     .filter(Boolean);
 
   if (!linkedData) {
+    console.warn("LD schema not found")
     return null;
   }
 
@@ -94,13 +96,14 @@ export const fetchExternalSite = async (url: string) => {
     .find((item) => item["@type"] === "Recipe");
 
   if (!recipe) {
+    console.warn("Recipe not found")
     return null;
   }
 
-  let name = recipe.name || null;
+  const name = recipe.name || null;
   let totalTime = recipe.totalTime || null;
-  let prepTime = recipe.prepTime || null;
-  let cookTime = recipe.cookTime || null;
+  const prepTime = recipe.prepTime || null;
+  const cookTime = recipe.cookTime || null;
   let ingredients = recipe.recipeIngredient || null;
   let instructions = recipe.recipeInstructions || null;
   let servings = recipe.recipeYield || null;

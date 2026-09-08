@@ -149,18 +149,18 @@ export const parseExternalInstructions = (instructionsVal: any[]) => {
   const instructions =
     howToSections.length > 0
       ? howToSections.flatMap((section) =>
-          (section.itemListElement || []).map((step: any) => ({
-            stepNumber: ++stepNumber,
-            method: decode(step.text),
-            category: decode(section.name),
-          })),
-        )
+        (section.itemListElement || []).map((step: any) => ({
+          stepNumber: ++stepNumber,
+          method: decode(step.text),
+          category: decode(section.name),
+        })),
+      )
       : instructionsVal
-          .filter((item) => item["@type"] === "HowToStep")
-          .map((step) => ({
-            stepNumber: ++stepNumber,
-            method: decode(step.text),
-          }));
+        .filter((item) => item["@type"] === "HowToStep")
+        .map((step) => ({
+          stepNumber: ++stepNumber,
+          method: decode(step.text),
+        }));
 
   return instructions;
 };

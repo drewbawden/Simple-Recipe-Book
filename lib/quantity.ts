@@ -124,10 +124,13 @@ export function tryNormaliseQuantity(input: string | number): number | null {
     return 1;
   }
 
-  // normalise punctuation
-  value = value.replace(/-/g, " ").replace(/\s+/g, " ").trim();
+  // normalise unicode fractions and punctuation before parsing
+  value = replaceUnicodeFractions(value)
+    .replace(/-/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 
-  // "1½" becomes "1 1/2"ut
+  // "1½" becomes "1 1/2"
   value = value.replace(/^(\d+)\s+(1\/\d+)$/, "$1 $2");
 
   // "a half" to "half"
