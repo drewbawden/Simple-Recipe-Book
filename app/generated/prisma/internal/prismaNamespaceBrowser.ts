@@ -231,6 +231,7 @@ export const ShoppingListItemScalarFieldEnum = {
   url: 'url',
   urgent: 'urgent',
   completed: 'completed',
+  completedAt: 'completedAt',
   tagId: 'tagId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

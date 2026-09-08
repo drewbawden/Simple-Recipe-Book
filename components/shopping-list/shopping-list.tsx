@@ -8,6 +8,7 @@ import {
   updateCategorySortOrder,
   updateItemSortOrder,
   updateTags,
+  deleteExpiredCompletedItems,
 } from "@/actions/shopping-lists";
 import {
   ContextMenu,
@@ -68,6 +69,8 @@ export const ShoppingList = () => {
   const deleteTokens = useRef<Record<number, number>>({});
 
   const refreshData = async () => {
+    await deleteExpiredCompletedItems();
+
     const [nextList, nextGroupedList] = await Promise.all([
       getShoppingList(),
       getShoppingListGroupedByCategory(filter?.id),
@@ -80,13 +83,7 @@ export const ShoppingList = () => {
   useEffect(() => {
     const fetchList = async () => {
       try {
-        const [nextList, nextGroupedList] = await Promise.all([
-          getShoppingList(),
-          getShoppingListGroupedByCategory(),
-        ]);
-
-        setShoppingList(nextList);
-        setGroupedList(nextGroupedList);
+        await refreshData();
       } catch (error) {
         console.error("Error fetching shopping list items:", error);
       } finally {

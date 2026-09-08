@@ -175,8 +175,9 @@ model ShoppingListItem {
   notes String?
   url   String?
 
-  urgent    Boolean @default(false)
-  completed Boolean @default(false)
+  urgent      Boolean   @default(false)
+  completed   Boolean   @default(false)
+  completedAt DateTime?
 
   tag   ShoppingListTag? @relation(fields: [tagId], references: [id], onDelete: SetNull)
   tagId Int?

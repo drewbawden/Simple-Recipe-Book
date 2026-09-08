@@ -167,6 +167,18 @@ export const getShoppingList = async () => {
   }
 };
 
+export const deleteExpiredCompletedItems = async () => {
+  await prisma.shoppingListItem.deleteMany({
+    where: {
+      shoppingListId: 1,
+      completed: true,
+      completedAt: {
+        lt: new Date(Date.now() - 1500),
+      },
+    },
+  });
+};
+
 interface addItemToListProps {
   itemName: string;
   categorySlug: string | null;
@@ -245,6 +257,7 @@ export const setItemCompleted = async (
     },
     data: {
       completed,
+      completedAt: completed ? new Date() : null,
     },
   });
 };
