@@ -24,8 +24,6 @@ services:
       context: ./python
       dockerfile: Dockerfile
     container_name: home-utils-zsl
-    ports:
-      - "8000:8000"
     restart: unless-stopped
 
   SRB-Postgres:
