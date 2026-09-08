@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, ChangeEvent } from "react";
+import { useState, useEffect, useRef, ChangeEvent, Ref } from "react";
 import {
   AutocompleteType,
   getAutocompleteSuggestions,
@@ -14,13 +14,23 @@ interface Suggestion {
 interface AutocompleteInputProps {
   modelType: AutocompleteType;
   placeholder?: string;
+
   onSelect?: (item: Suggestion) => void;
   onChange?: (value: string) => void;
+  onBlur?: (value: string) => void;
+  onEnter?: (value: string) => void;
+
   className?: string;
   id?: string;
   name?: string;
   value?: string;
   required?: boolean;
+
+  selectOnEnter?: boolean;
+  blurOnSelect?: boolean;
+  autoFocus?: boolean;
+
+  inputRef?: Ref<HTMLInputElement>;
 }
 
 export default function AutocompleteInput({
@@ -28,24 +38,43 @@ export default function AutocompleteInput({
   placeholder,
   onSelect,
   onChange,
+  onBlur,
+  onEnter,
   className,
   id,
   name,
   value = "",
   required = false,
+  selectOnEnter = true,
+  blurOnSelect = true,
+  autoFocus = false,
+  inputRef,
 }: AutocompleteInputProps) {
   const [query, setQuery] = useState(value);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [isOpen, setIsOpen] = useState(false);
-  const selectedRef = useRef(false);
+
+  const internalInputRef = useRef<HTMLInputElement>(null);
+
+  const setInputRef = (element: HTMLInputElement | null) => {
+    internalInputRef.current = element;
+
+    if (typeof inputRef === "function") {
+      inputRef(element);
+    } else if (inputRef) {
+      inputRef.current = element;
+    }
+  };
+
+  const selectedValueRef = useRef<string | null>(null);
 
   useEffect(() => {
     setQuery(value);
   }, [value]);
 
   useEffect(() => {
-    if (selectedRef.current) {
-      selectedRef.current = false;
+    if (selectedValueRef.current) {
+      selectedValueRef.current = null;
       return;
     }
 
@@ -53,8 +82,9 @@ export default function AutocompleteInput({
       if (query.trim().length >= 1) {
         try {
           const data = await getAutocompleteSuggestions(modelType, query);
+
           setSuggestions(data);
-          setIsOpen(true);
+          setIsOpen(data.length > 0);
         } catch (err) {
           console.error("Error fetching autocomplete data:", err);
         }
@@ -67,34 +97,72 @@ export default function AutocompleteInput({
     return () => clearTimeout(delayDebounceFn);
   }, [query, modelType]);
 
+  const handleChange = (newValue: string) => {
+    setQuery(newValue);
+    onChange?.(newValue);
+  };
+
   const handleSelect = (item: Suggestion) => {
+    selectedValueRef.current = item.name;
+
     setQuery(item.name);
     setIsOpen(false);
-    selectedRef.current = true;
-    if (onChange) {
-      onChange(item.name);
+
+    onChange?.(item.name);
+    onSelect?.(item);
+
+    if (blurOnSelect) {
+      internalInputRef.current?.blur();
     }
-    if (onSelect) {
-      onSelect(item);
+  };
+
+  const handleEnter = () => {
+    const value = query.trim();
+
+    if (!value) return;
+
+    if (selectOnEnter && isOpen && suggestions.length > 0) {
+      handleSelect(suggestions[0]);
+      return;
     }
+
+    onEnter?.(value);
+  };
+
+  const handleBlur = () => {
+    setIsOpen(false);
+
+    if (selectedValueRef.current) {
+      onBlur?.(selectedValueRef.current);
+      selectedValueRef.current = null;
+      return;
+    }
+
+    onBlur?.(query.trim());
   };
 
   return (
     <div className="relative text-gray-800">
-      <input type="hidden" name={modelType} value={query} />
-
       <input
+        autoFocus={autoFocus}
+        ref={setInputRef}
         required={required}
         type="text"
         value={query}
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
-          setQuery(e.target.value);
+          handleChange(e.target.value);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            handleEnter();
+          }
 
-          if (onChange) {
-            onChange(e.target.value);
+          if (e.key === "Escape") {
+            setIsOpen(false);
           }
         }}
-        onBlur={() => setIsOpen(false)}
+        onBlur={handleBlur}
         placeholder={placeholder || ""}
         className={className || ""}
         id={id || ""}

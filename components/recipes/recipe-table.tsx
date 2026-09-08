@@ -43,11 +43,23 @@ export const RecipeTable = () => {
   const [selectedInstructions, setSelectedInstructions] =
     useState<Recipe | null>(null);
 
+  const normaliseRecipes = (recipesData: any[]): Recipe[] =>
+    recipesData.map((recipe) => ({
+      ...recipe,
+      ingredients: (recipe.ingredients ?? []).map((ingredient: any) => ({
+        ...ingredient,
+        item: {
+          ...ingredient.item,
+          type: ingredient.item?.type ?? "ingredient",
+        },
+      })),
+    })) as Recipe[];
+
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
         const recipes = await getRecipes();
-        setRecipes(recipes);
+        setRecipes(normaliseRecipes(recipes));
         setLoading(false);
       } catch (error) {
         console.error("Error fetching recipes:", error);
@@ -60,7 +72,7 @@ export const RecipeTable = () => {
 
   const refreshRecipes = async (filters?: filterArguments) => {
     const data = await getRecipes(filters);
-    setRecipes(data);
+    setRecipes(normaliseRecipes(data));
   };
 
   const handleEdit = (recipe: Recipe) => {
@@ -292,6 +304,7 @@ export const RecipeTable = () => {
       <Modal
         isOpen={selectedIngredients !== null}
         onClose={() => setSelectedIngredients(null)}
+        modalTitle="Ingredients"
       >
         {selectedIngredients && (
           <IngredientPopup ingredients={selectedIngredients.ingredients} />
@@ -300,6 +313,7 @@ export const RecipeTable = () => {
       <Modal
         isOpen={selectedInstructions !== null}
         onClose={() => setSelectedInstructions(null)}
+        modalTitle="Instructions"
       >
         {selectedInstructions && (
           <InstructionPopup instructions={selectedInstructions.instructions} />
@@ -308,6 +322,7 @@ export const RecipeTable = () => {
       <Modal
         isOpen={selectedNotes !== null}
         onClose={() => setSelectedNotes(null)}
+        modalTitle="Notes"
       >
         {selectedNotes && (
           <NotesPopup notes={selectedNotes.notes ?? "No notes"} />
@@ -317,6 +332,7 @@ export const RecipeTable = () => {
         isOpen={isAddRecipeOpen}
         onClose={() => handleAddRecipeCancel()}
         hideCross
+        modalTitle="Add Recipe"
       >
         <RecipeInputPopup
           handleClose={() => handleAddRecipeCancel()}
@@ -328,6 +344,7 @@ export const RecipeTable = () => {
         isOpen={selectedShoppingList !== null}
         onClose={() => setSelectedShoppingList(null)}
         hideCross
+        modalTitle="Add to Shopping List"
       >
         {selectedShoppingList && (
           <AddToShoppingListPopup
@@ -339,6 +356,7 @@ export const RecipeTable = () => {
       <Modal
         isOpen={selectedEdit !== null}
         onClose={() => handleEditRecipeCancel()}
+        modalTitle="Edit Recipe"
         hideCross
       >
         {selectedEdit && (

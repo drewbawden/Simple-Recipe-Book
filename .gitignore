@@ -39,3 +39,26 @@ next-env.d.ts
 /public/recipe-pictures/*
 !/public/recipe-pictures/
 !/public/recipe-pictures/placeholder.png
+
+# python
+.venv
+venv/
+venv.bak/
+pip-log.txt
+pip-delete-this-directory.txt
+.Python
+build/
+develop-eggs/
+eggs/
+.eggs/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+__pycache__/
+*.py[codz]
+*$py.class
+*.manifest
+*.spec

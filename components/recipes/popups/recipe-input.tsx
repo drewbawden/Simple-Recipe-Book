@@ -2,7 +2,7 @@
 
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { insertNewRecipe, updateRecipe } from "@/actions/recipes";
-import { EnumOptions } from "@/components/templates/enums";
+import { EnumOptions } from "@/components/templates/options";
 import imageCompression from "browser-image-compression";
 import Form from "next/form";
 import { Modal } from "@/components/templates/modal";
@@ -411,6 +411,7 @@ export const RecipeInputPopup = ({
               enumType="recipeType"
               selected={types}
               onChange={setTypes}
+              selectMultiple
             />
           </div>
         </div>
@@ -536,6 +537,8 @@ export const RecipeInputPopup = ({
       <Modal
         isOpen={isIngredientsOpen}
         onClose={() => setIsIngredientsOpen(false)}
+        modalTitle="Add Ingredients"
+        isChild
       >
         <AddIngredientsPopup
           ingredientsList={ingredientsList}
@@ -545,6 +548,8 @@ export const RecipeInputPopup = ({
       <Modal
         isOpen={isInstructionsOpen}
         onClose={() => setIsInstructionsOpen(false)}
+        modalTitle="Add Instructions"
+        isChild
       >
         <AddInstructionsPopup
           instructionList={instructionList}
@@ -555,6 +560,8 @@ export const RecipeInputPopup = ({
         isOpen={isExternalIngredientsReviewOpen}
         onClose={handleCancelExternalIngredients}
         hideCross
+        modalTitle="Review Ingredients"
+        isChild
       >
         <IngredientsReviewPopup
           parsedIngredients={parsedExternalIngredients}

@@ -2,11 +2,14 @@
 
 import { useState, useEffect } from "react";
 
-import { getCategories } from "@/actions/dropdowns";
+import { getCategories } from "@/actions/items";
+import { error } from "console";
 
 type dropdownItem = {
-  id: number;
-  name: string;
+  slug: string;
+  displayName: string | null;
+  orderIndex: number;
+  userCreated: boolean;
 };
 
 export const CategoryDropdown = () => {
@@ -17,6 +20,7 @@ export const CategoryDropdown = () => {
     const fetchCategories = async () => {
       try {
         const data = await getCategories();
+        if (!data) throw new Error("data contains no value");
         setCategories(data);
         setLoading(false);
       } catch (error) {
@@ -35,8 +39,8 @@ export const CategoryDropdown = () => {
   return (
     <select>
       {categories.map((category) => (
-        <option key={category.id} value={category.id}>
-          {category.name}
+        <option key={category.slug} value={category.slug}>
+          {category.displayName ?? category.slug}
         </option>
       ))}
     </select>

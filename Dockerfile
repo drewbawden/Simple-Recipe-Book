@@ -116,4 +116,4 @@ USER node
 EXPOSE 3000
 
 # Run Prisma migrations before starting the standalone server
-CMD ["sh", "-c", "./node_modules/.bin/prisma migrate deploy --config prisma.config.ts --schema prisma/schema.prisma && node server.js"]
+CMD ["sh", "-c", "./node_modules/.bin/prisma migrate deploy --config prisma.config.ts --schema prisma/schema.prisma && npx prisma db seed --schema prisma/schema.prisma && node server.js"]

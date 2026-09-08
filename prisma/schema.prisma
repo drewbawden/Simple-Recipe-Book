@@ -18,9 +18,6 @@ model StoreProduct {
 
   nutrition Nutrition?
 
-  category   Category? @relation(fields: [categoryId], references: [id])
-  categoryId Int?
-
   item   Item? @relation(fields: [itemId], references: [id])
   itemId Int?
 
@@ -28,26 +25,47 @@ model StoreProduct {
   packageUnit NormalUnit?
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@unique([brand, name])
 }
 
-// such as "spreads", "sauces"
-model Category {
-  id       Int            @id @default(autoincrement())
-  name     String         @unique
-  products StoreProduct[]
-}
-
 // such as "Peanut butter", "Toilet paper"
 model Item {
-  id                Int                @id @default(autoincrement())
-  name              String             @unique
-  type              ItemType
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  category            ItemCategory? @relation(fields: [categorySlug], references: [slug])
+  categorySlug        String?
+  manuallyCategorised Boolean       @default(false)
+  usageCount          Int           @default(0)
+
   products          StoreProduct[]
   ingredients       RecipeIngredient[]
   shoppingListItems ShoppingListItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model ItemCategory {
+  slug        String            @id @unique
+  orderIndex  Int               @default(autoincrement())
+  displayName String?
+  userCreated Boolean           @default(false)
+  items       Item[]
+  keywords    CategoryKeyword[]
+}
+
+model CategoryKeyword {
+  id           Int          @id @default(autoincrement())
+  keyword      String
+  weight       Int          @default(1) // -3-3
+  category     ItemCategory @relation(fields: [categorySlug], references: [slug])
+  categorySlug String
+
+  @@unique([keyword, categorySlug])
+  @@index([categorySlug])
 }
 
 // such as "Bega peanut butter, 500g, expires 10/10/2005"
@@ -59,8 +77,9 @@ model Inventory {
   unit       NormalUnit   @default(INDIVIDUAL)
   location   Locations?
   expiryDate DateTime?
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Nutrition {
@@ -87,7 +106,7 @@ model Nutrition {
 }
 
 model Recipes {
-  id            Int                     @id @default(autoincrement())
+  id            Int          @id @default(autoincrement())
   name          String
   types         RecipeType[]
   notes         String?
@@ -95,8 +114,12 @@ model Recipes {
   totalTimeMins Int?
   servingSize   Int?
   imagePath     String?
-  ingredients   RecipeIngredient[]
-  instructions  RecipeInstructionStep[]
+
+  ingredients  RecipeIngredient[]
+  instructions RecipeInstructionStep[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model RecipeIngredient {
@@ -129,26 +152,40 @@ model RecipeInstructionStep {
 }
 
 model ShoppingList {
-  id        Int                @id @default(autoincrement())
-  name      String
-  items     ShoppingListItem[]
-  createdAt DateTime           @default(now())
-  updatedAt DateTime           @updatedAt
+  id                Int                    @id @default(autoincrement())
+  name              String
+  items             ShoppingListItem[]
+  categorySortOrder ShoppingListSortOption @default(ALPHABETICAL)
+  itemSortOrder     ListItemSortOption     @default(CREATION_DATE)
+  tags              ShoppingListTag[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model ShoppingListItem {
   id Int @id @default(autoincrement())
 
-  item   Item @relation(fields: [itemId], references: [id])
-  itemId Int
-
   shoppingList   ShoppingList @relation(fields: [shoppingListId], references: [id])
   shoppingListId Int
 
-  customName String? // temp name for "some random thing in the house", stuff that shouldn't really be stored
+  item   Item @relation(fields: [itemId], references: [id])
+  itemId Int
 
-  completed               Boolean                  @default(false)
+  notes String?
+  url   String?
+
+  urgent      Boolean   @default(false)
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+
+  tag   ShoppingListTag? @relation(fields: [tagId], references: [id], onDelete: SetNull)
+  tagId Int?
+
   shoppingListItemSources ShoppingListItemSource[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model ShoppingListItemSource {
@@ -161,6 +198,18 @@ model ShoppingListItemSource {
   recipeIngredientId Int
 
   dateAdded DateTime @default(now())
+}
+
+model ShoppingListTag {
+  id Int @id @default(autoincrement())
+
+  name   String
+  colour String
+
+  shoppingList   ShoppingList @relation(fields: [shoppingListId], references: [id], onDelete: Cascade)
+  shoppingListId Int
+
+  shoppingListItems ShoppingListItem[]
 }
 
 enum Locations {
@@ -207,7 +256,17 @@ enum RecipeType {
   SIDE
 }
 
-enum ItemType {
-  FOOD
-  HOUSEHOLD
+enum ShoppingListSortOption {
+  ALPHABETICAL
+  REVERSE_ALPHABETICAL
+  MANUAL // user defined order
+  AUTOMATIC // auto sort based on recent usage
+}
+
+enum ListItemSortOption {
+  ALPHABETICAL
+  REVERSE_ALPHABETICAL
+  CREATION_DATE
+  REVERSE_CREATION_DATE
+  PRIORITY
 }

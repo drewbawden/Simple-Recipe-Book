@@ -61,9 +61,22 @@ export const RecipeType = {
 export type RecipeType = (typeof RecipeType)[keyof typeof RecipeType]
 
 
-export const ItemType = {
-  FOOD: 'FOOD',
-  HOUSEHOLD: 'HOUSEHOLD'
+export const ShoppingListSortOption = {
+  ALPHABETICAL: 'ALPHABETICAL',
+  REVERSE_ALPHABETICAL: 'REVERSE_ALPHABETICAL',
+  MANUAL: 'MANUAL',
+  AUTOMATIC: 'AUTOMATIC'
 } as const
 
-export type ItemType = (typeof ItemType)[keyof typeof ItemType]
+export type ShoppingListSortOption = (typeof ShoppingListSortOption)[keyof typeof ShoppingListSortOption]
+
+
+export const ListItemSortOption = {
+  ALPHABETICAL: 'ALPHABETICAL',
+  REVERSE_ALPHABETICAL: 'REVERSE_ALPHABETICAL',
+  CREATION_DATE: 'CREATION_DATE',
+  REVERSE_CREATION_DATE: 'REVERSE_CREATION_DATE',
+  PRIORITY: 'PRIORITY'
+} as const
+
+export type ListItemSortOption = (typeof ListItemSortOption)[keyof typeof ListItemSortOption]

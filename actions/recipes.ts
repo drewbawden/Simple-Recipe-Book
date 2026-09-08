@@ -3,7 +3,6 @@
 import {
   PrismaClient,
   RecipeType,
-  ItemType,
   Prisma,
 } from "../app/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
@@ -13,6 +12,7 @@ import { mkdir, writeFile } from "fs/promises";
 import path from "path";
 import { randomUUID } from "crypto";
 import { downloadExternalRecipeImage } from "@/actions/parse-external";
+import { normaliseItemName } from "@/lib/items";
 import { filterArguments, RecipeFormData } from "@/types/recipe";
 
 const adapter = new PrismaPg({
@@ -144,6 +144,7 @@ export async function updateRecipe(recipeId: number, formData: FormData) {
           create: await Promise.all(
             data.ingredients.map(async (ingredient) => {
               const parsed = parseQuantity(ingredient.quantity);
+              const normalisedName = normaliseItemName(ingredient.name);
 
               if (parsed.quantity === null) {
                 throw new Error(
@@ -154,12 +155,11 @@ export async function updateRecipe(recipeId: number, formData: FormData) {
               let item;
               item = await tx.item.upsert({
                 where: {
-                  name: ingredient.name,
+                  name: normalisedName,
                 },
                 update: {},
                 create: {
-                  name: ingredient.name,
-                  type: ItemType.FOOD,
+                  name: normalisedName,
                 },
               });
 
@@ -191,26 +191,53 @@ export async function updateRecipe(recipeId: number, formData: FormData) {
       },
     });
   });
-  await cleanUpShoppingList();
 }
 
 export async function deleteRecipe(recipeId: number) {
-  await prisma.recipes.delete({
-    where: {
-      id: recipeId,
-    },
-  });
-  await cleanUpShoppingList();
-}
-
-async function cleanUpShoppingList() {
-  await prisma.shoppingListItem.deleteMany({
-    where: {
-      customName: null,
-      shoppingListItemSources: {
-        none: {},
+  await prisma.$transaction(async (tx) => {
+    const items = await tx.shoppingListItem.findMany({
+      where: {
+        shoppingListItemSources: {
+          some: {
+            recipeIngredient: {
+              recipeId,
+            },
+          },
+        },
       },
-    },
+      select: {
+        id: true,
+        shoppingListItemSources: {
+          select: {
+            recipeIngredient: {
+              select: {
+                recipeId: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const itemIdsToDelete = items
+      .filter((item) =>
+        item.shoppingListItemSources.every(
+          (source) => source.recipeIngredient.recipeId === recipeId,
+        ),
+      )
+      .map((item) => item.id);
+
+    await tx.shoppingListItem.deleteMany({
+      where: {
+        id: {
+          in: itemIdsToDelete,
+        },
+      },
+    });
+
+    await tx.recipes.delete({
+      where: { id: recipeId },
+    });
   });
 }
 
@@ -232,6 +259,7 @@ export async function insertNewRecipe(formData: FormData) {
           create: await Promise.all(
             data.ingredients.map(async (ingredient) => {
               const parsed = parseQuantity(ingredient.quantity);
+              const normalisedName = normaliseItemName(ingredient.name);
 
               if (parsed.quantity === null) {
                 throw new Error(
@@ -242,12 +270,11 @@ export async function insertNewRecipe(formData: FormData) {
               let item;
               item = await tx.item.upsert({
                 where: {
-                  name: ingredient.name,
+                  name: normalisedName,
                 },
                 update: {},
                 create: {
-                  name: ingredient.name,
-                  type: ItemType.FOOD,
+                  name: normalisedName,
                 },
               });
 

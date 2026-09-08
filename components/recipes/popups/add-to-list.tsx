@@ -3,6 +3,7 @@ import Form from "next/form";
 import { addRecipeToShoppingList } from "@/actions/shopping-lists";
 import { redirect, RedirectType } from "next/navigation";
 import { Recipe } from "@/types/recipe";
+import { SubmitButton } from "@/components/templates/submit-button";
 
 interface AddToShoppingListPopupProps {
   closePopup: () => void;
@@ -60,7 +61,7 @@ export const AddToShoppingListPopup = ({
 
   async function handleAdd(formData: FormData) {
     const continueToList = formData.get("continueToList");
-    addRecipeToShoppingList(formData);
+    await addRecipeToShoppingList(formData);
     if (continueToList) {
       redirect("/list", RedirectType.push);
     }
@@ -69,10 +70,6 @@ export const AddToShoppingListPopup = ({
 
   return (
     <Form action={handleAdd} className="text-gray-900">
-      <h1 className="rounded-xl bg-gray-50 border border-gray-200 p-4 text-2xl p-2 pb-4 text-center">
-        Add to Shopping List
-      </h1>
-      <hr className="h-0.5 bg-black" />
       <div className="flex p-2 justify-between space-x-2 items-center">
         <div className="border border-gray-200 rounded-xl p-2 space-x-2">
           <label htmlFor="selectAllCheck">Select All</label>
@@ -121,13 +118,11 @@ export const AddToShoppingListPopup = ({
       </ul>
 
       <div className="sticky bottom-0 mt-4 flex flex-col sm:flex-row-reverse sm:justify-start flex-wrap justify-end gap-3 bg-white p-4">
-        <button
-          type="submit"
-          className="disabled:bg-gray-400 rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-500 transition"
+        <SubmitButton
+          text="Add Selected"
+          disabledText="Adding..."
           disabled={selectedIngredientIds.size < 1}
-        >
-          Add Selected
-        </button>
+        />
         <button
           type="button"
           onClick={closePopup}

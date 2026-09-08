@@ -7,10 +7,6 @@ interface IngredientPopupProps {
 export const IngredientPopup = ({ ingredients }: IngredientPopupProps) => {
   return (
     <div className="text-gray-900 space-y-2">
-      <h1 className="rounded-xl bg-gray-50 border border-gray-200 p-4 text-2xl p-2 pb-4 text-center">
-        Ingredients
-      </h1>
-      <hr className="h-0.5 bg-black" />
       <ul className="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
         {ingredients.map((ingredient) => (
           <li
@@ -36,10 +32,6 @@ type NotesPopupProps = {
 export const NotesPopup = ({ notes }: NotesPopupProps) => {
   return (
     <div className="text-gray-900 space-y-2">
-      <h1 className="rounded-xl bg-gray-50 border border-gray-200 p-4 text-2xl p-2 pb-4 text-center">
-        Notes
-      </h1>
-      <hr className="h-0.5 bg-black" />
       <p className="p-4 break-all">{notes}</p>
     </div>
   );
@@ -67,10 +59,6 @@ export const InstructionPopup = ({ instructions }: InstructionsPopupProps) => {
 
   return (
     <div className="text-gray-900 space-y-2">
-      <h1 className="rounded-xl bg-gray-50 border border-gray-200 p-4 text-2xl p-2 pb-4 text-center">
-        Instructions
-      </h1>
-      <hr className="h-0.5 bg-black" />
       {hasCategories ? (
         <div className="space-y-6">
           {Object.entries(groupedInstructions).map(([category, steps]) => (

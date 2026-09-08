@@ -47,15 +47,20 @@ export { Prisma }
  */
 export type StoreProduct = Prisma.StoreProductModel
 /**
- * Model Category
- * 
- */
-export type Category = Prisma.CategoryModel
-/**
  * Model Item
  * 
  */
 export type Item = Prisma.ItemModel
+/**
+ * Model ItemCategory
+ * 
+ */
+export type ItemCategory = Prisma.ItemCategoryModel
+/**
+ * Model CategoryKeyword
+ * 
+ */
+export type CategoryKeyword = Prisma.CategoryKeywordModel
 /**
  * Model Inventory
  * 
@@ -96,3 +101,8 @@ export type ShoppingListItem = Prisma.ShoppingListItemModel
  * 
  */
 export type ShoppingListItemSource = Prisma.ShoppingListItemSourceModel
+/**
+ * Model ShoppingListTag
+ * 
+ */
+export type ShoppingListTag = Prisma.ShoppingListTagModel
