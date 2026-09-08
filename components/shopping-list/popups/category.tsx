@@ -25,7 +25,6 @@ export const ChangeCategoryPopup = ({
 
   const handleAutoCategorise = async () => {
     const autoSlug = await computeCategory(itemName, true);
-    console.log(autoSlug);
     setSlug(autoSlug);
     onClose();
   };

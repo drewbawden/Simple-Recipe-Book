@@ -129,7 +129,6 @@ export const ShoppingList = () => {
   };
 
   const handleItemDeleted = async (id: number) => {
-    console.log("delete item");
     cancelPendingDelete(id);
 
     await deleteItem(id);

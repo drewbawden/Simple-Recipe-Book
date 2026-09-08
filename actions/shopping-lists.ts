@@ -206,8 +206,6 @@ export const addItemToList = async ({
 }: addItemToListProps) => {
   itemName = normaliseItemName(itemName);
 
-  console.log(tagId);
-
   let category = null;
   if (categorySlug) {
     category = await prisma.itemCategory.upsert({
