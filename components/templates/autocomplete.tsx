@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, ChangeEvent } from "react";
+import { useState, useEffect, useRef, ChangeEvent, Ref } from "react";
 import {
   AutocompleteType,
   getAutocompleteSuggestions,
@@ -29,6 +29,8 @@ interface AutocompleteInputProps {
   selectOnEnter?: boolean;
   blurOnSelect?: boolean;
   autoFocus?: boolean;
+
+  inputRef?: Ref<HTMLInputElement>;
 }
 
 export default function AutocompleteInput({
@@ -46,12 +48,24 @@ export default function AutocompleteInput({
   selectOnEnter = true,
   blurOnSelect = true,
   autoFocus = false,
+  inputRef,
 }: AutocompleteInputProps) {
   const [query, setQuery] = useState(value);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  const internalInputRef = useRef<HTMLInputElement>(null);
+
+  const setInputRef = (element: HTMLInputElement | null) => {
+    internalInputRef.current = element;
+
+    if (typeof inputRef === "function") {
+      inputRef(element);
+    } else if (inputRef) {
+      inputRef.current = element;
+    }
+  };
+
   const selectedValueRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -98,7 +112,7 @@ export default function AutocompleteInput({
     onSelect?.(item);
 
     if (blurOnSelect) {
-      inputRef.current?.blur();
+      internalInputRef.current?.blur();
     }
   };
 
@@ -131,7 +145,7 @@ export default function AutocompleteInput({
     <div className="relative text-gray-800">
       <input
         autoFocus={autoFocus}
-        ref={inputRef}
+        ref={setInputRef}
         required={required}
         type="text"
         value={query}

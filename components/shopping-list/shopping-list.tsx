@@ -19,7 +19,10 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { ListItemCard } from "@/components/shopping-list/item-card";
 import { computeQuantity } from "@/lib/shopping-list";
-import { ShoppingListItemInput } from "@/components/shopping-list/item-input";
+import {
+  ShoppingListItemInput,
+  StickyAddButton,
+} from "@/components/shopping-list/item-input";
 import { SettingsIcon, XIcon } from "lucide-react";
 import { Modal } from "@/components/templates/modal";
 import { ItemEditPopup } from "@/components/shopping-list/popups/item-edit";
@@ -50,11 +53,13 @@ export const ShoppingList = () => {
   const [editCategorySortOrder, setEditCategorySortOrder] = useState(false);
   const [editItemSortOrder, setEditItemSortOrder] = useState(false);
   const [editTags, setEditTags] = useState(false);
+
   const itemEditFormRef = useRef<HTMLFormElement>(null);
   const listEditFormRef = useRef<HTMLFormElement>(null);
   const categorySortEditFormRef = useRef<HTMLFormElement>(null);
   const itemSortEditFormRef = useRef<HTMLFormElement>(null);
   const tagEditFormRef = useRef<HTMLFormElement>(null);
+  const mainInputRef = useRef<HTMLInputElement>(null);
 
   const deleteTimers = useRef<Record<number, NodeJS.Timeout | undefined>>({});
   const deleteTokens = useRef<Record<number, number>>({});
@@ -323,7 +328,10 @@ export const ShoppingList = () => {
         </div>
       </div>
       <hr className="h-0.5 bg-black pb-2" />
-      <ShoppingListItemInput refreshData={refreshData} />
+      <ShoppingListItemInput
+        refreshData={refreshData}
+        inputRef={mainInputRef}
+      />
       <div className="space-y-2 my-4">
         {groupedList.map((category) => (
           <ul key={category.slug} className="bg-gray-800 p-2 rounded space-y-2">
@@ -391,6 +399,7 @@ export const ShoppingList = () => {
           </ul>
         ))}
       </div>
+      <StickyAddButton inputRef={mainInputRef} />
       <Modal
         isOpen={editItem !== null}
         onClose={() => setEditItem(null)}

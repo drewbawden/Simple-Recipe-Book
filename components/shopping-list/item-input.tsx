@@ -2,7 +2,7 @@
 
 import { addItemToList } from "@/actions/shopping-lists";
 import { computeCategory } from "@/lib/category";
-import { useEffect, useRef, useState } from "react";
+import { Ref, useEffect, useState } from "react";
 import AutocompleteInput from "../templates/autocomplete";
 import { TagSelect } from "./tag-select";
 import { Tag } from "@/types/list-item";
@@ -13,12 +13,14 @@ interface ShoppingListItemInputProps {
   onEnter?: () => void;
   categoryName?: string | null;
   autoFocus?: boolean;
+  inputRef?: Ref<HTMLInputElement>;
 }
 export const ShoppingListItemInput = ({
   refreshData,
   onEnter,
   categoryName = null,
   autoFocus = false,
+  inputRef,
 }: ShoppingListItemInputProps) => {
   const [inputValue, setInputValue] = useState("");
   const [tag, setTag] = useState<Tag | null>(null);
@@ -98,6 +100,7 @@ export const ShoppingListItemInput = ({
           selectOnEnter={false}
           blurOnSelect={true}
           autoFocus={autoFocus}
+          inputRef={inputRef || null}
         />
         <input type="submit" hidden />
         <div className="flex flex-row text-gray-900 gap-2">
@@ -117,5 +120,21 @@ export const ShoppingListItemInput = ({
         </div>
       </form>
     </div>
+  );
+};
+
+interface StickyAddButtonProps {
+  inputRef?: Ref<HTMLInputElement>;
+}
+export const StickyAddButton = ({ inputRef }: StickyAddButtonProps) => {
+  return (
+    <button
+      onClick={() => {
+        inputRef?.current?.focus();
+      }}
+      className="fixed bottom-10 right-6 bg-white rounded-full size-12 text-3xl text-gray-500 active:bg-gray-300"
+    >
+      +
+    </button>
   );
 };
