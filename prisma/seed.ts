@@ -1,6 +1,6 @@
-import { PrismaClient } from "@/app/generated/prisma/client";
+import { PrismaClient } from "../app/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { categoryKeywords, categories } from "@/prisma/seed-data/data";
+import { categoryKeywords, categories } from "./seed-data/data";
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
