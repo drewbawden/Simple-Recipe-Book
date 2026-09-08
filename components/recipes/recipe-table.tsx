@@ -43,11 +43,23 @@ export const RecipeTable = () => {
   const [selectedInstructions, setSelectedInstructions] =
     useState<Recipe | null>(null);
 
+  const normaliseRecipes = (recipesData: any[]): Recipe[] =>
+    recipesData.map((recipe) => ({
+      ...recipe,
+      ingredients: (recipe.ingredients ?? []).map((ingredient: any) => ({
+        ...ingredient,
+        item: {
+          ...ingredient.item,
+          type: ingredient.item?.type ?? "ingredient",
+        },
+      })),
+    })) as Recipe[];
+
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
         const recipes = await getRecipes();
-        setRecipes(recipes);
+        setRecipes(normaliseRecipes(recipes));
         setLoading(false);
       } catch (error) {
         console.error("Error fetching recipes:", error);
@@ -60,7 +72,7 @@ export const RecipeTable = () => {
 
   const refreshRecipes = async (filters?: filterArguments) => {
     const data = await getRecipes(filters);
-    setRecipes(data);
+    setRecipes(normaliseRecipes(data));
   };
 
   const handleEdit = (recipe: Recipe) => {

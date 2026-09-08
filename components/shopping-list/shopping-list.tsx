@@ -362,7 +362,7 @@ export const ShoppingList = () => {
         refreshData={refreshData}
         inputRef={mainInputRef}
       />
-      <div className="space-y-2 my-4">
+      <div className="space-y-4 my-4">
         {groupedList.map((category) => (
           <ul key={category.slug} className="bg-gray-800 p-2 rounded space-y-2">
             <div className="flex">
@@ -396,7 +396,7 @@ export const ShoppingList = () => {
                       notes: listItem.notes ?? undefined,
                       url: listItem.url ?? undefined,
                       urgent: listItem.urgent,
-                      categorySlug: listItem.item.category?.slug,
+                      categorySlug: listItem.item.category?.slug ?? "",
                       tag: listItem.tag ?? undefined,
                     })
                   }

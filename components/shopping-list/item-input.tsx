@@ -130,7 +130,9 @@ export const StickyAddButton = ({ inputRef }: StickyAddButtonProps) => {
   return (
     <button
       onClick={() => {
-        inputRef?.current?.focus();
+        if (inputRef && typeof inputRef !== "function") {
+          inputRef.current?.focus();
+        }
       }}
       className="fixed bottom-10 right-6 bg-white rounded-full size-12 text-3xl text-gray-500 active:bg-gray-300"
     >

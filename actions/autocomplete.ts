@@ -64,11 +64,18 @@ const autocompleteMap: Record<
       select: { id: true, name: true },
     }),
   categories: async (q) =>
-    prisma.itemCategory.findMany({
-      where: { name: { contains: q, mode: "insensitive" } },
-      take: 8,
-      select: { id: true, name: true },
-    }),
+    prisma.itemCategory
+      .findMany({
+        where: { displayName: { contains: q, mode: "insensitive" } },
+        take: 8,
+        select: { slug: true, displayName: true },
+      })
+      .then((categories) =>
+        categories.map(({ slug, displayName }) => ({
+          id: slug,
+          name: displayName ?? slug,
+        })),
+      ),
 };
 
 export type AutocompleteType =

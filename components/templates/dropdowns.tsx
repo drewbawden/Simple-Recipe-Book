@@ -3,10 +3,13 @@
 import { useState, useEffect } from "react";
 
 import { getCategories } from "@/actions/items";
+import { error } from "console";
 
 type dropdownItem = {
   slug: string;
   displayName: string | null;
+  orderIndex: number;
+  userCreated: boolean;
 };
 
 export const CategoryDropdown = () => {
@@ -17,6 +20,7 @@ export const CategoryDropdown = () => {
     const fetchCategories = async () => {
       try {
         const data = await getCategories();
+        if (!data) throw new Error("data contains no value");
         setCategories(data);
         setLoading(false);
       } catch (error) {

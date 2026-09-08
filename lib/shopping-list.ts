@@ -101,8 +101,20 @@ const manualListSort = (property: string) => {
   };
 };
 
-export const sortShoppingList = (ShoppingList, categories) => {
-  switch (ShoppingList.categorySortOrder) {
+interface ShoppingListCategory {
+  slug: string;
+  orderIndex: number;
+}
+
+interface ShoppingListSortInput {
+  categorySortOrder: ShoppingListSortOption;
+}
+
+export const sortShoppingList = <T extends ShoppingListCategory>(
+  shoppingList: ShoppingListSortInput,
+  categories: T[],
+): T[] => {
+  switch (shoppingList.categorySortOrder) {
     case ShoppingListSortOption.ALPHABETICAL:
       categories.sort(alphabeticalSort((category) => category.slug));
       break;
@@ -119,8 +131,11 @@ export const sortShoppingList = (ShoppingList, categories) => {
   return categories;
 };
 
-export const sortShoppingListItems = (shoppingList, categories) => {
-  return categories.map((category) => {
+export const sortShoppingListItems = <T extends { items: any[]; slug: string }>(
+  shoppingList: { itemSortOrder: ListItemSortOption },
+  categories: T[],
+): T[] => {
+  return categories.map((category): T => {
     const items = [...category.items];
 
     switch (shoppingList.itemSortOrder) {

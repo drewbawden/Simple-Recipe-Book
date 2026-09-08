@@ -10,6 +10,12 @@ interface KeywordMatch {
   confidence: number;
 }
 
+interface RawKeywordMatch {
+  categorySlug: string;
+  weight: number | string;
+  confidence: number | string;
+}
+
 export const scoreKeywordMatches = (matches: KeywordMatch[]) => {
   const groupedMatches = matches.reduce<Record<string, KeywordMatch[]>>(
     (grouped, match) => {
@@ -45,7 +51,7 @@ export const scoreKeywordMatches = (matches: KeywordMatch[]) => {
 };
 
 const checkAgainstKeywords = async (productName: string) => {
-  const matches = await fuzzyFindKeywords(productName);
+  const matches = (await fuzzyFindKeywords(productName)) as RawKeywordMatch[];
   if (!matches.length) {
     return null;
   }

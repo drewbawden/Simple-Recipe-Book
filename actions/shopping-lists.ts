@@ -1,6 +1,6 @@
 "use server";
 
-import { PrismaClient } from "../app/generated/prisma/client";
+import { Prisma, PrismaClient } from "../app/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import "dotenv/config";
 import {
@@ -64,12 +64,14 @@ export const getShoppingListGroupedByCategory = async (tagId?: number) => {
     for (const item of shoppingList.items) {
       const category = item.item.category;
 
-      const slug = category?.slug ?? "other";
-      const displayName = category?.displayName ?? category?.slug ?? "Other";
+      if (!category) break;
+
+      const slug = category.slug ?? "other";
+      const displayName = category.displayName ?? category?.slug ?? "Other";
 
       const existing = categories.get(slug);
 
-      const orderIndex = category?.orderIndex;
+      const orderIndex = category.orderIndex;
 
       if (existing) {
         existing.items.push(item);
@@ -105,7 +107,16 @@ export const getShoppingListGroupedByCategory = async (tagId?: number) => {
     }));
 
     const sortedCategories = sortShoppingList(shoppingList, categoriesArray);
-    const finalSorted = sortShoppingListItems(shoppingList, sortedCategories);
+    const finalSorted = sortShoppingListItems(
+      shoppingList,
+      sortedCategories.map((category) => ({
+        slug: category.slug,
+        displayName: category.displayName,
+        items:
+          categoriesArray.find((group) => group.slug === category.slug)
+            ?.items ?? [],
+      })),
+    );
     return finalSorted;
   } catch (error) {
     console.error("Database Error:", error);
@@ -306,7 +317,11 @@ export const addRecipeToShoppingList = async (formData: FormData) => {
     });
 
     for (const ingredient of ingredients) {
-      await categoriseItem(ingredient.item.id, ingredient.item.name, tx);
+      await categoriseItem({
+        itemId: ingredient.item.id,
+        itemName: ingredient.item.name,
+        tx: tx,
+      });
 
       await tx.shoppingListItem.create({
         data: {
@@ -369,11 +384,16 @@ export const clearShoppingList = async (listId = 1) => {
   }
 };
 
-const categoriseItem = async (
-  itemId: number,
-  itemName: string,
+interface categoriseItemProps {
+  itemId: number;
+  itemName: string;
+  tx: Prisma.TransactionClient;
+}
+const categoriseItem = async ({
+  itemId,
+  itemName,
   tx = prisma,
-) => {
+}: categoriseItemProps) => {
   const categorySlug = await computeCategory(itemName);
 
   if (!categorySlug) {
