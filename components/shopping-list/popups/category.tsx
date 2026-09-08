@@ -14,7 +14,7 @@ export const ChangeCategoryPopup = ({
   onClose,
   itemName,
 }: ChangeCategoryPopupProps) => {
-  const handleOnChange = (newSlug: string) => {
+  const handleOnChange = (newSlug: string | null) => {
     setSlug(newSlug);
     onClose();
   };

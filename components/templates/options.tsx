@@ -110,8 +110,8 @@ interface DynamicOptionsProps extends Omit<
   "onChange"
 > {
   listType: dynamicListType;
-  selected?: string;
-  onChange?: (selected: string) => void;
+  selected?: string | null;
+  onChange?: (selected: string | null) => void;
   deletable?: string;
   onDelete?: (id: string) => void;
 }
@@ -176,6 +176,35 @@ export const DynamicOptions = ({
 
   return (
     <ul className="grid grid-cols-1">
+      <li
+        key={"none"}
+        className="relative p-1.5 bg-gray-200
+                    first:rounded-t
+                    last:rounded-b
+                    first:last:rounded
+                    after:absolute after:bottom-0 after:left-3 after:right-3 after:h-px after:bg-black/10
+                    last:after:hidden
+        "
+      >
+        <label className="flex items-center justify-between bg-gray-200 p-1 w-full">
+          <span className="text-gray-500">No Category</span>
+          <div className="flex items-center gap-2">
+            <input
+              {...inputProps}
+              type="radio"
+              value={"none"}
+              checked={selected === null}
+              onChange={(e) => {
+                if (!onChange) return;
+
+                if (e.target.checked) {
+                  onChange(null);
+                }
+              }}
+            />
+          </div>
+        </label>
+      </li>
       {items.map((option) => (
         <li
           key={option.id}
