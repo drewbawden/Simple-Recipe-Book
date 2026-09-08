@@ -4,17 +4,19 @@ import { Ref, useEffect, useState } from "react";
 import { ChangeCategoryPopup } from "./category";
 import { ChevronRightIcon } from "lucide-react";
 import { getItemTags } from "@/actions/items";
-import { TagSelect } from "../tag-select";
+import { TagSelect } from "../custom-selects";
 
 interface ItemEditPopupProps {
   initialData: ListItem | null;
   formRef: Ref<HTMLFormElement>;
   onSubmit: (formData: FormData) => void | Promise<void>;
+  availableTags: Tag[] | null;
 }
 export const ItemEditPopup = ({
   initialData,
   formRef,
   onSubmit,
+  availableTags,
 }: ItemEditPopupProps) => {
   const fallbackData: ListItem = {
     id: 0,
@@ -32,21 +34,7 @@ export const ItemEditPopup = ({
   const [categorySlug, setCategorySlug] = useState<string | null>(
     resolvedInitialData.categorySlug,
   );
-  const [availableTags, setAvailableTags] = useState<Tag[] | null>(null);
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
-
-  useEffect(() => {
-    const fetchList = async () => {
-      try {
-        const tags = await getItemTags();
-        setAvailableTags(tags);
-      } catch (error) {
-        console.error("Error fetching available tags:", error);
-      }
-    };
-
-    fetchList();
-  }, []);
 
   if (!initialData) {
     return null;

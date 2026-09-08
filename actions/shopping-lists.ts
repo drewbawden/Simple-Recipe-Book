@@ -20,12 +20,13 @@ const prisma = new PrismaClient({
   adapter,
 });
 
-export const getShoppingListGroupedByCategory = async () => {
+export const getShoppingListGroupedByCategory = async (tagId?: number) => {
   try {
     const shoppingList = await prisma.shoppingList.findUnique({
       where: { id: 1 },
       include: {
         items: {
+          where: tagId !== undefined ? { tagId } : undefined,
           include: {
             item: {
               include: {

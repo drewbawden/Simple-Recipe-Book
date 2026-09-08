@@ -4,7 +4,7 @@ import { addItemToList } from "@/actions/shopping-lists";
 import { computeCategory } from "@/lib/category";
 import { Ref, useEffect, useState } from "react";
 import AutocompleteInput from "../templates/autocomplete";
-import { TagSelect } from "./tag-select";
+import { TagSelect } from "./custom-selects";
 import { Tag } from "@/types/list-item";
 import { getItemTags } from "@/actions/items";
 

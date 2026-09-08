@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { getEnums, enumType } from "@/actions/enums";
 import { getCategories } from "@/actions/items";
 
-interface enumItem {
+export interface enumItem {
   id: string;
   name: string;
   deletable?: boolean;

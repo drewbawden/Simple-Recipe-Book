@@ -26,7 +26,7 @@ import {
 import { SettingsIcon, XIcon } from "lucide-react";
 import { Modal } from "@/components/templates/modal";
 import { ItemEditPopup } from "@/components/shopping-list/popups/item-edit";
-import { ListItem } from "@/types/list-item";
+import { ListItem, Tag } from "@/types/list-item";
 import {
   CategorySortOrderPopup,
   EditInfoPopup,
@@ -37,7 +37,8 @@ import {
   ListItemSortOption,
   ShoppingListSortOption,
 } from "@/app/generated/prisma/enums";
-import { updateCategoryIndices } from "@/actions/items";
+import { getItemTags, updateCategoryIndices } from "@/actions/items";
+import { TagSelect } from "./custom-selects";
 
 export const ShoppingList = () => {
   const [loading, setLoading] = useState(true);
@@ -46,13 +47,15 @@ export const ShoppingList = () => {
   const [groupedList, setGroupedList] = useState<
     Awaited<ReturnType<typeof getShoppingListGroupedByCategory>>
   >([]);
-  const [addToCategory, setAddToCategory] = useState<string | null>(null);
+  const [availableTags, setAvailableTags] = useState<Tag[] | null>(null);
 
+  const [addToCategory, setAddToCategory] = useState<string | null>(null);
   const [editItem, setEditItem] = useState<ListItem | null>(null);
   const [editList, setEditList] = useState(false);
   const [editCategorySortOrder, setEditCategorySortOrder] = useState(false);
   const [editItemSortOrder, setEditItemSortOrder] = useState(false);
   const [editTags, setEditTags] = useState(false);
+  const [filter, setFilter] = useState<Tag | null>(null);
 
   const itemEditFormRef = useRef<HTMLFormElement>(null);
   const listEditFormRef = useRef<HTMLFormElement>(null);
@@ -67,7 +70,7 @@ export const ShoppingList = () => {
   const refreshData = async () => {
     const [nextList, nextGroupedList] = await Promise.all([
       getShoppingList(),
-      getShoppingListGroupedByCategory(),
+      getShoppingListGroupedByCategory(filter?.id),
     ]);
 
     setShoppingList(nextList);
@@ -93,6 +96,23 @@ export const ShoppingList = () => {
 
     fetchList();
   }, []);
+
+  useEffect(() => {
+    const fetchList = async () => {
+      try {
+        const tags = await getItemTags();
+        setAvailableTags(tags);
+      } catch (error) {
+        console.error("Error fetching available tags:", error);
+      }
+    };
+
+    fetchList();
+  }, []);
+
+  useEffect(() => {
+    refreshData();
+  }, [filter]);
 
   if (loading) {
     return <p>Loading Items...</p>;
@@ -258,6 +278,10 @@ export const ShoppingList = () => {
     await refreshData();
   };
 
+  const handleFilterSelected = async (tag: Tag | null) => {
+    setFilter(tag);
+  };
+
   return (
     <div className="mx-auto max-w-xl p-6 flex flex-col text-center space-y-1">
       <Link
@@ -269,15 +293,15 @@ export const ShoppingList = () => {
       <h1 className="mb-6 text-4xl font-bold">{shoppingList.name}</h1>
       <hr className="h-0.5 bg-black pb-2" />
       <div className="grid grid-cols-[1fr_auto_1fr] items-center px-2">
-        <button
-          className="bg-gray-500 w-fit p-2 rounded font-bold justify-self-start"
-          onClick={async () => {
-            await clearShoppingList();
-            refreshData();
-          }}
-        >
-          Clear List
-        </button>
+        <div>
+          <TagSelect
+            tag={filter}
+            setTag={handleFilterSelected}
+            availableTags={availableTags}
+            containerClass="text-gray-900 w-min"
+            placeholder="Filter"
+          />
+        </div>
         <span className="bg-gray-500 p-2 rounded italic text-gray-300 justify-self-center">
           {shoppingList.items.length} Item
           {shoppingList.items.length != 1 && "s"}
@@ -318,6 +342,15 @@ export const ShoppingList = () => {
                 }}
               >
                 Edit Tags
+              </ContextMenuItem>
+              <hr />
+              <ContextMenuItem
+                onClick={async () => {
+                  await clearShoppingList();
+                  refreshData();
+                }}
+              >
+                Clear List
               </ContextMenuItem>
               <hr />
               <ContextMenuItem className="text-red-500" onSelect={() => {}}>
@@ -412,6 +445,7 @@ export const ShoppingList = () => {
           initialData={editItem}
           formRef={itemEditFormRef}
           onSubmit={handleItemEditSubmit}
+          availableTags={availableTags}
         />
       </Modal>
       <Modal
