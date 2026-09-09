@@ -1,3 +1,5 @@
+"use client";
+
 import {
   getShoppingList,
   setItemCompleted,
@@ -40,6 +42,7 @@ import {
 } from "@/app/generated/prisma/enums";
 import { getItemTags, updateCategoryIndices } from "@/actions/items";
 import { TagSelect } from "./custom-selects";
+import { useModalQuery } from "@/hooks/useModalQuery";
 
 export const ShoppingList = () => {
   const [loading, setLoading] = useState(true);
@@ -49,14 +52,27 @@ export const ShoppingList = () => {
     Awaited<ReturnType<typeof getShoppingListGroupedByCategory>>
   >([]);
   const [availableTags, setAvailableTags] = useState<Tag[] | null>(null);
+  const { modal, openModal, closeModal, getModalParam } = useModalQuery();
 
   const [addToCategory, setAddToCategory] = useState<string | null>(null);
-  const [editItem, setEditItem] = useState<ListItem | null>(null);
-  const [editList, setEditList] = useState(false);
-  const [editCategorySortOrder, setEditCategorySortOrder] = useState(false);
-  const [editItemSortOrder, setEditItemSortOrder] = useState(false);
-  const [editTags, setEditTags] = useState(false);
   const [filter, setFilter] = useState<Tag | null>(null);
+
+  const selectedItemId = Number(getModalParam("itemId"));
+  const selectedItem = groupedList
+    .flatMap((category) => category.items)
+    .find((item) => item.id === selectedItemId);
+  const editItem: ListItem | null =
+    modal === "editItem" && selectedItem
+      ? {
+          id: selectedItem.id,
+          name: selectedItem.item.name,
+          notes: selectedItem.notes ?? undefined,
+          url: selectedItem.url ?? undefined,
+          urgent: selectedItem.urgent,
+          categorySlug: selectedItem.item.category?.slug ?? "",
+          tag: selectedItem.tag ?? undefined,
+        }
+      : null;
 
   const itemEditFormRef = useRef<HTMLFormElement>(null);
   const listEditFormRef = useRef<HTMLFormElement>(null);
@@ -232,6 +248,7 @@ export const ShoppingList = () => {
       typeof entry === "string" ? entry : entry == null ? "" : String(entry);
     const tagId = formData.get("tagValue");
 
+    console.log("1");
     const fields = {
       id: Number(formData.get("id")),
       name: value(formData.get("name")),
@@ -243,8 +260,11 @@ export const ShoppingList = () => {
     };
 
     await editListItem(fields);
-    setEditItem(null);
+    console.log("2");
+    closeModal();
+    console.log("3");
     await refreshData();
+    console.log("4");
   };
 
   const handleCategorySortSubmit = async (formData: FormData) => {
@@ -253,7 +273,7 @@ export const ShoppingList = () => {
     await updateCategorySortOrder(shoppingList.id, order);
     await updateCategoryIndices(categoryOrder);
 
-    setEditCategorySortOrder(false);
+    closeModal();
     await refreshData();
   };
 
@@ -261,7 +281,7 @@ export const ShoppingList = () => {
     const order = formData.get("sortOrder") as ListItemSortOption;
     await updateItemSortOrder(shoppingList.id, order);
 
-    setEditItemSortOrder(false);
+    closeModal();
     await refreshData();
   };
 
@@ -270,8 +290,12 @@ export const ShoppingList = () => {
 
     await updateTags(shoppingList.id, tags);
 
-    setEditTags(false);
+    closeModal();
     await refreshData();
+  };
+
+  const handleListEditSubmit = () => {
+    closeModal();
   };
 
   const handleFilterSelected = async (tag: Tag | null) => {
@@ -310,7 +334,7 @@ export const ShoppingList = () => {
             <ContextMenuContent align="right" className="text-gray-900 w-50">
               <ContextMenuItem
                 onSelect={() => {
-                  setEditList(true);
+                  openModal("editList");
                 }}
               >
                 Edit List Info
@@ -318,7 +342,7 @@ export const ShoppingList = () => {
               <hr />
               <ContextMenuItem
                 onSelect={() => {
-                  setEditCategorySortOrder(true);
+                  openModal("sortCategories");
                 }}
               >
                 Sort Categories
@@ -326,7 +350,7 @@ export const ShoppingList = () => {
               <hr />
               <ContextMenuItem
                 onSelect={() => {
-                  setEditItemSortOrder(true);
+                  openModal("sortItems");
                 }}
               >
                 Sort Items
@@ -334,7 +358,7 @@ export const ShoppingList = () => {
               <hr />
               <ContextMenuItem
                 onSelect={() => {
-                  setEditTags(true);
+                  openModal("editTags");
                 }}
               >
                 Edit Tags
@@ -389,15 +413,7 @@ export const ShoppingList = () => {
                   handleItemChecked={handleItemChecked}
                   handleItemDeleted={handleItemDeleted}
                   setItemEdit={() =>
-                    setEditItem({
-                      id: listItem.id,
-                      name: listItem.item.name,
-                      notes: listItem.notes ?? undefined,
-                      url: listItem.url ?? undefined,
-                      urgent: listItem.urgent,
-                      categorySlug: listItem.item.category?.slug ?? "",
-                      tag: listItem.tag ?? undefined,
-                    })
+                    openModal("editItem", { itemId: listItem.id })
                   }
                 />
               </li>
@@ -430,8 +446,8 @@ export const ShoppingList = () => {
       </div>
       <StickyAddButton inputRef={mainInputRef} />
       <Modal
-        isOpen={editItem !== null}
-        onClose={() => setEditItem(null)}
+        isOpen={modal === "editItem" && editItem !== null}
+        onClose={closeModal}
         size="md"
         modalTitle="Edit Item"
         showTick
@@ -445,8 +461,8 @@ export const ShoppingList = () => {
         />
       </Modal>
       <Modal
-        isOpen={editList}
-        onClose={() => setEditList(false)}
+        isOpen={modal === "editList"}
+        onClose={closeModal}
         size="md"
         modalTitle="Edit Shopping List"
         showTick
@@ -455,12 +471,12 @@ export const ShoppingList = () => {
         <EditInfoPopup
           initialData={shoppingList}
           formRef={listEditFormRef}
-          onSubmit={() => {}}
+          onSubmit={handleListEditSubmit}
         />
       </Modal>
       <Modal
-        isOpen={editCategorySortOrder}
-        onClose={() => setEditCategorySortOrder(false)}
+        isOpen={modal === "sortCategories"}
+        onClose={closeModal}
         size="md"
         modalTitle="Sort Categories"
         showTick
@@ -473,8 +489,8 @@ export const ShoppingList = () => {
         />
       </Modal>
       <Modal
-        isOpen={editItemSortOrder}
-        onClose={() => setEditItemSortOrder(false)}
+        isOpen={modal === "sortItems"}
+        onClose={closeModal}
         size="md"
         modalTitle="Sort Items"
         showTick
@@ -487,8 +503,8 @@ export const ShoppingList = () => {
         />
       </Modal>
       <Modal
-        isOpen={editTags}
-        onClose={() => setEditTags(false)}
+        isOpen={modal === "editTags"}
+        onClose={closeModal}
         size="md"
         modalTitle="Edit Tags"
         showTick

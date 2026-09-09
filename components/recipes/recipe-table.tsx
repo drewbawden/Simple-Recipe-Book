@@ -28,20 +28,24 @@ import {
   SettingsIcon,
   ShoppingBasketIcon,
 } from "lucide-react";
+import { useModalQuery } from "@/hooks/useModalQuery";
 
 export const RecipeTable = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isAddRecipeOpen, setIsAddRecipeOpen] = useState(false);
-  const [selectedIngredients, setSelectedIngredients] = useState<Recipe | null>(
-    null,
+  const { modal, openModal, closeModal, getModalParam } = useModalQuery();
+
+  const selectedRecipeId = Number(getModalParam("recipeId"));
+  const selectedRecipe = recipes.find(
+    (recipe) => recipe.id === selectedRecipeId,
   );
-  const [selectedNotes, setSelectedNotes] = useState<Recipe | null>(null);
-  const [selectedShoppingList, setSelectedShoppingList] =
-    useState<Recipe | null>(null);
-  const [selectedEdit, setSelectedEdit] = useState<Recipe | null>(null);
-  const [selectedInstructions, setSelectedInstructions] =
-    useState<Recipe | null>(null);
+  const isAddRecipeOpen = modal === "addRecipe";
+  const selectedIngredients = modal === "ingredients" ? selectedRecipe : null;
+  const selectedNotes = modal === "notes" ? selectedRecipe : null;
+  const selectedShoppingList =
+    modal === "addToShoppingList" ? selectedRecipe : null;
+  const selectedEdit = modal === "editRecipe" ? selectedRecipe : null;
+  const selectedInstructions = modal === "instructions" ? selectedRecipe : null;
 
   const normaliseRecipes = (recipesData: any[]): Recipe[] =>
     recipesData.map((recipe) => ({
@@ -76,7 +80,7 @@ export const RecipeTable = () => {
   };
 
   const handleEdit = (recipe: Recipe) => {
-    setSelectedEdit(recipe);
+    openModal("editRecipe", { recipeId: recipe.id });
   };
 
   const handleDelete = async (recipeId: number) => {
@@ -86,12 +90,14 @@ export const RecipeTable = () => {
 
   const handleAddRecipeCancel = () => {
     const confirmation = confirm("Are you sure you want to close?");
-    setIsAddRecipeOpen(!confirmation);
+    if (confirmation) {
+      closeModal();
+    }
   };
   const handleEditRecipeCancel = () => {
     const confirmation = confirm("Are you sure you want to close?");
     if (confirmation) {
-      setSelectedEdit(null);
+      closeModal();
     }
   };
 
@@ -108,7 +114,7 @@ export const RecipeTable = () => {
         <button
           className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded "
           type="button"
-          onClick={() => setIsAddRecipeOpen(true)}
+          onClick={() => openModal("addRecipe")}
         >
           Add Recipe
         </button>
@@ -206,7 +212,9 @@ export const RecipeTable = () => {
                 </ContextMenu>
                 {recipe.ingredients.length > 0 ? (
                   <button
-                    onClick={() => setSelectedIngredients(recipe)}
+                    onClick={() =>
+                      openModal("ingredients", { recipeId: recipe.id })
+                    }
                     className="text-blue-500 underline font-bold"
                   >
                     <SaladIcon />
@@ -234,7 +242,9 @@ export const RecipeTable = () => {
 
                 {recipe.instructions.length > 0 ? (
                   <button
-                    onClick={() => setSelectedInstructions(recipe)}
+                    onClick={() =>
+                      openModal("instructions", { recipeId: recipe.id })
+                    }
                     className="text-blue-500 underline font-bold truncate max-w-32"
                   >
                     <NotepadTextIcon />
@@ -262,7 +272,7 @@ export const RecipeTable = () => {
 
                 {recipe.notes ? (
                   <button
-                    onClick={() => setSelectedNotes(recipe)}
+                    onClick={() => openModal("notes", { recipeId: recipe.id })}
                     className="text-blue-500 underline font-bold truncate max-w-32"
                   >
                     <InfoIcon />
@@ -291,7 +301,9 @@ export const RecipeTable = () => {
                 <button
                   title="Add to shopping list"
                   className="bg-blue-500 text-white text-base font-bold py-2 px-2 rounded"
-                  onClick={() => setSelectedShoppingList(recipe)}
+                  onClick={() =>
+                    openModal("addToShoppingList", { recipeId: recipe.id })
+                  }
                   type="button"
                 >
                   <ShoppingBasketIcon />
@@ -303,7 +315,7 @@ export const RecipeTable = () => {
       </div>
       <Modal
         isOpen={selectedIngredients !== null}
-        onClose={() => setSelectedIngredients(null)}
+        onClose={closeModal}
         modalTitle="Ingredients"
       >
         {selectedIngredients && (
@@ -312,7 +324,7 @@ export const RecipeTable = () => {
       </Modal>
       <Modal
         isOpen={selectedInstructions !== null}
-        onClose={() => setSelectedInstructions(null)}
+        onClose={closeModal}
         modalTitle="Instructions"
       >
         {selectedInstructions && (
@@ -321,7 +333,7 @@ export const RecipeTable = () => {
       </Modal>
       <Modal
         isOpen={selectedNotes !== null}
-        onClose={() => setSelectedNotes(null)}
+        onClose={closeModal}
         modalTitle="Notes"
       >
         {selectedNotes && (
@@ -336,19 +348,19 @@ export const RecipeTable = () => {
       >
         <RecipeInputPopup
           handleClose={() => handleAddRecipeCancel()}
-          closePopup={() => setIsAddRecipeOpen(false)}
+          closePopup={closeModal}
           refreshRecipes={refreshRecipes}
         />
       </Modal>
       <Modal
         isOpen={selectedShoppingList !== null}
-        onClose={() => setSelectedShoppingList(null)}
+        onClose={closeModal}
         hideCross
         modalTitle="Add to Shopping List"
       >
         {selectedShoppingList && (
           <AddToShoppingListPopup
-            closePopup={() => setSelectedShoppingList(null)}
+            closePopup={closeModal}
             recipe={selectedShoppingList}
           />
         )}
@@ -362,7 +374,7 @@ export const RecipeTable = () => {
         {selectedEdit && (
           <RecipeInputPopup
             handleClose={() => handleEditRecipeCancel()}
-            closePopup={() => setIsAddRecipeOpen(false)}
+            closePopup={closeModal}
             refreshRecipes={refreshRecipes}
             initialData={selectedEdit}
           />

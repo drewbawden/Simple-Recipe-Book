@@ -167,9 +167,7 @@ export const Modal = ({
 
     try {
       event.currentTarget.releasePointerCapture(event.pointerId);
-    } catch {
-      // no-op
-    }
+    } catch {}
 
     if (shouldClose) {
       setDragging(false);
@@ -190,9 +188,7 @@ export const Modal = ({
 
     try {
       event.currentTarget.releasePointerCapture(event.pointerId);
-    } catch {
-      // no-op
-    }
+    } catch {}
   };
 
   if (!mounted) return null;
@@ -312,6 +308,7 @@ export const Modal = ({
                   onClick={(event) => {
                     event.stopPropagation();
                     handleTick?.();
+                    requestClose();
                   }}
                 >
                   <CheckIcon />

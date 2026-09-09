@@ -308,6 +308,7 @@ export const categoryKeywords = [
   // HOUSEHOLD ITEMS
   // ============================================================
   // Cleaning & laundry products
+  { keyword: "laundry", weight: 3, categorySlug: "household_items" },
   { keyword: "laundry detergent", weight: 3, categorySlug: "household_items" },
   { keyword: "laundry powder", weight: 3, categorySlug: "household_items" },
   { keyword: "washing powder", weight: 3, categorySlug: "household_items" },

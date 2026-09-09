@@ -21,7 +21,7 @@ import { IngredientsReviewPopup } from "./ingredient-review";
 interface RecipeInputPopupProps {
   handleClose: () => void;
   closePopup: () => void;
-  refreshRecipes: () => void;
+  refreshRecipes: () => void | Promise<void>;
   initialData?: Recipe;
 }
 
@@ -310,7 +310,7 @@ export const RecipeInputPopup = ({
             await insertNewRecipe(formData);
           }
 
-          refreshRecipes();
+          await refreshRecipes();
           closePopup();
         }}
         onSubmit={handleSubmit}
