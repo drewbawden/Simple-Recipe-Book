@@ -5,7 +5,16 @@ import Image, { ImageProps } from "next/image";
 import { CheckIcon, ChevronLeftIcon, XIcon } from "lucide-react";
 import { createPortal } from "react-dom";
 
-type ModalSize = "xs" | "sm" | "md" | "lg" | "xl" | "xxl" | "xxxl";
+type ModalSize =
+  | "xs"
+  | "sm"
+  | "md"
+  | "lg"
+  | "xl"
+  | "xxl"
+  | "xxxl"
+  | "pfull"
+  | "full";
 
 interface ModalProps {
   isOpen: boolean;
@@ -201,6 +210,8 @@ export const Modal = ({
     xl: "max-w-xl",
     xxl: "max-w-2xl",
     xxxl: "max-w-3xl",
+    pfull: "max-w-19/20",
+    full: "max-w-full",
   };
 
   const viewportWidth = typeof window !== "undefined" ? window.innerWidth : 0;

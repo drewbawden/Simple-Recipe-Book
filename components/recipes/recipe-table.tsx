@@ -21,7 +21,6 @@ import {
 import { MainFilterBar } from "@/components/recipes/filter-bar";
 
 import {
-  Info,
   InfoIcon,
   NotepadTextIcon,
   SaladIcon,
@@ -29,6 +28,8 @@ import {
   ShoppingBasketIcon,
 } from "lucide-react";
 import { useModalQuery } from "@/hooks/useModalQuery";
+import { RecipeOverview } from "./popups/overview";
+import Image from "next/image";
 
 export const RecipeTable = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -45,6 +46,7 @@ export const RecipeTable = () => {
   const selectedShoppingList =
     modal === "addToShoppingList" ? selectedRecipe : null;
   const selectedEdit = modal === "editRecipe" ? selectedRecipe : null;
+  const recipeOverview = modal === "recipeOverview" ? selectedRecipe : null;
   const selectedInstructions = modal === "instructions" ? selectedRecipe : null;
 
   const normaliseRecipes = (recipesData: any[]): Recipe[] =>
@@ -131,16 +133,24 @@ export const RecipeTable = () => {
       <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-4">
         {recipes.map((recipe) => (
           <div
+            role="button"
             key={recipe.id}
             className="overflow-visible flex flex-row text-gray-900 p-4 border rounded-lg shadow-sm bg-white space-x-4"
+            onClick={(e) => {
+              if ((e.target as HTMLElement).closest("button")) {
+                return;
+              }
+
+              openModal("recipeOverview", { recipeId: recipe.id });
+            }}
           >
             {recipe.imagePath ? (
               <div className="w-1/3 relative aspect-[16/9] bg-gray-100 overflow-hidden rounded-lg">
-                <ImageModal
+                <Image
                   src={recipe.imagePath}
                   alt={recipe.name}
-                  className="z-5 object-cover"
                   fill
+                  className="z-5 object-cover"
                   sizes="(max-width: 768px) 100vw,
                          (max-width: 1200px) 50vw,
                          33vw"
@@ -379,6 +389,14 @@ export const RecipeTable = () => {
             initialData={selectedEdit}
           />
         )}
+      </Modal>
+      <Modal
+        isOpen={recipeOverview !== null}
+        onClose={closeModal}
+        modalTitle="Recipe Overview"
+        size="pfull"
+      >
+        {recipeOverview && <RecipeOverview recipe={recipeOverview} />}
       </Modal>
     </div>
   );

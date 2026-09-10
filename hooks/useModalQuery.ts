@@ -13,7 +13,8 @@ export type ModalName =
   | "editList"
   | "sortCategories"
   | "sortItems"
-  | "editTags";
+  | "editTags"
+  | "recipeOverview";
 
 export type ModalParams = Record<string, string | number | null | undefined>;
 
