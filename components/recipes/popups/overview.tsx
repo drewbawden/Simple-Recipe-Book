@@ -1,19 +1,47 @@
 import { ImageModal } from "@/components/templates/modal";
 import { toPascalCase } from "@/lib/text";
 import { Recipe } from "@/types/recipe";
+import { InstructionIngredients } from "./instruction-ingredients";
 import { getGroupedInstructions, instructionsHasCategories } from "./metadata";
+import { ignoredIngredientWords } from "@/lib/ingredients";
 
 interface RecipeOverviewProps {
   recipe: Recipe;
 }
 
 export const RecipeOverview = ({ recipe }: RecipeOverviewProps) => {
+  const hasIngredientWord = (method: string, word: string) => {
+    const escapedWord = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return new RegExp(`\\b${escapedWord}\\b`, "i").test(method);
+  };
   const hasCategories = instructionsHasCategories({
     instructions: recipe.instructions,
   });
   const groupedInstructions = getGroupedInstructions({
     instructions: recipe.instructions,
   });
+  const findIngredientRelations = () => {
+    return recipe.instructions.map((instruction) => ({
+      stepId: instruction.id,
+      matches: recipe.ingredients.filter((ingredient) => {
+        const method = instruction.method;
+        const ingredientWords = ingredient.item.name
+          .toLowerCase()
+          .split(/\s+/)
+          .filter((word) => !ignoredIngredientWords.has(word));
+
+        return (
+          ingredientWords.length > 0 &&
+          ingredientWords.every((word) => hasIngredientWord(method, word))
+        );
+      }),
+    }));
+  };
+
+  const ingredientRelations = findIngredientRelations();
+  const getIngredientMatches = (stepId: number) =>
+    ingredientRelations.find((relation) => relation.stepId === stepId)
+      ?.matches ?? [];
 
   return (
     <div className="text-gray-900 grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-x-2 gap-y-5">
@@ -82,7 +110,7 @@ export const RecipeOverview = ({ recipe }: RecipeOverviewProps) => {
                   className="flex justify-between items-center p-2 transition"
                 >
                   <span className="font-medium text-gray-900">
-                    {ingredient.item.name}
+                    {toPascalCase(ingredient.item.name)}
                   </span>
                   <span className="bg-gray-100 text-gray-700 text-sm font-semibold px-3 py-1 rounded border border-gray-200">
                     {ingredient.quantity} {ingredient.unit}
@@ -92,10 +120,10 @@ export const RecipeOverview = ({ recipe }: RecipeOverviewProps) => {
             </ul>
           </div>
         )}
-
         {recipe.instructions.length > 0 && (
           <div className="bg-gray-100 p-2 rounded space-y-2 border border-gray-100">
             <h2 className="text-2xl font-bold text-center">Instructions</h2>
+
             {hasCategories ? (
               <div className="space-y-6">
                 {Object.entries(groupedInstructions).map(
@@ -107,15 +135,30 @@ export const RecipeOverview = ({ recipe }: RecipeOverviewProps) => {
                       <div className="bg-gray-100 px-4 py-3 border-b border-gray-200">
                         <h2 className="font-bold text-gray-900">{category}</h2>
                       </div>
-                      <ol className="list-decimal list-inside divide-y divide-gray-200">
-                        {steps.map((instruction) => (
+
+                      <ol className="divide-y divide-gray-200">
+                        {steps.map((instruction, index) => (
                           <li
                             key={instruction.id}
-                            className="px-4 py-3 transition"
+                            className="flex space-x-3.5 items-start p-3.5 transition"
                           >
-                            <span className="font-medium text-gray-900">
-                              {instruction.method}
+                            <span className="bg-gray-100 text-gray-700 text-sm font-semibold px-3 py-1 rounded border border-gray-200">
+                              {index + 1}
                             </span>
+
+                            <div className="space-y-2">
+                              <p className="font-medium text-gray-900">
+                                {instruction.method}
+                              </p>
+                              {getIngredientMatches(instruction.id).length >
+                                0 && (
+                                <InstructionIngredients
+                                  ingredients={getIngredientMatches(
+                                    instruction.id,
+                                  )}
+                                />
+                              )}
+                            </div>
                           </li>
                         ))}
                       </ol>
@@ -124,21 +167,29 @@ export const RecipeOverview = ({ recipe }: RecipeOverviewProps) => {
                 )}
               </div>
             ) : (
-              <ul className="mt-4 divide-y divide-gray-200 border border-gray-200 rounded overflow-hidden bg-white shadow-sm">
+              <ol className="mt-4 divide-y divide-gray-200 border border-gray-200 rounded overflow-hidden bg-white shadow-sm">
                 {recipe.instructions.map((instruction) => (
                   <li
                     key={instruction.id}
-                    className="flex space-x-3.5 items-center p-3.5 transition"
+                    className="flex space-x-3.5 items-start p-3.5 transition"
                   >
                     <span className="bg-gray-100 text-gray-700 text-sm font-semibold px-3 py-1 rounded border border-gray-200">
                       {instruction.stepNumber}
                     </span>
-                    <span className="font-medium text-gray-900">
-                      {instruction.method}
-                    </span>
+
+                    <div className="space-y-2">
+                      <p className="font-medium text-gray-900">
+                        {instruction.method}
+                      </p>
+                      {getIngredientMatches(instruction.id).length > 0 && (
+                        <InstructionIngredients
+                          ingredients={getIngredientMatches(instruction.id)}
+                        />
+                      )}
+                    </div>
                   </li>
                 ))}
-              </ul>
+              </ol>
             )}
           </div>
         )}

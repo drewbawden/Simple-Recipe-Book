@@ -113,7 +113,7 @@ export const Modal = ({
 
     const target = event.target;
     const isInteractiveElement =
-      target instanceof HTMLElement &&
+      target instanceof Element &&
       target.closest(
         "button, input, textarea, select, label, a, svg, [role='button'], [role='link']",
       );
