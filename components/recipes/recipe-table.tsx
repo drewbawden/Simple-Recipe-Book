@@ -367,6 +367,7 @@ export const RecipeTable = () => {
         onClose={closeModal}
         hideCross
         modalTitle="Add to Shopping List"
+        confirmClose
       >
         {selectedShoppingList && (
           <AddToShoppingListPopup

@@ -26,6 +26,7 @@ interface ModalProps {
   modalTitle: string;
   handleTick?: () => void;
   isChild?: boolean;
+  confirmClose?: boolean;
 }
 
 export const Modal = ({
@@ -38,6 +39,7 @@ export const Modal = ({
   modalTitle,
   handleTick,
   isChild = false,
+  confirmClose,
 }: ModalProps) => {
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(isOpen);
@@ -103,6 +105,10 @@ export const Modal = ({
   }, [isOpen]);
 
   const requestClose = () => {
+    if (confirmClose && !window.confirm("Are you sure you want to close?")) {
+      return;
+    }
+
     onClose();
   };
 
@@ -319,7 +325,7 @@ export const Modal = ({
                   onClick={(event) => {
                     event.stopPropagation();
                     handleTick?.();
-                    requestClose();
+                    onClose();
                   }}
                 >
                   <CheckIcon />

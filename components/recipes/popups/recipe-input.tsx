@@ -562,6 +562,7 @@ export const RecipeInputPopup = ({
         hideCross
         modalTitle="Review Ingredients"
         isChild
+        confirmClose
       >
         <IngredientsReviewPopup
           parsedIngredients={parsedExternalIngredients}

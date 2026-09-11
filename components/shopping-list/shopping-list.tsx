@@ -486,6 +486,7 @@ export const ShoppingList = () => {
         size="md"
         modalTitle="Edit Item"
         showTick
+        confirmClose
         handleTick={() => itemEditFormRef.current?.requestSubmit()}
       >
         <ItemEditPopup
@@ -501,6 +502,7 @@ export const ShoppingList = () => {
         size="md"
         modalTitle="Edit Shopping List"
         showTick
+        confirmClose
         handleTick={() => listEditFormRef.current?.requestSubmit()}
       >
         <EditInfoPopup
@@ -515,6 +517,7 @@ export const ShoppingList = () => {
         size="md"
         modalTitle="Sort Categories"
         showTick
+        confirmClose
         handleTick={() => categorySortEditFormRef.current?.requestSubmit()}
       >
         <CategorySortOrderPopup
@@ -529,6 +532,7 @@ export const ShoppingList = () => {
         size="md"
         modalTitle="Sort Items"
         showTick
+        confirmClose
         handleTick={() => itemSortEditFormRef.current?.requestSubmit()}
       >
         <ItemSortOrderPopup
@@ -543,6 +547,7 @@ export const ShoppingList = () => {
         size="md"
         modalTitle="Edit Tags"
         showTick
+        confirmClose
         handleTick={() => tagEditFormRef.current?.requestSubmit()}
       >
         <TagsEditPopup
