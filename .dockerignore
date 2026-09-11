@@ -5,6 +5,7 @@
 
 # Dependencies (installed inside Docker, never copied)
 node_modules/
+python/
 .pnpm-store/
 npm-debug.log*
 yarn-debug.log*
