@@ -197,6 +197,8 @@ model ShoppingListItemSource {
   recipeIngredient   RecipeIngredient @relation(fields: [recipeIngredientId], references: [id], onDelete: Cascade)
   recipeIngredientId Int
 
+  multiplier Float @default(1)
+
   dateAdded DateTime @default(now())
 }
 

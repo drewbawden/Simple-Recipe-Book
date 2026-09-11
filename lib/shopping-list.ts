@@ -12,11 +12,12 @@ export const computeQuantity = (sources: any) => {
   const normalUnits = new Set<string>();
   const stringUnits = new Set<string>();
   for (let i = 0; i < sources.length; i++) {
+    const multiplier = sources[i].multiplier ?? 1;
     const standardQuantity = sources[i].recipeIngredient.standardQuantity
-      ? Number(sources[i].recipeIngredient.standardQuantity)
+      ? Number(sources[i].recipeIngredient.standardQuantity) * multiplier
       : null;
     const normalQuantity = sources[i].recipeIngredient.normalQuantity
-      ? Number(sources[i].recipeIngredient.normalQuantity)
+      ? Number(sources[i].recipeIngredient.normalQuantity) * multiplier
       : null;
     if (standardQuantity) {
       totalStandardQuantity += standardQuantity;

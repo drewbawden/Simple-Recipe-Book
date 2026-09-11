@@ -1,0 +1,2 @@
+ALTER TABLE "ShoppingListItemSource"
+ADD COLUMN "multiplier" DOUBLE PRECISION NOT NULL DEFAULT 1;

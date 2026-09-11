@@ -1,8 +1,5 @@
-import { enumType, getEnums } from "@/actions/enums";
 import { Select } from "@/components/templates/select";
 import { Tag } from "@/types/list-item";
-import { useEffect, useState } from "react";
-import { enumItem } from "../templates/options";
 
 interface TagSelectProps {
   tag: Tag | null;

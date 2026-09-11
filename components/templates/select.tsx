@@ -11,6 +11,7 @@ interface SelectProps<T> {
   placeholder?: string;
   clearLabel?: string;
   containerClass?: string;
+  selectClass?: string;
 }
 
 export const Select = <T,>({
@@ -23,6 +24,7 @@ export const Select = <T,>({
   placeholder = "Select an option",
   clearLabel = "Clear",
   containerClass,
+  selectClass,
 }: SelectProps<T>) => {
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -62,7 +64,10 @@ export const Select = <T,>({
       <button
         type="button"
         onClick={() => setIsOpen((open) => !open)}
-        className="bg-gray-100 p-2 rounded w-full flex items-center justify-between"
+        className={
+          selectClass ||
+          "bg-gray-100 p-2 rounded w-full flex items-center justify-between"
+        }
       >
         <span className={selectedOption ? "" : "text-gray-500"}>
           {selectedOption ? getLabel(selectedOption) : placeholder}
@@ -76,13 +81,15 @@ export const Select = <T,>({
 
       {isOpen && (
         <div className="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded shadow-lg overflow-hidden">
-          <button
-            type="button"
-            onClick={() => handleSelect(null)}
-            className="w-full p-2 flex items-center gap-2 text-left hover:bg-gray-100"
-          >
-            <span className="text-gray-500">{clearLabel}</span>
-          </button>
+          {clearLabel && (
+            <button
+              type="button"
+              onClick={() => handleSelect(null)}
+              className="w-full p-2 flex items-center gap-2 text-left hover:bg-gray-100"
+            >
+              <span className="text-gray-500">{clearLabel}</span>
+            </button>
+          )}
 
           {options.map((option) => {
             const selected =

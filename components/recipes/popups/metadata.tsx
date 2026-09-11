@@ -1,13 +1,16 @@
-import { NormalUnit } from "@/app/generated/prisma/enums";
 import { Ingredient, RecipeInstructionStep } from "@/types/recipe";
+import { useState } from "react";
+import { MultiplierPicker } from "../ingredient-multiplier";
 
 interface IngredientPopupProps {
   ingredients: Ingredient[];
 }
 export const IngredientPopup = ({ ingredients }: IngredientPopupProps) => {
+  const [multiplier, setMultiplier] = useState(1);
   return (
-    <div className="text-gray-900 space-y-2">
-      <ul className="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
+    <div className="text-gray-900 space-y-2 flex flex-col items-center">
+      <MultiplierPicker multiplier={multiplier} setMultiplier={setMultiplier} />
+      <ul className="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm w-full">
         {ingredients.map((ingredient) => (
           <li
             key={ingredient.id}
@@ -17,7 +20,12 @@ export const IngredientPopup = ({ ingredients }: IngredientPopupProps) => {
               {ingredient.item.name}
             </span>
             <span className="bg-gray-100 text-gray-700 text-sm font-semibold px-3 py-1 rounded-md border border-gray-200">
-              {ingredient.quantity} {ingredient.unit}
+              {!!ingredient.standardQuantity
+                ? parseFloat(
+                    (ingredient.standardQuantity * multiplier).toFixed(4),
+                  )
+                : ingredient.quantity}{" "}
+              {ingredient.unit}
             </span>
           </li>
         ))}

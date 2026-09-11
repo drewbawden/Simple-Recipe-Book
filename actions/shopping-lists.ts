@@ -289,6 +289,11 @@ export const deleteItem = async (listItemId: number) => {
 
 export const addRecipeToShoppingList = async (formData: FormData) => {
   const ingredientIds = formData.getAll("ingredientIds").map(Number);
+  const parsedMultiplier = Number(formData.get("multiplier"));
+  const multiplier =
+    Number.isFinite(parsedMultiplier) && parsedMultiplier > 0
+      ? parsedMultiplier
+      : 1;
 
   return prisma.$transaction(async (tx) => {
     const shoppingList =
@@ -328,6 +333,7 @@ export const addRecipeToShoppingList = async (formData: FormData) => {
           shoppingListItemSources: {
             create: {
               recipeIngredientId: ingredient.id,
+              multiplier,
             },
           },
         },

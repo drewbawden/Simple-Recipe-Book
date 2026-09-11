@@ -30,18 +30,21 @@ export type ShoppingListItemSourceAvgAggregateOutputType = {
   id: number | null
   shoppingListItemId: number | null
   recipeIngredientId: number | null
+  multiplier: number | null
 }
 
 export type ShoppingListItemSourceSumAggregateOutputType = {
   id: number | null
   shoppingListItemId: number | null
   recipeIngredientId: number | null
+  multiplier: number | null
 }
 
 export type ShoppingListItemSourceMinAggregateOutputType = {
   id: number | null
   shoppingListItemId: number | null
   recipeIngredientId: number | null
+  multiplier: number | null
   dateAdded: Date | null
 }
 
@@ -49,6 +52,7 @@ export type ShoppingListItemSourceMaxAggregateOutputType = {
   id: number | null
   shoppingListItemId: number | null
   recipeIngredientId: number | null
+  multiplier: number | null
   dateAdded: Date | null
 }
 
@@ -56,6 +60,7 @@ export type ShoppingListItemSourceCountAggregateOutputType = {
   id: number
   shoppingListItemId: number
   recipeIngredientId: number
+  multiplier: number
   dateAdded: number
   _all: number
 }
@@ -65,18 +70,21 @@ export type ShoppingListItemSourceAvgAggregateInputType = {
   id?: true
   shoppingListItemId?: true
   recipeIngredientId?: true
+  multiplier?: true
 }
 
 export type ShoppingListItemSourceSumAggregateInputType = {
   id?: true
   shoppingListItemId?: true
   recipeIngredientId?: true
+  multiplier?: true
 }
 
 export type ShoppingListItemSourceMinAggregateInputType = {
   id?: true
   shoppingListItemId?: true
   recipeIngredientId?: true
+  multiplier?: true
   dateAdded?: true
 }
 
@@ -84,6 +92,7 @@ export type ShoppingListItemSourceMaxAggregateInputType = {
   id?: true
   shoppingListItemId?: true
   recipeIngredientId?: true
+  multiplier?: true
   dateAdded?: true
 }
 
@@ -91,6 +100,7 @@ export type ShoppingListItemSourceCountAggregateInputType = {
   id?: true
   shoppingListItemId?: true
   recipeIngredientId?: true
+  multiplier?: true
   dateAdded?: true
   _all?: true
 }
@@ -185,6 +195,7 @@ export type ShoppingListItemSourceGroupByOutputType = {
   id: number
   shoppingListItemId: number
   recipeIngredientId: number
+  multiplier: number
   dateAdded: Date
   _count: ShoppingListItemSourceCountAggregateOutputType | null
   _avg: ShoppingListItemSourceAvgAggregateOutputType | null
@@ -215,6 +226,7 @@ export type ShoppingListItemSourceWhereInput = {
   id?: Prisma.IntFilter<"ShoppingListItemSource"> | number
   shoppingListItemId?: Prisma.IntFilter<"ShoppingListItemSource"> | number
   recipeIngredientId?: Prisma.IntFilter<"ShoppingListItemSource"> | number
+  multiplier?: Prisma.FloatFilter<"ShoppingListItemSource"> | number
   dateAdded?: Prisma.DateTimeFilter<"ShoppingListItemSource"> | Date | string
   shoppingListItem?: Prisma.XOR<Prisma.ShoppingListItemScalarRelationFilter, Prisma.ShoppingListItemWhereInput>
   recipeIngredient?: Prisma.XOR<Prisma.RecipeIngredientScalarRelationFilter, Prisma.RecipeIngredientWhereInput>
@@ -224,6 +236,7 @@ export type ShoppingListItemSourceOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   shoppingListItemId?: Prisma.SortOrder
   recipeIngredientId?: Prisma.SortOrder
+  multiplier?: Prisma.SortOrder
   dateAdded?: Prisma.SortOrder
   shoppingListItem?: Prisma.ShoppingListItemOrderByWithRelationInput
   recipeIngredient?: Prisma.RecipeIngredientOrderByWithRelationInput
@@ -236,6 +249,7 @@ export type ShoppingListItemSourceWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ShoppingListItemSourceWhereInput | Prisma.ShoppingListItemSourceWhereInput[]
   shoppingListItemId?: Prisma.IntFilter<"ShoppingListItemSource"> | number
   recipeIngredientId?: Prisma.IntFilter<"ShoppingListItemSource"> | number
+  multiplier?: Prisma.FloatFilter<"ShoppingListItemSource"> | number
   dateAdded?: Prisma.DateTimeFilter<"ShoppingListItemSource"> | Date | string
   shoppingListItem?: Prisma.XOR<Prisma.ShoppingListItemScalarRelationFilter, Prisma.ShoppingListItemWhereInput>
   recipeIngredient?: Prisma.XOR<Prisma.RecipeIngredientScalarRelationFilter, Prisma.RecipeIngredientWhereInput>
@@ -245,6 +259,7 @@ export type ShoppingListItemSourceOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   shoppingListItemId?: Prisma.SortOrder
   recipeIngredientId?: Prisma.SortOrder
+  multiplier?: Prisma.SortOrder
   dateAdded?: Prisma.SortOrder
   _count?: Prisma.ShoppingListItemSourceCountOrderByAggregateInput
   _avg?: Prisma.ShoppingListItemSourceAvgOrderByAggregateInput
@@ -260,10 +275,12 @@ export type ShoppingListItemSourceScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"ShoppingListItemSource"> | number
   shoppingListItemId?: Prisma.IntWithAggregatesFilter<"ShoppingListItemSource"> | number
   recipeIngredientId?: Prisma.IntWithAggregatesFilter<"ShoppingListItemSource"> | number
+  multiplier?: Prisma.FloatWithAggregatesFilter<"ShoppingListItemSource"> | number
   dateAdded?: Prisma.DateTimeWithAggregatesFilter<"ShoppingListItemSource"> | Date | string
 }
 
 export type ShoppingListItemSourceCreateInput = {
+  multiplier?: number
   dateAdded?: Date | string
   shoppingListItem: Prisma.ShoppingListItemCreateNestedOneWithoutShoppingListItemSourcesInput
   recipeIngredient: Prisma.RecipeIngredientCreateNestedOneWithoutShoppingListItemSourcesInput
@@ -273,10 +290,12 @@ export type ShoppingListItemSourceUncheckedCreateInput = {
   id?: number
   shoppingListItemId: number
   recipeIngredientId: number
+  multiplier?: number
   dateAdded?: Date | string
 }
 
 export type ShoppingListItemSourceUpdateInput = {
+  multiplier?: Prisma.FloatFieldUpdateOperationsInput | number
   dateAdded?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   shoppingListItem?: Prisma.ShoppingListItemUpdateOneRequiredWithoutShoppingListItemSourcesNestedInput
   recipeIngredient?: Prisma.RecipeIngredientUpdateOneRequiredWithoutShoppingListItemSourcesNestedInput
@@ -286,6 +305,7 @@ export type ShoppingListItemSourceUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   shoppingListItemId?: Prisma.IntFieldUpdateOperationsInput | number
   recipeIngredientId?: Prisma.IntFieldUpdateOperationsInput | number
+  multiplier?: Prisma.FloatFieldUpdateOperationsInput | number
   dateAdded?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -293,10 +313,12 @@ export type ShoppingListItemSourceCreateManyInput = {
   id?: number
   shoppingListItemId: number
   recipeIngredientId: number
+  multiplier?: number
   dateAdded?: Date | string
 }
 
 export type ShoppingListItemSourceUpdateManyMutationInput = {
+  multiplier?: Prisma.FloatFieldUpdateOperationsInput | number
   dateAdded?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -304,6 +326,7 @@ export type ShoppingListItemSourceUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   shoppingListItemId?: Prisma.IntFieldUpdateOperationsInput | number
   recipeIngredientId?: Prisma.IntFieldUpdateOperationsInput | number
+  multiplier?: Prisma.FloatFieldUpdateOperationsInput | number
   dateAdded?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -321,6 +344,7 @@ export type ShoppingListItemSourceCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   shoppingListItemId?: Prisma.SortOrder
   recipeIngredientId?: Prisma.SortOrder
+  multiplier?: Prisma.SortOrder
   dateAdded?: Prisma.SortOrder
 }
 
@@ -328,12 +352,14 @@ export type ShoppingListItemSourceAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   shoppingListItemId?: Prisma.SortOrder
   recipeIngredientId?: Prisma.SortOrder
+  multiplier?: Prisma.SortOrder
 }
 
 export type ShoppingListItemSourceMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   shoppingListItemId?: Prisma.SortOrder
   recipeIngredientId?: Prisma.SortOrder
+  multiplier?: Prisma.SortOrder
   dateAdded?: Prisma.SortOrder
 }
 
@@ -341,6 +367,7 @@ export type ShoppingListItemSourceMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   shoppingListItemId?: Prisma.SortOrder
   recipeIngredientId?: Prisma.SortOrder
+  multiplier?: Prisma.SortOrder
   dateAdded?: Prisma.SortOrder
 }
 
@@ -348,6 +375,7 @@ export type ShoppingListItemSourceSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   shoppingListItemId?: Prisma.SortOrder
   recipeIngredientId?: Prisma.SortOrder
+  multiplier?: Prisma.SortOrder
 }
 
 export type ShoppingListItemSourceCreateNestedManyWithoutRecipeIngredientInput = {
@@ -434,7 +462,16 @@ export type ShoppingListItemSourceUncheckedUpdateManyWithoutShoppingListItemNest
   deleteMany?: Prisma.ShoppingListItemSourceScalarWhereInput | Prisma.ShoppingListItemSourceScalarWhereInput[]
 }
 
+export type FloatFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type ShoppingListItemSourceCreateWithoutRecipeIngredientInput = {
+  multiplier?: number
   dateAdded?: Date | string
   shoppingListItem: Prisma.ShoppingListItemCreateNestedOneWithoutShoppingListItemSourcesInput
 }
@@ -442,6 +479,7 @@ export type ShoppingListItemSourceCreateWithoutRecipeIngredientInput = {
 export type ShoppingListItemSourceUncheckedCreateWithoutRecipeIngredientInput = {
   id?: number
   shoppingListItemId: number
+  multiplier?: number
   dateAdded?: Date | string
 }
 
@@ -478,10 +516,12 @@ export type ShoppingListItemSourceScalarWhereInput = {
   id?: Prisma.IntFilter<"ShoppingListItemSource"> | number
   shoppingListItemId?: Prisma.IntFilter<"ShoppingListItemSource"> | number
   recipeIngredientId?: Prisma.IntFilter<"ShoppingListItemSource"> | number
+  multiplier?: Prisma.FloatFilter<"ShoppingListItemSource"> | number
   dateAdded?: Prisma.DateTimeFilter<"ShoppingListItemSource"> | Date | string
 }
 
 export type ShoppingListItemSourceCreateWithoutShoppingListItemInput = {
+  multiplier?: number
   dateAdded?: Date | string
   recipeIngredient: Prisma.RecipeIngredientCreateNestedOneWithoutShoppingListItemSourcesInput
 }
@@ -489,6 +529,7 @@ export type ShoppingListItemSourceCreateWithoutShoppingListItemInput = {
 export type ShoppingListItemSourceUncheckedCreateWithoutShoppingListItemInput = {
   id?: number
   recipeIngredientId: number
+  multiplier?: number
   dateAdded?: Date | string
 }
 
@@ -521,10 +562,12 @@ export type ShoppingListItemSourceUpdateManyWithWhereWithoutShoppingListItemInpu
 export type ShoppingListItemSourceCreateManyRecipeIngredientInput = {
   id?: number
   shoppingListItemId: number
+  multiplier?: number
   dateAdded?: Date | string
 }
 
 export type ShoppingListItemSourceUpdateWithoutRecipeIngredientInput = {
+  multiplier?: Prisma.FloatFieldUpdateOperationsInput | number
   dateAdded?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   shoppingListItem?: Prisma.ShoppingListItemUpdateOneRequiredWithoutShoppingListItemSourcesNestedInput
 }
@@ -532,22 +575,26 @@ export type ShoppingListItemSourceUpdateWithoutRecipeIngredientInput = {
 export type ShoppingListItemSourceUncheckedUpdateWithoutRecipeIngredientInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   shoppingListItemId?: Prisma.IntFieldUpdateOperationsInput | number
+  multiplier?: Prisma.FloatFieldUpdateOperationsInput | number
   dateAdded?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ShoppingListItemSourceUncheckedUpdateManyWithoutRecipeIngredientInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   shoppingListItemId?: Prisma.IntFieldUpdateOperationsInput | number
+  multiplier?: Prisma.FloatFieldUpdateOperationsInput | number
   dateAdded?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ShoppingListItemSourceCreateManyShoppingListItemInput = {
   id?: number
   recipeIngredientId: number
+  multiplier?: number
   dateAdded?: Date | string
 }
 
 export type ShoppingListItemSourceUpdateWithoutShoppingListItemInput = {
+  multiplier?: Prisma.FloatFieldUpdateOperationsInput | number
   dateAdded?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   recipeIngredient?: Prisma.RecipeIngredientUpdateOneRequiredWithoutShoppingListItemSourcesNestedInput
 }
@@ -555,12 +602,14 @@ export type ShoppingListItemSourceUpdateWithoutShoppingListItemInput = {
 export type ShoppingListItemSourceUncheckedUpdateWithoutShoppingListItemInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   recipeIngredientId?: Prisma.IntFieldUpdateOperationsInput | number
+  multiplier?: Prisma.FloatFieldUpdateOperationsInput | number
   dateAdded?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ShoppingListItemSourceUncheckedUpdateManyWithoutShoppingListItemInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   recipeIngredientId?: Prisma.IntFieldUpdateOperationsInput | number
+  multiplier?: Prisma.FloatFieldUpdateOperationsInput | number
   dateAdded?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -570,6 +619,7 @@ export type ShoppingListItemSourceSelect<ExtArgs extends runtime.Types.Extension
   id?: boolean
   shoppingListItemId?: boolean
   recipeIngredientId?: boolean
+  multiplier?: boolean
   dateAdded?: boolean
   shoppingListItem?: boolean | Prisma.ShoppingListItemDefaultArgs<ExtArgs>
   recipeIngredient?: boolean | Prisma.RecipeIngredientDefaultArgs<ExtArgs>
@@ -579,6 +629,7 @@ export type ShoppingListItemSourceSelectCreateManyAndReturn<ExtArgs extends runt
   id?: boolean
   shoppingListItemId?: boolean
   recipeIngredientId?: boolean
+  multiplier?: boolean
   dateAdded?: boolean
   shoppingListItem?: boolean | Prisma.ShoppingListItemDefaultArgs<ExtArgs>
   recipeIngredient?: boolean | Prisma.RecipeIngredientDefaultArgs<ExtArgs>
@@ -588,6 +639,7 @@ export type ShoppingListItemSourceSelectUpdateManyAndReturn<ExtArgs extends runt
   id?: boolean
   shoppingListItemId?: boolean
   recipeIngredientId?: boolean
+  multiplier?: boolean
   dateAdded?: boolean
   shoppingListItem?: boolean | Prisma.ShoppingListItemDefaultArgs<ExtArgs>
   recipeIngredient?: boolean | Prisma.RecipeIngredientDefaultArgs<ExtArgs>
@@ -597,10 +649,11 @@ export type ShoppingListItemSourceSelectScalar = {
   id?: boolean
   shoppingListItemId?: boolean
   recipeIngredientId?: boolean
+  multiplier?: boolean
   dateAdded?: boolean
 }
 
-export type ShoppingListItemSourceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "shoppingListItemId" | "recipeIngredientId" | "dateAdded", ExtArgs["result"]["shoppingListItemSource"]>
+export type ShoppingListItemSourceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "shoppingListItemId" | "recipeIngredientId" | "multiplier" | "dateAdded", ExtArgs["result"]["shoppingListItemSource"]>
 export type ShoppingListItemSourceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   shoppingListItem?: boolean | Prisma.ShoppingListItemDefaultArgs<ExtArgs>
   recipeIngredient?: boolean | Prisma.RecipeIngredientDefaultArgs<ExtArgs>
@@ -624,6 +677,7 @@ export type $ShoppingListItemSourcePayload<ExtArgs extends runtime.Types.Extensi
     id: number
     shoppingListItemId: number
     recipeIngredientId: number
+    multiplier: number
     dateAdded: Date
   }, ExtArgs["result"]["shoppingListItemSource"]>
   composites: {}
@@ -1053,6 +1107,7 @@ export interface ShoppingListItemSourceFieldRefs {
   readonly id: Prisma.FieldRef<"ShoppingListItemSource", 'Int'>
   readonly shoppingListItemId: Prisma.FieldRef<"ShoppingListItemSource", 'Int'>
   readonly recipeIngredientId: Prisma.FieldRef<"ShoppingListItemSource", 'Int'>
+  readonly multiplier: Prisma.FieldRef<"ShoppingListItemSource", 'Float'>
   readonly dateAdded: Prisma.FieldRef<"ShoppingListItemSource", 'DateTime'>
 }
     

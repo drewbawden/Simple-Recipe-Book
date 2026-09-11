@@ -4,12 +4,16 @@ import { Recipe } from "@/types/recipe";
 import { InstructionIngredients } from "./instruction-ingredients";
 import { getGroupedInstructions, instructionsHasCategories } from "./metadata";
 import { ignoredIngredientWords } from "@/lib/ingredients";
+import { useState } from "react";
+import { MultiplierPicker } from "../ingredient-multiplier";
 
 interface RecipeOverviewProps {
   recipe: Recipe;
 }
 
 export const RecipeOverview = ({ recipe }: RecipeOverviewProps) => {
+  const [multiplier, setMultiplier] = useState(1);
+
   const hasIngredientWord = (method: string, word: string) => {
     const escapedWord = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     return new RegExp(`\\b${escapedWord}\\b`, "i").test(method);
@@ -102,7 +106,15 @@ export const RecipeOverview = ({ recipe }: RecipeOverviewProps) => {
       <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-x-2 gap-y-5">
         {recipe.ingredients.length > 0 && (
           <div className="bg-gray-100 p-2 rounded space-y-2 border border-gray-100">
-            <h2 className="text-2xl font-bold text-center">Ingredients</h2>
+            <div className="flex items-center justify-center relative">
+              <div className="flex flex-row items-center absolute left-0">
+                <MultiplierPicker
+                  multiplier={multiplier}
+                  setMultiplier={setMultiplier}
+                />
+              </div>
+              <h2 className="text-2xl font-bold text-center">Ingredients</h2>
+            </div>
             <ul className="divide-y divide-gray-200 overflow-hidden border border-gray-200 rounded shadow-sm bg-white">
               {recipe.ingredients.map((ingredient) => (
                 <li
@@ -113,7 +125,12 @@ export const RecipeOverview = ({ recipe }: RecipeOverviewProps) => {
                     {toPascalCase(ingredient.item.name)}
                   </span>
                   <span className="bg-gray-100 text-gray-700 text-sm font-semibold px-3 py-1 rounded border border-gray-200">
-                    {ingredient.quantity} {ingredient.unit}
+                    {!!ingredient.standardQuantity
+                      ? parseFloat(
+                          (ingredient.standardQuantity * multiplier).toFixed(4),
+                        )
+                      : ingredient.quantity}{" "}
+                    {ingredient.unit}
                   </span>
                 </li>
               ))}

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 import { deleteRecipe, getRecipes } from "@/actions/recipes";
-import { ImageModal, Modal } from "@/components/templates/modal";
+import { Modal } from "@/components/templates/modal";
 import {
   ContextMenu,
   ContextMenuContent,

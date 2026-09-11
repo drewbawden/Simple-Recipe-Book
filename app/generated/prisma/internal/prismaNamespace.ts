@@ -1579,6 +1579,7 @@ export const ShoppingListItemSourceScalarFieldEnum = {
   id: 'id',
   shoppingListItemId: 'shoppingListItemId',
   recipeIngredientId: 'recipeIngredientId',
+  multiplier: 'multiplier',
   dateAdded: 'dateAdded'
 } as const
 

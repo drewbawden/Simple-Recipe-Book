@@ -4,6 +4,7 @@ import { addRecipeToShoppingList } from "@/actions/shopping-lists";
 import { redirect, RedirectType } from "next/navigation";
 import { Recipe } from "@/types/recipe";
 import { SubmitButton } from "@/components/templates/submit-button";
+import { MultiplierPicker } from "../ingredient-multiplier";
 
 interface AddToShoppingListPopupProps {
   closePopup: () => void;
@@ -20,6 +21,7 @@ export const AddToShoppingListPopup = ({
     () => new Set(ingredients.map((ingredient) => ingredient.id)),
   );
   const [allSelected, setAllSelected] = useState(true);
+  const [multiplier, setMultiplier] = useState(1);
 
   useEffect(() => {
     const ingredientIds = ingredients.map((ingredient) => ingredient.id);
@@ -71,13 +73,20 @@ export const AddToShoppingListPopup = ({
   return (
     <Form action={handleAdd} className="text-gray-900">
       <div className="flex p-2 justify-between space-x-2 items-center">
-        <div className="border border-gray-200 rounded-xl p-2 space-x-2">
+        <input type="hidden" name="multiplier" value={multiplier} />
+        <div className="border border-gray-200 rounded-xl p-2 space-x-2 items-center">
           <label htmlFor="selectAllCheck">Select All</label>
           <input
             id="selectAllCheck"
             type="checkbox"
             checked={allSelected}
             onChange={toggleSelectAll}
+          />
+        </div>
+        <div className="flex flex-col h-full">
+          <MultiplierPicker
+            multiplier={multiplier}
+            setMultiplier={setMultiplier}
           />
         </div>
         <div className="border border-gray-200 rounded-xl p-2 space-x-2">
@@ -109,7 +118,12 @@ export const AddToShoppingListPopup = ({
                   {ingredient.item.name}
                 </span>
                 <span className="bg-gray-100 text-gray-700 text-sm font-semibold px-3 py-1 rounded-md border border-gray-200">
-                  {ingredient.quantity} {ingredient.unit}
+                  {!!ingredient.standardQuantity
+                    ? parseFloat(
+                        (ingredient.standardQuantity * multiplier).toFixed(4),
+                      )
+                    : ingredient.quantity}{" "}
+                  {ingredient.unit}
                 </span>
               </label>
             </li>

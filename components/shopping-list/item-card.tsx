@@ -150,7 +150,10 @@ export const ListItemCard = ({
                   )}
                 </span>
                 <span className="font-mono text-xs bg-gray-100 p-1 text-gray-500 rounded">
-                  {source.recipeIngredient.quantity}{" "}
+                  {source.recipeIngredient.standardQuantity != null
+                    ? Number(source.recipeIngredient.standardQuantity) *
+                      (source.multiplier ?? 1)
+                    : source.recipeIngredient.quantity}{" "}
                   {source.recipeIngredient.unit}
                 </span>
               </li>
