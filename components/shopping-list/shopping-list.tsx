@@ -12,6 +12,7 @@ import {
   updateTags,
   deleteExpiredCompletedItems,
 } from "@/actions/shopping-lists";
+import { getRecipes } from "@/actions/recipes";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -43,6 +44,8 @@ import {
 import { getItemTags, updateCategoryIndices } from "@/actions/items";
 import { TagSelect } from "./custom-selects";
 import { useModalQuery } from "@/hooks/useModalQuery";
+import { RecipeOverview } from "@/components/recipes/popups/overview";
+import { Recipe } from "@/types/recipe";
 
 export const ShoppingList = () => {
   const [loading, setLoading] = useState(true);
@@ -51,6 +54,7 @@ export const ShoppingList = () => {
   const [groupedList, setGroupedList] = useState<
     Awaited<ReturnType<typeof getShoppingListGroupedByCategory>>
   >([]);
+  const [recipeOverview, setRecipeOverview] = useState<Recipe | null>(null);
   const [availableTags, setAvailableTags] = useState<Tag[] | null>(null);
   const { modal, openModal, closeModal, getModalParam } = useModalQuery();
 
@@ -58,6 +62,9 @@ export const ShoppingList = () => {
   const [filter, setFilter] = useState<Tag | null>(null);
 
   const selectedItemId = Number(getModalParam("itemId"));
+  const selectedRecipeId = Number(getModalParam("recipeId"));
+  const selectedRecipe =
+    recipeOverview?.id === selectedRecipeId ? recipeOverview : null;
   const selectedItem = groupedList
     .flatMap((category) => category.items)
     .find((item) => item.id === selectedItemId);
@@ -109,6 +116,34 @@ export const ShoppingList = () => {
 
     fetchList();
   }, []);
+
+  useEffect(() => {
+    if (modal !== "recipeOverview" || !selectedRecipeId) return;
+
+    const fetchRecipe = async () => {
+      const recipes = await getRecipes();
+      const selectedRecipe = recipes.find(
+        (recipe) => recipe.id === selectedRecipeId,
+      );
+
+      setRecipeOverview(
+        selectedRecipe
+          ? ({
+              ...selectedRecipe,
+              ingredients: selectedRecipe.ingredients.map((ingredient) => ({
+                ...ingredient,
+                item: {
+                  ...ingredient.item,
+                  type: "ingredient",
+                },
+              })),
+            } as Recipe)
+          : null,
+      );
+    };
+
+    fetchRecipe();
+  }, [modal, selectedRecipeId]);
 
   useEffect(() => {
     const fetchList = async () => {
@@ -515,6 +550,14 @@ export const ShoppingList = () => {
           formRef={tagEditFormRef}
           onSubmit={handleTagEditSubmit}
         />
+      </Modal>
+      <Modal
+        isOpen={modal === "recipeOverview" && selectedRecipe !== null}
+        onClose={closeModal}
+        modalTitle="Recipe Overview"
+        size="pfull"
+      >
+        {selectedRecipe && <RecipeOverview recipe={selectedRecipe} />}
       </Modal>
     </div>
   );

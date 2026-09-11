@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { ChevronDown, LinkIcon, SettingsIcon } from "lucide-react";
+import Link from "next/link";
 import { getShoppingList } from "@/actions/shopping-lists";
 import {
   ContextMenu,
@@ -137,9 +138,18 @@ export const ListItemCard = ({
             {sources.map((source) => (
               <li key={source.id} className="flex items-center justify-between">
                 <span className="max-w-md">
-                  {source.recipeIngredient.recipe.name || "Recipe Source"}
+                  {source.recipeIngredient.recipe.name ? (
+                    <Link
+                      href={`/list?modal=recipeOverview&recipeId=${source.recipeIngredient.recipeId}`}
+                      className="bg-gray-200 text-gray-900 p-1 border border-gray-200 rounded shadow-sm hover:underline"
+                    >
+                      {source.recipeIngredient.recipe.name}
+                    </Link>
+                  ) : (
+                    "Recipe Source"
+                  )}
                 </span>
-                <span className="font-mono text-xs">
+                <span className="font-mono text-xs bg-gray-100 p-1 text-gray-500 rounded">
                   {source.recipeIngredient.quantity}{" "}
                   {source.recipeIngredient.unit}
                 </span>
