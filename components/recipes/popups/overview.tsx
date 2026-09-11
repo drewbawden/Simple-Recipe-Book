@@ -106,14 +106,14 @@ export const RecipeOverview = ({ recipe }: RecipeOverviewProps) => {
       <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-x-2 gap-y-5">
         {recipe.ingredients.length > 0 && (
           <div className="bg-gray-100 p-2 rounded space-y-2 border border-gray-100">
-            <div className="flex items-center justify-center relative">
-              <div className="flex flex-row items-center absolute left-0">
+            <div className="@container flex items-center justify-center relative flex-col gap-2">
+              <h2 className="text-2xl font-bold text-center">Ingredients</h2>
+              <div className="flex flex-row items-center @min-sm:absolute @min-sm:left-0">
                 <MultiplierPicker
                   multiplier={multiplier}
                   setMultiplier={setMultiplier}
                 />
               </div>
-              <h2 className="text-2xl font-bold text-center">Ingredients</h2>
             </div>
             <ul className="divide-y divide-gray-200 overflow-hidden border border-gray-200 rounded shadow-sm bg-white">
               {recipe.ingredients.map((ingredient) => (

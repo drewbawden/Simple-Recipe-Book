@@ -1,6 +1,7 @@
 import { Ingredient, RecipeInstructionStep } from "@/types/recipe";
 import { useState } from "react";
 import { MultiplierPicker } from "../ingredient-multiplier";
+import { toPascalCase } from "@/lib/text";
 
 interface IngredientPopupProps {
   ingredients: Ingredient[];
@@ -17,7 +18,7 @@ export const IngredientPopup = ({ ingredients }: IngredientPopupProps) => {
             className="flex justify-between items-center p-3.5 transition"
           >
             <span className="font-medium text-gray-900">
-              {ingredient.item.name}
+              {toPascalCase(ingredient.item.name)}
             </span>
             <span className="bg-gray-100 text-gray-700 text-sm font-semibold px-3 py-1 rounded-md border border-gray-200">
               {!!ingredient.standardQuantity

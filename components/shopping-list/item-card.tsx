@@ -8,6 +8,7 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from "@/components/templates/context-menu";
+import { toPascalCase } from "@/lib/text";
 
 type ShoppingList = NonNullable<Awaited<ReturnType<typeof getShoppingList>>>;
 
@@ -67,7 +68,7 @@ export const ListItemCard = ({
                   <circle cx="7" cy="7" r="7" fill={listItem.tag.colour} />
                 </svg>
               )}
-              {listItem.item.name}
+              {toPascalCase(listItem.item.name)}
             </label>
             <p className="text-sm text-gray-400">{listItem.notes}</p>
           </div>
