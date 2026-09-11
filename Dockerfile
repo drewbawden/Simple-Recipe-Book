@@ -7,7 +7,7 @@
 # To ensure security and compatibility, regularly update the NODE_VERSION ARG to the latest LTS version.
 ARG NODE_VERSION=24.13.0-slim
 
-FROM node:${NODE_VERSION} AS dependencies
+FROM node:${NODE_VERSION} AS builder
 
 # Set working directory
 WORKDIR /app
@@ -28,18 +28,6 @@ RUN --mount=type=cache,target=/root/.npm \
   else \
     echo "No lockfile found." && exit 1; \
   fi
-
-# ============================================
-# Stage 2: Build Next.js application in standalone mode
-# ============================================
-
-FROM node:${NODE_VERSION} AS builder
-
-# Set working directory
-WORKDIR /app
-
-# Copy project dependencies from dependencies stage
-COPY --from=dependencies /app/node_modules ./node_modules
 
 # Copy application source code
 COPY . .
@@ -62,6 +50,9 @@ RUN --mount=type=cache,target=/app/.next/cache \
   else \
     echo "No lockfile found." && exit 1; \
   fi
+
+# Keep only packages required by the standalone server and startup migrations.
+RUN npm prune --omit=dev
 
 # ============================================
 # Stage 3: Run Next.js application
