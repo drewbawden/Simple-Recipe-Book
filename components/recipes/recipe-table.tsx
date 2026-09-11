@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 
 import { deleteRecipe, getRecipes } from "@/actions/recipes";
@@ -31,6 +31,18 @@ import { useModalQuery } from "@/hooks/useModalQuery";
 import { RecipeOverview } from "./popups/overview";
 import Image from "next/image";
 
+const normaliseRecipes = (recipesData: any[]): Recipe[] =>
+  recipesData.map((recipe) => ({
+    ...recipe,
+    ingredients: (recipe.ingredients ?? []).map((ingredient: any) => ({
+      ...ingredient,
+      item: {
+        ...ingredient.item,
+        type: ingredient.item?.type ?? "ingredient",
+      },
+    })),
+  })) as Recipe[];
+
 export const RecipeTable = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,18 +61,6 @@ export const RecipeTable = () => {
   const recipeOverview = modal === "recipeOverview" ? selectedRecipe : null;
   const selectedInstructions = modal === "instructions" ? selectedRecipe : null;
 
-  const normaliseRecipes = (recipesData: any[]): Recipe[] =>
-    recipesData.map((recipe) => ({
-      ...recipe,
-      ingredients: (recipe.ingredients ?? []).map((ingredient: any) => ({
-        ...ingredient,
-        item: {
-          ...ingredient.item,
-          type: ingredient.item?.type ?? "ingredient",
-        },
-      })),
-    })) as Recipe[];
-
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
@@ -76,10 +76,10 @@ export const RecipeTable = () => {
     fetchRecipes();
   }, []);
 
-  const refreshRecipes = async (filters?: filterArguments) => {
+  const refreshRecipes = useCallback(async (filters?: filterArguments) => {
     const data = await getRecipes(filters);
     setRecipes(normaliseRecipes(data));
-  };
+  }, []);
 
   const handleEdit = (recipe: Recipe) => {
     openModal("editRecipe", { recipeId: recipe.id });

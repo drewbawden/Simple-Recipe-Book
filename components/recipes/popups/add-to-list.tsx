@@ -74,25 +74,31 @@ export const AddToShoppingListPopup = ({
     <Form action={handleAdd} className="text-gray-900">
       <div className="flex p-2 justify-between space-x-2 items-center">
         <input type="hidden" name="multiplier" value={multiplier} />
-        <div className="border border-gray-200 rounded-xl p-2 space-x-2 items-center">
-          <label htmlFor="selectAllCheck">Select All</label>
+        <label
+          htmlFor="selectAllCheck"
+          className="border border-gray-200 rounded-xl p-2 space-x-2 items-center"
+        >
+          <span>Select All</span>
           <input
             id="selectAllCheck"
             type="checkbox"
             checked={allSelected}
             onChange={toggleSelectAll}
           />
-        </div>
+        </label>
         <div className="flex flex-col h-full">
           <MultiplierPicker
             multiplier={multiplier}
             setMultiplier={setMultiplier}
           />
         </div>
-        <div className="border border-gray-200 rounded-xl p-2 space-x-2">
-          <label htmlFor="continueToList">Continue to shopping list?</label>
+        <label
+          htmlFor="continueToList"
+          className="border border-gray-200 rounded-xl p-2 space-x-2"
+        >
+          <span>Continue to shopping list?</span>
           <input id="continueToList" name="continueToList" type="checkbox" />
-        </div>
+        </label>
       </div>
       <hr className="h-0.5 bg-black" />
       <ul className="mt-4 divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">

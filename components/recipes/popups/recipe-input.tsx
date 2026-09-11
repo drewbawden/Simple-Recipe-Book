@@ -197,7 +197,7 @@ export const RecipeInputPopup = ({
     setImageFile(null);
     setExternalImageUrl(null);
     setImagePreview(nextState.imagePreview);
-  }, [initialData]);
+  }, [initialData?.id]);
 
   const [isFetchingExternal, setIsFetchingExternal] = useState(false);
   const handleFetchExternal = async () => {

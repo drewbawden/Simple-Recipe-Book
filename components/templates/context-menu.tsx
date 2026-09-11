@@ -13,6 +13,8 @@ type ContextMenuContextType = {
   open: boolean;
   toggle: () => void;
   close: () => void;
+  triggerElement: HTMLButtonElement | null;
+  setTriggerElement: (node: HTMLButtonElement | null) => void;
   triggerRect: DOMRect | null;
   setTriggerRect: (rect: DOMRect | null) => void;
   menuElement: HTMLDivElement | null;
@@ -23,6 +25,8 @@ const ContextMenuContext = createContext<ContextMenuContextType | null>(null);
 
 export const ContextMenu = ({ children }: { children: ReactNode }) => {
   const [open, setOpen] = useState(false);
+  const [triggerElement, setTriggerElement] =
+    useState<HTMLButtonElement | null>(null);
   const [triggerRect, setTriggerRect] = useState<DOMRect | null>(null);
   const [menuElement, setMenuElement] = useState<HTMLDivElement | null>(null);
   const rootRef = useRef<HTMLDivElement | null>(null);
@@ -59,6 +63,8 @@ export const ContextMenu = ({ children }: { children: ReactNode }) => {
         open,
         toggle: () => setOpen((current) => !current),
         close: () => setOpen(false),
+        triggerElement,
+        setTriggerElement,
         triggerRect,
         setTriggerRect,
         menuElement,
@@ -85,6 +91,13 @@ export const ContextMenuTrigger = ({
   if (!context) {
     throw new Error("ContextMenuTrigger must be used inside a ContextMenu.");
   }
+
+  useEffect(() => {
+    context.setTriggerElement(triggerRef.current);
+    return () => {
+      context.setTriggerElement(null);
+    };
+  }, [context]);
 
   const handleClick = () => {
     if (triggerRef.current) {
@@ -132,29 +145,45 @@ export const ContextMenuContent = ({
   }, [context]);
 
   useLayoutEffect(() => {
-    if (!context.open || !context.triggerRect || !contentRef.current) {
+    if (!context.open || !context.triggerElement || !contentRef.current) {
       return;
     }
 
     const offset = 8;
-    const menuRect = contentRef.current.getBoundingClientRect();
-    const top = Math.min(
-      Math.max(context.triggerRect.bottom + offset, offset),
-      window.innerHeight - menuRect.height - offset,
-    );
+    const updatePosition = () => {
+      if (!contentRef.current || !context.triggerElement) {
+        return;
+      }
 
-    let left =
-      align === "right"
-        ? context.triggerRect.right - menuRect.width
-        : context.triggerRect.left;
+      const triggerRect = context.triggerElement.getBoundingClientRect();
+      const menuRect = contentRef.current.getBoundingClientRect();
+      const top = Math.min(
+        Math.max(triggerRect.bottom + offset, offset),
+        window.innerHeight - menuRect.height - offset,
+      );
 
-    left = Math.max(
-      offset,
-      Math.min(left, window.innerWidth - menuRect.width - offset),
-    );
+      let left =
+        align === "right"
+          ? triggerRect.right - menuRect.width
+          : triggerRect.left;
 
-    setPosition({ top, left });
-  }, [context.open, context.triggerRect, align, children]);
+      left = Math.max(
+        offset,
+        Math.min(left, window.innerWidth - menuRect.width - offset),
+      );
+
+      setPosition({ top, left });
+    };
+
+    updatePosition();
+    window.addEventListener("scroll", updatePosition, true);
+    window.addEventListener("resize", updatePosition);
+
+    return () => {
+      window.removeEventListener("scroll", updatePosition, true);
+      window.removeEventListener("resize", updatePosition);
+    };
+  }, [context.open, context.triggerElement, align, children]);
 
   if (!context.open || typeof document === "undefined") {
     return null;

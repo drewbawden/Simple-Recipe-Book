@@ -19,7 +19,7 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from "@/components/templates/context-menu";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { ListItemCard } from "@/components/shopping-list/item-card";
 import { computeQuantity } from "@/lib/shopping-list";
@@ -91,31 +91,19 @@ export const ShoppingList = () => {
   const deleteTimers = useRef<Record<number, NodeJS.Timeout | undefined>>({});
   const deleteTokens = useRef<Record<number, number>>({});
 
-  const refreshData = async () => {
+  const refreshData = useCallback(async () => {
     await deleteExpiredCompletedItems();
 
     const [nextList, nextGroupedList] = await Promise.all([
       getShoppingList(),
       getShoppingListGroupedByCategory(filter?.id),
     ]);
+    console.log(nextList);
+    console.log(nextGroupedList);
 
     setShoppingList(nextList);
     setGroupedList(nextGroupedList);
-  };
-
-  useEffect(() => {
-    const fetchList = async () => {
-      try {
-        await refreshData();
-      } catch (error) {
-        console.error("Error fetching shopping list items:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchList();
-  }, []);
+  }, [filter?.id]);
 
   useEffect(() => {
     if (modal !== "recipeOverview" || !selectedRecipeId) return;
@@ -159,8 +147,18 @@ export const ShoppingList = () => {
   }, []);
 
   useEffect(() => {
-    refreshData();
-  }, [filter]);
+    const fetchList = async () => {
+      try {
+        await refreshData();
+      } catch (error) {
+        console.error("Error fetching shopping list items:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchList();
+  }, [refreshData]);
 
   if (loading) {
     return <p>Loading Items...</p>;

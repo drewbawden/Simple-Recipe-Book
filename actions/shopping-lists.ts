@@ -63,15 +63,12 @@ export const getShoppingListGroupedByCategory = async (tagId?: number) => {
 
     for (const item of shoppingList.items) {
       const category = item.item.category;
-
-      if (!category) break;
-
-      const slug = category.slug ?? "other";
-      const displayName = category.displayName ?? category?.slug ?? "Other";
+      const slug = category?.slug ?? "other";
+      const displayName = category?.displayName ?? category?.slug ?? "Other";
 
       const existing = categories.get(slug);
 
-      const orderIndex = category.orderIndex;
+      const orderIndex = category?.orderIndex ?? Number.MAX_SAFE_INTEGER;
 
       if (existing) {
         existing.items.push(item);

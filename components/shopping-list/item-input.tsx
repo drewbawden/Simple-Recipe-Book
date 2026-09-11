@@ -101,6 +101,7 @@ export const ShoppingListItemInput = ({
           blurOnSelect={true}
           autoFocus={autoFocus}
           inputRef={inputRef || null}
+          required
         />
         <input type="submit" hidden />
         <div className="flex flex-row text-gray-900 gap-2">
