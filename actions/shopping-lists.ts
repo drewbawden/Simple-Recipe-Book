@@ -12,6 +12,7 @@ import { computeCategory } from "@/lib/category";
 import { sortShoppingList, sortShoppingListItems } from "@/lib/shopping-list";
 import { EditableTag } from "@/types/list-item";
 import { incrementItemUsage } from "./items";
+import { broadcast } from "@/lib/event";
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
@@ -176,7 +177,7 @@ export const getShoppingList = async () => {
 };
 
 export const deleteExpiredCompletedItems = async () => {
-  await prisma.shoppingListItem.deleteMany({
+  const result = await prisma.shoppingListItem.deleteMany({
     where: {
       shoppingListId: 1,
       completed: true,
@@ -185,6 +186,9 @@ export const deleteExpiredCompletedItems = async () => {
       },
     },
   });
+  if (result.count > 0) {
+    broadcastUpdate();
+  }
 };
 
 interface addItemToListProps {
@@ -251,6 +255,7 @@ export const addItemToList = async ({
   });
 
   await incrementItemUsage(item.id);
+  broadcastUpdate();
 };
 
 export const setItemCompleted = async (
@@ -266,6 +271,7 @@ export const setItemCompleted = async (
       completedAt: completed ? new Date() : null,
     },
   });
+  broadcastUpdate();
 };
 
 export const deleteItem = async (listItemId: number) => {
@@ -282,6 +288,7 @@ export const deleteItem = async (listItemId: number) => {
       },
     });
   });
+  broadcastUpdate();
 };
 
 export const addRecipeToShoppingList = async (formData: FormData) => {
@@ -292,7 +299,7 @@ export const addRecipeToShoppingList = async (formData: FormData) => {
       ? parsedMultiplier
       : 1;
 
-  return prisma.$transaction(async (tx) => {
+  const shoppingList = await prisma.$transaction(async (tx) => {
     const shoppingList =
       (await tx.shoppingList.findFirst({
         orderBy: {
@@ -339,6 +346,8 @@ export const addRecipeToShoppingList = async (formData: FormData) => {
 
     return shoppingList;
   });
+  broadcastUpdate();
+  return shoppingList;
 };
 
 export const getManualCategory = async (itemName: string) => {
@@ -383,6 +392,7 @@ export const clearShoppingList = async (listId = 1) => {
     console.error("Database Error:", error);
     throw new Error("Failed to clear shopping list");
   }
+  broadcastUpdate();
 };
 
 interface categoriseItemProps {
@@ -474,6 +484,7 @@ export const editListItem = async (data: EditListItemData) => {
         },
       });
     });
+    broadcastUpdate();
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to update list item");
@@ -493,6 +504,7 @@ export const updateCategorySortOrder = async (
         categorySortOrder: sortOrder,
       },
     });
+    broadcastUpdate();
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to update list sort order");
@@ -512,6 +524,7 @@ export const updateItemSortOrder = async (
         itemSortOrder: sortOrder,
       },
     });
+    broadcastUpdate();
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to update list sort order");
@@ -571,4 +584,9 @@ export async function updateTags(shoppingListId: number, tags: EditableTag[]) {
       });
     }
   });
+  broadcastUpdate();
 }
+
+const broadcastUpdate = () => {
+  broadcast("shopping-list-updated", {});
+};

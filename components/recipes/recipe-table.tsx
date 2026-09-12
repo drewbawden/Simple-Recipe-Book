@@ -62,11 +62,19 @@ export const RecipeTable = () => {
   const recipeOverview = modal === "recipeOverview" ? selectedRecipe : null;
   const selectedInstructions = modal === "instructions" ? selectedRecipe : null;
 
+  const refreshRecipes = useCallback(async (filters?: filterArguments) => {
+    const data = await getRecipes(filters);
+    setRecipes(normaliseRecipes(data));
+  }, []);
+
+  const handleEdit = (recipe: Recipe) => {
+    openModal("editRecipe", { recipeId: recipe.id });
+  };
+
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-        const recipes = await getRecipes();
-        setRecipes(normaliseRecipes(recipes));
+        refreshRecipes();
         setLoading(false);
       } catch (error) {
         console.error("Error fetching recipes:", error);
@@ -77,14 +85,15 @@ export const RecipeTable = () => {
     fetchRecipes();
   }, []);
 
-  const refreshRecipes = useCallback(async (filters?: filterArguments) => {
-    const data = await getRecipes(filters);
-    setRecipes(normaliseRecipes(data));
-  }, []);
+  useEffect(() => {
+    const eventSource = new EventSource("/api/sse/events");
 
-  const handleEdit = (recipe: Recipe) => {
-    openModal("editRecipe", { recipeId: recipe.id });
-  };
+    eventSource.addEventListener("recipes-updated", () => {
+      void refreshRecipes();
+    });
+
+    return () => eventSource.close();
+  }, [refreshRecipes]);
 
   const handleDelete = async (recipeId: number) => {
     await deleteRecipe(recipeId);
@@ -321,7 +330,7 @@ export const RecipeTable = () => {
                 >
                   <ShoppingBasketIcon />
                 </button>
-              </div>{" "}
+              </div>
             </div>
           </div>
         ))}

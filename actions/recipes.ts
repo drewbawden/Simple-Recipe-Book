@@ -14,6 +14,7 @@ import { randomUUID } from "crypto";
 import { downloadExternalRecipeImage } from "@/actions/parse-external";
 import { normaliseItemName } from "@/lib/items";
 import { filterArguments, RecipeFormData } from "@/types/recipe";
+import { broadcast } from "@/lib/event";
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
@@ -191,6 +192,7 @@ export async function updateRecipe(recipeId: number, formData: FormData) {
       },
     });
   });
+  broadcastUpdate();
 }
 
 export async function deleteRecipe(recipeId: number) {
@@ -239,6 +241,7 @@ export async function deleteRecipe(recipeId: number) {
       where: { id: recipeId },
     });
   });
+  broadcastUpdate();
 }
 
 export async function insertNewRecipe(formData: FormData) {
@@ -305,4 +308,9 @@ export async function insertNewRecipe(formData: FormData) {
       },
     });
   });
+  broadcastUpdate();
 }
+
+const broadcastUpdate = () => {
+  broadcast("recipes-updated", {});
+};

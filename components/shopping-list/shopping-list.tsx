@@ -161,6 +161,16 @@ export const ShoppingList = () => {
     fetchList();
   }, [refreshData]);
 
+  useEffect(() => {
+    const eventSource = new EventSource("/api/sse/events");
+
+    eventSource.addEventListener("shopping-list-updated", () => {
+      void refreshData();
+    });
+
+    return () => eventSource.close();
+  }, [refreshData]);
+
   if (loading) {
     return <p>Loading Items...</p>;
   }
