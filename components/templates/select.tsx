@@ -66,7 +66,7 @@ export const Select = <T,>({
         onClick={() => setIsOpen((open) => !open)}
         className={
           selectClass ||
-          "bg-gray-100 p-2 rounded w-full flex items-center justify-between"
+          "bg-white border border-gray-200 shadow-sm p-2 rounded w-full flex items-center justify-between"
         }
       >
         <span className={selectedOption ? "" : "text-gray-500"}>

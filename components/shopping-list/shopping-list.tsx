@@ -46,6 +46,7 @@ import { TagSelect } from "./custom-selects";
 import { useModalQuery } from "@/hooks/useModalQuery";
 import { RecipeOverview } from "@/components/recipes/popups/overview";
 import { Recipe } from "@/types/recipe";
+import { rogueScript } from "@/app/ui/fonts";
 
 export const ShoppingList = () => {
   const [loading, setLoading] = useState(true);
@@ -336,15 +337,16 @@ export const ShoppingList = () => {
   };
 
   return (
-    <div className="mx-auto max-w-xl p-6 flex flex-col text-center space-y-1">
+    <div className="mx-auto max-w-xl p-6 flex flex-col text-center space-y-4">
       <Link
         href="/"
         className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded mb-4"
       >
         Recipes
       </Link>
-      <h1 className="mb-6 text-4xl font-bold">{shoppingList.name}</h1>
-      <hr className="h-0.5 bg-black pb-2" />
+      <h1 className={`${rogueScript.className} mb-6 text-7xl`}>
+        {shoppingList.name}
+      </h1>
       <div className="grid grid-cols-[1fr_auto_1fr] items-center px-2">
         <div>
           <TagSelect
@@ -355,13 +357,13 @@ export const ShoppingList = () => {
             placeholder="Filter"
           />
         </div>
-        <span className="bg-gray-500 p-2 rounded italic text-gray-300 justify-self-center">
+        <span className="bg-white p-2 rounded italic text-gray-400 justify-self-center border border-gray-300">
           {shoppingList.items.length} Item
           {shoppingList.items.length != 1 && "s"}
         </span>
         <div className="justify-self-end">
           <ContextMenu>
-            <ContextMenuTrigger>
+            <ContextMenuTrigger className="bg-white text-gray-900 text-sm font-bold p-1 rounded hover:bg-gray-100 active:bg-gray-200 border border-gray-200 shadow-sm">
               <SettingsIcon />
             </ContextMenuTrigger>
             <ContextMenuContent align="right" className="text-gray-900 w-50">
@@ -413,20 +415,19 @@ export const ShoppingList = () => {
           </ContextMenu>
         </div>
       </div>
-      <hr className="h-0.5 bg-black pb-2" />
       <ShoppingListItemInput
         refreshData={refreshData}
         inputRef={mainInputRef}
       />
       <div className="space-y-4 my-4">
         {groupedList.map((category) => (
-          <ul key={category.slug} className="bg-gray-800 p-2 rounded space-y-2">
+          <ul key={category.slug} className="bg-white p-2 rounded space-y-2">
             <div className="flex">
-              <h1 className="bg-black p-1 rounded w-full flex justify-between gap-2 items-center">
-                <span className="text-2xl font-bold ">
+              <h1 className="bg-gray-100 border border-gray-200 p-1 rounded w-full flex justify-between gap-2 items-center text-gray-900">
+                <span className="text-2xl font-bold">
                   {category.displayName ?? category.slug}
                 </span>
-                <span className="text-md italic">
+                <span className="text-md italic text-gray-500">
                   ({category.items.length})
                 </span>
               </h1>
@@ -468,7 +469,7 @@ export const ShoppingList = () => {
               </div>
             ) : (
               <button
-                className="bg-gray-400 text-2xl rounded px-10 py-1 w-full"
+                className="bg-gray-200 border border-gray-200 shadow-sm text-2xl rounded px-10 py-1 w-full"
                 onClick={() => setAddToCategory(category.slug)}
               >
                 +

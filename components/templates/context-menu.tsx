@@ -80,7 +80,7 @@ export const ContextMenu = ({ children }: { children: ReactNode }) => {
 
 export const ContextMenuTrigger = ({
   children,
-  className = "bg-gray-400 text-white text-sm font-bold p-1 rounded hover:bg-gray-500 active:bg-gray-600",
+  className = "bg-gray-400 text-white text-sm font-bold p-1 rounded hover:bg-gray-500 active:bg-gray-600 border border-gray-300 shadow-sm",
 }: {
   children: ReactNode;
   className?: string;

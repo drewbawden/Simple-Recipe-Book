@@ -79,9 +79,9 @@ export const ShoppingListItemInput = ({
           e.preventDefault();
           handleInputSubmit();
         }}
-        className="bg-gray-400 p-2 items-center rounded w-full space-y-2"
+        className="bg-white p-2 items-center rounded w-full space-y-2 border border-gray-200 shadow-sm"
       >
-        <h2 className="text-lg font-bold text-gray-900">Add an item</h2>
+        <h2 className="text-xl font-bold text-gray-900">Add an item</h2>
         <input
           type="hidden"
           name="tagValue"
@@ -92,7 +92,7 @@ export const ShoppingListItemInput = ({
           modelType="items"
           name="productInput"
           id="productInput"
-          className="bg-gray-500 p-1 text-white rounded h-10 w-full"
+          className="bg-gray-100 p-1 text-gray-900 rounded h-10 w-full border border-gray-200"
           placeholder="Enter an item"
           value={inputValue}
           onChange={setInputValue}
@@ -114,7 +114,7 @@ export const ShoppingListItemInput = ({
           />
           <button
             type="submit"
-            className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-1 px-3 rounded text-2xl"
+            className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold px-3 rounded text-3xl text-center flex flex-cols justify-center shadow-sm rorder border-blue-600"
           >
             +
           </button>
@@ -135,9 +135,9 @@ export const StickyAddButton = ({ inputRef }: StickyAddButtonProps) => {
           inputRef.current?.focus();
         }
       }}
-      className="fixed bottom-10 right-6 bg-white rounded-full size-12 text-3xl text-gray-500 active:bg-gray-300"
+      className="fixed bottom-10 right-6 bg-white rounded-full size-13 text-3xl leading-none text-gray-500 active:bg-gray-300 flex items-center justify-center shadow-sm border border-gray-200"
     >
-      +
+      <span className="-translate-y-0.5">+</span>
     </button>
   );
 };

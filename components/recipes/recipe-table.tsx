@@ -30,6 +30,7 @@ import {
 import { useModalQuery } from "@/hooks/useModalQuery";
 import { RecipeOverview } from "./popups/overview";
 import Image from "next/image";
+import { rogueScript } from "@/app/ui/fonts";
 
 const normaliseRecipes = (recipesData: any[]): Recipe[] =>
   recipesData.map((recipe) => ({
@@ -110,11 +111,13 @@ export const RecipeTable = () => {
   return (
     <div>
       <div className="flex flex-row justify-center">
-        <h1 className="text-4xl font-bold">Recipes</h1>
+        <h1 className={`${rogueScript.className} text-8xl text-gray-900`}>
+          Recipes
+        </h1>
       </div>
       <div className="flex flex-row justify-between m-8">
         <button
-          className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded "
+          className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded border border-blue-600 shadow-sm"
           type="button"
           onClick={() => openModal("addRecipe")}
         >
@@ -122,7 +125,7 @@ export const RecipeTable = () => {
         </button>
         <Link
           href="/list"
-          className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded "
+          className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded border border-blue-600 shadow-sm"
         >
           Shopping List
         </Link>
@@ -310,7 +313,7 @@ export const RecipeTable = () => {
 
                 <button
                   title="Add to shopping list"
-                  className="bg-blue-500 text-white text-base font-bold py-2 px-2 rounded"
+                  className="bg-blue-500 text-white text-base font-bold py-2 px-2 rounded border border-blue-600 shadow-sm"
                   onClick={() =>
                     openModal("addToShoppingList", { recipeId: recipe.id })
                   }

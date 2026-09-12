@@ -65,7 +65,7 @@ export const MainFilterBar = ({ refreshTable }: MainFilterBarProps) => {
         </div>
         <button
           type="submit"
-          className="bg-blue-500 text-white text-base font-bold py-2 px-2 rounded hover:bg-blue-600 active:bg-blue-700"
+          className="bg-blue-500 text-white text-base font-bold py-2 px-2 rounded hover:bg-blue-600 active:bg-blue-700 border border-blue-600 shadow-sm"
         >
           Clear
         </button>

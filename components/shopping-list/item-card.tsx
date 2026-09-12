@@ -76,7 +76,7 @@ export const ListItemCard = ({
 
         <div className="flex flex-row space-x-2">
           {sources && sources.length > 0 && (
-            <label className="flex items-center border-1 border-gray-500 rounded">
+            <label className="flex items-center border-1 border-gray-500 shadow-sm rounded">
               <span className="rounded-md bg-muted pl-2 py-1 text-xs font-semibold text-muted-foreground">
                 {totalUnit === "mixed units" ? "" : totalQuantity}
                 {totalUnit ? ` ${totalUnit}` : ""}
