@@ -466,29 +466,6 @@ export const ShoppingList = () => {
                 />
               </li>
             ))}
-            {addToCategory == category.slug ? (
-              <div className="flex flex-row justify-center space-x-1">
-                <ShoppingListItemInput
-                  refreshData={refreshData}
-                  onEnter={() => setAddToCategory(null)}
-                  categoryName={category.slug}
-                  autoFocus={true}
-                />
-                <button
-                  className="text-red-400 p-1 my-auto border-1 rounded-4xl h-1/2 border-red-400"
-                  onClick={() => setAddToCategory(null)}
-                >
-                  <XIcon />
-                </button>
-              </div>
-            ) : (
-              <button
-                className="bg-gray-200 border border-gray-200 shadow-sm text-2xl rounded px-10 py-1 w-full"
-                onClick={() => setAddToCategory(category.slug)}
-              >
-                +
-              </button>
-            )}
           </ul>
         ))}
       </div>
