@@ -7,9 +7,11 @@ import AutocompleteInput from "../templates/autocomplete";
 import { TagSelect } from "./custom-selects";
 import { Tag } from "@/types/list-item";
 import { getItemTags } from "@/actions/items";
+import { normaliseItemName } from "@/lib/items";
 
 interface ShoppingListItemInputProps {
   refreshData: () => void;
+  existingItemNames?: string[];
   onEnter?: () => void;
   categoryName?: string | null;
   autoFocus?: boolean;
@@ -17,6 +19,7 @@ interface ShoppingListItemInputProps {
 }
 export const ShoppingListItemInput = ({
   refreshData,
+  existingItemNames = [],
   onEnter,
   categoryName = null,
   autoFocus = false,
@@ -29,21 +32,38 @@ export const ShoppingListItemInput = ({
   const handleInputSubmit = async () => {
     if (!inputValue) return;
 
+    const itemAlreadyExists = existingItemNames.some(
+      (itemName) =>
+        normaliseItemName(itemName) === normaliseItemName(inputValue),
+    );
+
+    if (
+      itemAlreadyExists &&
+      !window.confirm(`"${inputValue}" already exists\n\nAdd it again?`)
+    ) {
+      setInputValue("");
+      return;
+    }
+
     setInputValue("");
 
     setTimeout(async () => {
       try {
+        const resolvedCategoryName =
+          categoryName === null
+            ? await computeCategory(inputValue)
+            : categoryName;
+
         if (categoryName === null) {
-          categoryName = await computeCategory(inputValue);
           await addItemToList({
             itemName: inputValue,
-            categorySlug: categoryName,
+            categorySlug: resolvedCategoryName,
             tagId: tag?.id,
           });
         } else {
           await addItemToList({
             itemName: inputValue,
-            categorySlug: categoryName,
+            categorySlug: resolvedCategoryName,
             manuallyAdded: true,
             tagId: tag?.id,
           });

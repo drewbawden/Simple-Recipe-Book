@@ -430,6 +430,7 @@ export const ShoppingList = () => {
       </div>
       <ShoppingListItemInput
         refreshData={refreshData}
+        existingItemNames={shoppingList.items.map((item) => item.item.name)}
         inputRef={mainInputRef}
       />
       <div className="space-y-4 my-4">
