@@ -82,6 +82,15 @@ export const AddInstructionsPopup = ({
     setInstructionList(updated);
   };
 
+  const handleMethodChange = (index: number, method: string) => {
+    const updated = [...instructionList];
+    updated[index] = {
+      ...updated[index],
+      method,
+    };
+    setInstructionList(updated);
+  };
+
   const handleMove = (index: number, direction: "up" | "down") => {
     const targetIndex = direction === "up" ? index - 1 : index + 1;
 
@@ -162,9 +171,13 @@ export const AddInstructionsPopup = ({
                 </span>
 
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-gray-900 text-sm leading-relaxed pt-1">
-                    {item.method}
-                  </p>
+                  <textarea
+                    rows={3}
+                    value={item.method}
+                    onChange={(e) => handleMethodChange(index, e.target.value)}
+                    aria-label={`Instruction step ${item.stepNumber}`}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm text-gray-900 leading-relaxed focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-y"
+                  />
                   <input
                     type="text"
                     value={item.category ?? ""}

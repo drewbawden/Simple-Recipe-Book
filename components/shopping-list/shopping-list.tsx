@@ -27,7 +27,7 @@ import {
   ShoppingListItemInput,
   StickyAddButton,
 } from "@/components/shopping-list/item-input";
-import { SettingsIcon, XIcon } from "lucide-react";
+import { SettingsIcon } from "lucide-react";
 import { Modal } from "@/components/templates/modal";
 import { ItemEditPopup } from "@/components/shopping-list/popups/item-edit";
 import { ListItem, Tag } from "@/types/list-item";
@@ -59,7 +59,6 @@ export const ShoppingList = () => {
   const [availableTags, setAvailableTags] = useState<Tag[] | null>(null);
   const { modal, openModal, closeModal, getModalParam } = useModalQuery();
 
-  const [addToCategory, setAddToCategory] = useState<string | null>(null);
   const [filter, setFilter] = useState<Tag | null>(null);
 
   const selectedItemId = Number(getModalParam("itemId"));
