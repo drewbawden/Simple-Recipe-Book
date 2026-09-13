@@ -362,9 +362,13 @@ export const ShoppingList = () => {
           <TagSelect
             tag={filter}
             setTag={handleFilterSelected}
-            availableTags={availableTags}
+            availableTags={[
+              { id: -1, name: "No tag", colour: "#ffffff" },
+              ...(availableTags || []),
+            ]}
             containerClass="text-gray-900 w-min"
             placeholder="Filter"
+            clearLabel="Clear filter"
           />
         </div>
         <span className="bg-white p-2 rounded italic text-gray-400 justify-self-center border border-gray-300">

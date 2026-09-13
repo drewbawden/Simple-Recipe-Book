@@ -6,6 +6,7 @@ interface TagSelectProps {
   setTag: (tag: Tag | null) => void;
   availableTags: Tag[] | null;
   placeholder?: string;
+  clearLabel?: string;
   containerClass?: string;
 }
 
@@ -14,6 +15,7 @@ export const TagSelect = ({
   setTag,
   availableTags,
   placeholder = "Select a tag",
+  clearLabel = "No tag",
   containerClass,
 }: TagSelectProps) => {
   return (
@@ -24,7 +26,7 @@ export const TagSelect = ({
       getValue={(tag) => String(tag.id)}
       getLabel={(tag) => tag.name}
       placeholder={placeholder}
-      clearLabel="No tag"
+      clearLabel={clearLabel}
       containerClass={containerClass}
       renderOption={(tag) => (
         <>

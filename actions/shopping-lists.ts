@@ -28,7 +28,12 @@ export const getShoppingListGroupedByCategory = async (tagId?: number) => {
       where: { id: 1 },
       include: {
         items: {
-          where: tagId !== undefined ? { tagId } : undefined,
+          where:
+            tagId === -1
+              ? { tagId: null }
+              : tagId !== undefined
+                ? { tagId }
+                : undefined,
           include: {
             item: {
               include: {
