@@ -1,7 +1,6 @@
 "use client";
 
-import { addItemToList } from "@/actions/shopping-lists";
-import { computeCategory } from "@/lib/category";
+import { addItemToList, categoriseAddedItem } from "@/actions/shopping-lists";
 import { Ref, useEffect, useState } from "react";
 import AutocompleteInput from "../templates/autocomplete";
 import { TagSelect } from "./custom-selects";
@@ -13,7 +12,6 @@ interface ShoppingListItemInputProps {
   refreshData: () => void;
   existingItemNames?: string[];
   onEnter?: () => void;
-  categoryName?: string | null;
   autoFocus?: boolean;
   inputRef?: Ref<HTMLInputElement>;
 }
@@ -21,7 +19,6 @@ export const ShoppingListItemInput = ({
   refreshData,
   existingItemNames = [],
   onEnter,
-  categoryName = null,
   autoFocus = false,
   inputRef,
 }: ShoppingListItemInputProps) => {
@@ -49,26 +46,14 @@ export const ShoppingListItemInput = ({
 
     setTimeout(async () => {
       try {
-        const resolvedCategoryName =
-          categoryName === null
-            ? await computeCategory(inputValue)
-            : categoryName;
+        const itemName = inputValue;
+        const itemId = await addItemToList({
+          itemName,
+          tagId: tag?.id,
+        });
 
-        if (categoryName === null) {
-          await addItemToList({
-            itemName: inputValue,
-            categorySlug: resolvedCategoryName,
-            tagId: tag?.id,
-          });
-        } else {
-          await addItemToList({
-            itemName: inputValue,
-            categorySlug: resolvedCategoryName,
-            manuallyAdded: true,
-            tagId: tag?.id,
-          });
-        }
-
+        await refreshData();
+        await categoriseAddedItem(itemId, normaliseItemName(itemName));
         await refreshData();
         if (onEnter) {
           onEnter();

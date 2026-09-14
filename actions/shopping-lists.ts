@@ -8,7 +8,7 @@ import {
   ShoppingListSortOption,
 } from "../app/generated/prisma/enums";
 import { normaliseItemName } from "@/lib/items";
-import { computeCategory } from "@/lib/category";
+import { computeCategory, computeZsl } from "@/lib/category";
 import { sortShoppingList, sortShoppingListItems } from "@/lib/shopping-list";
 import { EditableTag } from "@/types/list-item";
 import { incrementItemUsage } from "./items";
@@ -198,52 +198,29 @@ export const deleteExpiredCompletedItems = async () => {
 
 interface addItemToListProps {
   itemName: string;
-  categorySlug: string | null;
-  manuallyAdded?: boolean;
   shoppingListId?: number;
   tagId?: number;
 }
 export const addItemToList = async ({
   itemName,
-  categorySlug,
-  manuallyAdded,
   shoppingListId = 1,
   tagId,
 }: addItemToListProps) => {
   itemName = normaliseItemName(itemName);
-
-  let category = null;
-  if (categorySlug) {
-    category = await prisma.itemCategory.upsert({
-      where: { slug: categorySlug },
-      update: {},
-      create: {
-        slug: categorySlug,
-        displayName: categorySlug,
-      },
-    });
-  }
 
   const item = await prisma.item.upsert({
     where: {
       name: itemName,
     },
     update: {
-      categorySlug: category ? category.slug : null,
-      ...(manuallyAdded !== undefined
-        ? { manuallyCategorised: manuallyAdded }
-        : {}),
+      categorySlug: null,
     },
     create: {
       name: itemName,
-      categorySlug: category ? category.slug : null,
-      ...(manuallyAdded !== undefined
-        ? { manuallyCategorised: manuallyAdded }
-        : {}),
     },
   });
 
-  const shoppingListItem = await prisma.shoppingListItem.create({
+  await prisma.shoppingListItem.create({
     data: {
       shoppingListId,
       itemId: item.id,
@@ -261,6 +238,8 @@ export const addItemToList = async ({
 
   await incrementItemUsage(item.id);
   broadcastUpdate();
+
+  return item.id;
 };
 
 export const setItemCompleted = async (
@@ -405,19 +384,28 @@ interface categoriseItemProps {
   itemName: string;
   tx: Prisma.TransactionClient;
 }
-const categoriseItem = async ({
+export const categoriseItem = async ({
   itemId,
   itemName,
   tx = prisma,
 }: categoriseItemProps) => {
-  const categorySlug = await computeCategory(itemName);
+  let categorySlug = await computeCategory(itemName);
+  console.log("awaited");
 
   if (!categorySlug) {
-    return tx.item.update({
+    console.log("no slug");
+    await tx.item.update({
       where: { id: itemId },
       data: { categorySlug: null },
     });
+
+    categorySlug = await computeZsl(itemName);
+    if (!categorySlug) {
+      console.log("no slug again");
+      return;
+    }
   }
+  console.log("made it past...");
 
   const category = await tx.itemCategory.upsert({
     where: { slug: categorySlug },
@@ -434,6 +422,15 @@ const categoriseItem = async ({
       categorySlug: category.slug,
     },
   });
+};
+
+export const categoriseAddedItem = async (itemId: number, itemName: string) => {
+  await categoriseItem({
+    itemId,
+    itemName,
+    tx: prisma,
+  });
+  broadcastUpdate();
 };
 
 interface EditListItemData {

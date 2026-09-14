@@ -89,7 +89,10 @@ export const computeCategory = async (
     }
   }
 
-  // Fallback to zsl model if previous checks returned no hits
+  return null;
+};
+
+export const computeZsl = async (productName: string) => {
   try {
     const zslScores = await zslCategorise(productName);
     const topZslScore = zslScores[0];

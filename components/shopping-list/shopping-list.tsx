@@ -98,8 +98,6 @@ export const ShoppingList = () => {
       getShoppingList(),
       getShoppingListGroupedByCategory(filter?.id),
     ]);
-    console.log(nextList);
-    console.log(nextGroupedList);
 
     setShoppingList(nextList);
     setGroupedList(nextGroupedList);
@@ -291,7 +289,6 @@ export const ShoppingList = () => {
       typeof entry === "string" ? entry : entry == null ? "" : String(entry);
     const tagId = formData.get("tagValue");
 
-    console.log("1");
     const fields = {
       id: Number(formData.get("id")),
       name: value(formData.get("name")),
@@ -303,11 +300,8 @@ export const ShoppingList = () => {
     };
 
     await editListItem(fields);
-    console.log("2");
     closeModal();
-    console.log("3");
     await refreshData();
-    console.log("4");
   };
 
   const handleCategorySortSubmit = async (formData: FormData) => {
