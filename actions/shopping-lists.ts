@@ -390,10 +390,8 @@ export const categoriseItem = async ({
   tx = prisma,
 }: categoriseItemProps) => {
   let categorySlug = await computeCategory(itemName);
-  console.log("awaited");
 
   if (!categorySlug) {
-    console.log("no slug");
     await tx.item.update({
       where: { id: itemId },
       data: { categorySlug: null },
@@ -401,11 +399,9 @@ export const categoriseItem = async ({
 
     categorySlug = await computeZsl(itemName);
     if (!categorySlug) {
-      console.log("no slug again");
       return;
     }
   }
-  console.log("made it past...");
 
   const category = await tx.itemCategory.upsert({
     where: { slug: categorySlug },

@@ -62,6 +62,9 @@ export async function getRecipes(filters?: filterArguments) {
       },
       instructions: true,
     },
+    orderBy: {
+      name: "asc",
+    },
   });
 
   return recipes.map((recipe) => ({
