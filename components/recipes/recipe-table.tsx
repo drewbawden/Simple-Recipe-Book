@@ -21,6 +21,7 @@ import {
 import { MainFilterBar } from "@/components/recipes/filter-bar";
 
 import {
+  HouseIcon,
   InfoIcon,
   NotepadTextIcon,
   SaladIcon,
@@ -133,10 +134,10 @@ export const RecipeTable = () => {
           Add Recipe
         </button>
         <Link
-          href="/list"
-          className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded border border-blue-600 shadow-sm"
+          href="/"
+          className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold p-2 rounded border border-blue-600 shadow-sm"
         >
-          Shopping List
+          <HouseIcon />
         </Link>
       </div>
 

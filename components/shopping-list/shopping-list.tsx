@@ -27,7 +27,7 @@ import {
   ShoppingListItemInput,
   StickyAddButton,
 } from "@/components/shopping-list/item-input";
-import { SettingsIcon } from "lucide-react";
+import { HouseIcon, SettingsIcon } from "lucide-react";
 import { Modal } from "@/components/templates/modal";
 import { ItemEditPopup } from "@/components/shopping-list/popups/item-edit";
 import { ListItem, Tag } from "@/types/list-item";
@@ -340,12 +340,12 @@ export const ShoppingList = () => {
   };
 
   return (
-    <div className="mx-auto max-w-xl p-6 flex flex-col text-center space-y-4">
+    <div className="mx-auto max-w-xl p-6 flex flex-col text-center space-y-4 relative">
       <Link
         href="/"
-        className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded mb-4"
+        className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold p-2 rounded mb-4 flex justify-center absolute left-0 top-0"
       >
-        Recipes
+        <HouseIcon />
       </Link>
       <h1 className={`${rogueScript.className} mb-6 text-7xl`}>
         {shoppingList.name}

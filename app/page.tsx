@@ -1,14 +1,11 @@
 "use client";
 
-import { RecipeTable } from "@/components/recipes/recipe-table";
-import { Suspense } from "react";
+import { PageOptions } from "@/components/home/options";
 
 export default function RecipesPage() {
   return (
     <main className="p-6">
-      <Suspense>
-        <RecipeTable />
-      </Suspense>
+      <PageOptions />
     </main>
   );
 }
