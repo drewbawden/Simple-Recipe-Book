@@ -1,6 +1,11 @@
 "use client";
 
-import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "lucide-react";
+import {
+  ArrowRightIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  PlusIcon,
+} from "lucide-react";
 import { useState } from "react";
 import { Modal } from "../templates/modal";
 import { useModalQuery } from "@/hooks/useModalQuery";
@@ -28,19 +33,56 @@ const isSameDay = (first: Date, second: Date) =>
   first.getMonth() === second.getMonth() &&
   first.getDate() === second.getDate();
 
+const parseDateParam = (value: string | null) => {
+  if (!value) return null;
+
+  const [year, month, day] = value.split("-").map(Number);
+  const date = new Date(year, month - 1, day);
+
+  return Number.isNaN(date.getTime()) ? null : date;
+};
+
+const formatDateParam = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+const getDatesBetween = (startDate: Date, endDate: Date) => {
+  const dates = [];
+  const current = new Date(startDate);
+
+  while (current <= endDate) {
+    dates.push(new Date(current));
+    current.setDate(current.getDate() + 1);
+  }
+
+  return dates;
+};
+
 export const MealPlannerCalendar = () => {
   const today = new Date();
+  const { modal, openModal, closeModal, getModalParam } = useModalQuery();
+  const queryStartDate =
+    modal === "addMeal" ? parseDateParam(getModalParam("startDate")) : null;
+  const queryEndDate =
+    modal === "addMeal" ? parseDateParam(getModalParam("endDate")) : null;
   const [displayedMonth, setDisplayedMonth] = useState(
     new Date(today.getFullYear(), today.getMonth(), 1),
   );
-  const [selectedDates, setSelectedDates] = useState<Date[] | null>(null);
+  const [selectedDates, setSelectedDates] = useState<Date[] | null>(() =>
+    queryStartDate && queryEndDate
+      ? getDatesBetween(queryStartDate, queryEndDate)
+      : null,
+  );
   const days = getDaysInMonth(displayedMonth);
 
   const [selectingDates, setSelectingDates] = useState(false);
-  const [mealStartDate, setMealStartDate] = useState<Date | null>(null);
-  const [mealEndDate, setMealEndDate] = useState<Date | null>(null);
-
-  const { modal, openModal, closeModal, getModalParam } = useModalQuery();
+  const [mealStartDate, setMealStartDate] = useState<Date | null>(
+    queryStartDate,
+  );
+  const [mealEndDate, setMealEndDate] = useState<Date | null>(queryEndDate);
   const addingMeal = modal === "addMeal";
 
   const changeMonth = (amount: number) => {
@@ -62,15 +104,14 @@ export const MealPlannerCalendar = () => {
   const selectedDate = selectedDates?.[0] ?? null;
 
   const selectDatesBetween = (startDate: Date, endDate: Date) => {
-    const dates = [];
-    const current = new Date(startDate);
+    setSelectedDates(getDatesBetween(startDate, endDate));
 
-    while (current <= endDate) {
-      dates.push(new Date(current));
-      current.setDate(current.getDate() + 1);
+    if (addingMeal) {
+      openModal("addMeal", {
+        startDate: formatDateParam(startDate),
+        endDate: formatDateParam(endDate),
+      });
     }
-
-    setSelectedDates(dates);
   };
 
   const handleDateClick = (date: Date, isBeforeMealStartDate: boolean) => {
@@ -84,7 +125,10 @@ export const MealPlannerCalendar = () => {
       setMealEndDate(date);
       setSelectingDates(false);
       selectDatesBetween(mealStartDate!, date);
-      openModal("addMeal");
+      openModal("addMeal", {
+        startDate: formatDateParam(mealStartDate!),
+        endDate: formatDateParam(date),
+      });
       return;
     }
     setSelectedDates([date]);
@@ -179,7 +223,7 @@ export const MealPlannerCalendar = () => {
                 <div className="size-full flex items-center justify-center h-max">
                   {selectingDates ? (
                     <p className="text-center text-gray-500">
-                      Select an end date
+                      <ArrowRightIcon />
                     </p>
                   ) : (
                     <span className="text-gray-500">
