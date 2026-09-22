@@ -2,6 +2,9 @@
 
 import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "lucide-react";
 import { useState } from "react";
+import { Modal } from "../templates/modal";
+import { useModalQuery } from "@/hooks/useModalQuery";
+import { AddMealPopup } from "./popups/add-meal";
 
 const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -30,9 +33,15 @@ export const MealPlannerCalendar = () => {
   const [displayedMonth, setDisplayedMonth] = useState(
     new Date(today.getFullYear(), today.getMonth(), 1),
   );
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedDates, setSelectedDates] = useState<Date[] | null>(null);
   const days = getDaysInMonth(displayedMonth);
+
+  const [selectingDates, setSelectingDates] = useState(false);
   const [mealStartDate, setMealStartDate] = useState<Date | null>(null);
+  const [mealEndDate, setMealEndDate] = useState<Date | null>(null);
+
+  const { modal, openModal, closeModal, getModalParam } = useModalQuery();
+  const addingMeal = modal === "addMeal";
 
   const changeMonth = (amount: number) => {
     setDisplayedMonth(
@@ -50,14 +59,35 @@ export const MealPlannerCalendar = () => {
     year: "numeric",
   });
 
-  const handleMealStart = (date: Date) => {
-    setMealStartDate(date);
+  const selectedDate = selectedDates?.[0] ?? null;
+
+  const selectDatesBetween = (startDate: Date, endDate: Date) => {
+    const dates = [];
+    const current = new Date(startDate);
+
+    while (current <= endDate) {
+      dates.push(new Date(current));
+      current.setDate(current.getDate() + 1);
+    }
+
+    setSelectedDates(dates);
   };
 
-  const handleMealEnd = (date: Date) => {
-    // call function with (mealStartDate, date)
-    setMealStartDate(null);
-    setSelectedDate(null);
+  const handleDateClick = (date: Date, isBeforeMealStartDate: boolean) => {
+    if (selectingDates && isBeforeMealStartDate) return;
+
+    if (!selectingDates && selectedDate && isSameDay(date, selectedDate)) {
+      setMealStartDate(date);
+      setSelectingDates(true);
+      return;
+    } else if (selectingDates) {
+      setMealEndDate(date);
+      setSelectingDates(false);
+      selectDatesBetween(mealStartDate!, date);
+      openModal("addMeal");
+      return;
+    }
+    setSelectedDates([date]);
   };
 
   return (
@@ -115,23 +145,30 @@ export const MealPlannerCalendar = () => {
             : null;
           const isSelected =
             date !== null &&
-            selectedDate !== null &&
-            isSameDay(date, selectedDate);
+            selectedDates?.some((selected) => isSameDay(date, selected));
           const isToday = date !== null && isSameDay(date, today);
+          const isBeforeMealStartDate =
+            selectingDates &&
+            date !== null &&
+            mealStartDate !== null &&
+            date < mealStartDate;
 
           return (
             <button
               key={date?.toISOString() ?? `empty-${index}`}
               type="button"
               disabled={date === null}
-              onClick={() => date && setSelectedDate(date)}
-              className={`relative min-h-20 p-2 text-left align-top transition sm:min-h-28 sm:p-3 ${
-                date === null ? "cursor-default opacity-45" : ""
-              } ${isSelected ? "ring-2 ring-inset ring-blue-500 bg-blue-50 hover:bg-blue-100" : "bg-white hover:bg-gray-50"}`}
+              onClick={() => {
+                date && handleDateClick(date, isBeforeMealStartDate);
+              }}
+              className={`flex flex-col items-center min-h-20 p-1 text-left align-top transition sm:min-h-28 sm:p-1
+                ${date === null ? "cursor-default opacity-45" : ""}
+                ${isBeforeMealStartDate ? "bg-gray-300" : isSelected ? "bg-blue-50 ring-2 ring-inset ring-blue-500" : "bg-white"}
+              `}
             >
               {date && (
                 <span
-                  className={`absolute top-2 left-2 flex h-7 w-7 items-center justify-center rounded-full text-sm font-semibold ${
+                  className={`flex h-7 w-7 items-center justify-center rounded-full text-sm font-semibold ${
                     isToday ? "bg-blue-500 text-white" : "text-gray-900"
                   }`}
                 >
@@ -139,16 +176,16 @@ export const MealPlannerCalendar = () => {
                 </span>
               )}
               {isSelected && (
-                <div
-                  role="button"
-                  onClick={() => {
-                    handleMealStart(date);
-                  }}
-                  className="size-full flex items-center justify-center"
-                >
-                  <span>
-                    <PlusIcon />
-                  </span>
+                <div className="size-full flex items-center justify-center h-max">
+                  {selectingDates ? (
+                    <p className="text-center text-gray-500">
+                      Select an end date
+                    </p>
+                  ) : (
+                    <span className="text-gray-500">
+                      <PlusIcon />
+                    </span>
+                  )}
                 </div>
               )}
             </button>
@@ -161,6 +198,24 @@ export const MealPlannerCalendar = () => {
         {selectedDate &&
           selectedDate.toLocaleDateString("en-US", { dateStyle: "long" })}
       </p>
+      <Modal
+        isOpen={addingMeal}
+        onClose={() => {
+          setSelectedDates([]);
+          closeModal();
+        }}
+        modalTitle="Add Meal"
+        showTick
+        confirmClose
+      >
+        <AddMealPopup
+          startDate={mealStartDate || null}
+          setStartDate={setMealStartDate}
+          endDate={mealEndDate || null}
+          setEndDate={setMealEndDate}
+          updateHighlights={selectDatesBetween}
+        />
+      </Modal>
     </div>
   );
 };

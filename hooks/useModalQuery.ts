@@ -14,7 +14,8 @@ export type ModalName =
   | "sortCategories"
   | "sortItems"
   | "editTags"
-  | "recipeOverview";
+  | "recipeOverview"
+  | "addMeal";
 
 export type ModalParams = Record<string, string | number | null | undefined>;
 
