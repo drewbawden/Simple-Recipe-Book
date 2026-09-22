@@ -97,6 +97,10 @@ export const RecipeTable = () => {
   }, [refreshRecipes]);
 
   const handleDelete = async (recipeId: number) => {
+    const confirmDialog =
+      "Are you sure?\n\nDeleting this recipe will remove any references in the shopping list or meal planner";
+
+    if (!confirm(confirmDialog)) return;
     await deleteRecipe(recipeId);
     refreshRecipes();
   };

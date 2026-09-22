@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "lucide-react";
 import { useState } from "react";
 
 const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -30,8 +30,9 @@ export const MealPlannerCalendar = () => {
   const [displayedMonth, setDisplayedMonth] = useState(
     new Date(today.getFullYear(), today.getMonth(), 1),
   );
-  const [selectedDate, setSelectedDate] = useState(today);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const days = getDaysInMonth(displayedMonth);
+  const [mealStartDate, setMealStartDate] = useState<Date | null>(null);
 
   const changeMonth = (amount: number) => {
     setDisplayedMonth(
@@ -48,6 +49,16 @@ export const MealPlannerCalendar = () => {
     month: "long",
     year: "numeric",
   });
+
+  const handleMealStart = (date: Date) => {
+    setMealStartDate(date);
+  };
+
+  const handleMealEnd = (date: Date) => {
+    // call function with (mealStartDate, date)
+    setMealStartDate(null);
+    setSelectedDate(null);
+  };
 
   return (
     <div className="mx-auto w-full max-w-4xl overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
@@ -102,7 +113,10 @@ export const MealPlannerCalendar = () => {
                 day,
               )
             : null;
-          const isSelected = date !== null && isSameDay(date, selectedDate);
+          const isSelected =
+            date !== null &&
+            selectedDate !== null &&
+            isSameDay(date, selectedDate);
           const isToday = date !== null && isSameDay(date, today);
 
           return (
@@ -111,9 +125,9 @@ export const MealPlannerCalendar = () => {
               type="button"
               disabled={date === null}
               onClick={() => date && setSelectedDate(date)}
-              className={`relative min-h-20 bg-white p-2 text-left align-top transition sm:min-h-28 sm:p-3 ${
-                date === null ? "cursor-default opacity-45" : "hover:bg-gray-50"
-              } ${isSelected ? "ring-2 ring-inset ring-blue-500" : ""}`}
+              className={`relative min-h-20 p-2 text-left align-top transition sm:min-h-28 sm:p-3 ${
+                date === null ? "cursor-default opacity-45" : ""
+              } ${isSelected ? "ring-2 ring-inset ring-blue-500 bg-blue-50 hover:bg-blue-100" : "bg-white hover:bg-gray-50"}`}
             >
               {date && (
                 <span
@@ -124,6 +138,19 @@ export const MealPlannerCalendar = () => {
                   {day}
                 </span>
               )}
+              {isSelected && (
+                <div
+                  role="button"
+                  onClick={() => {
+                    handleMealStart(date);
+                  }}
+                  className="size-full flex items-center justify-center"
+                >
+                  <span>
+                    <PlusIcon />
+                  </span>
+                </div>
+              )}
             </button>
           );
         })}
@@ -131,7 +158,8 @@ export const MealPlannerCalendar = () => {
 
       <p className="border-t border-gray-200 px-4 py-3 text-sm text-gray-500 sm:px-6">
         Selected:{" "}
-        {selectedDate.toLocaleDateString("en-US", { dateStyle: "long" })}
+        {selectedDate &&
+          selectedDate.toLocaleDateString("en-US", { dateStyle: "long" })}
       </p>
     </div>
   );

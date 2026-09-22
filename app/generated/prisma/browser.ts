@@ -82,3 +82,8 @@ export type ShoppingListItemSource = Prisma.ShoppingListItemSourceModel
  * 
  */
 export type ShoppingListTag = Prisma.ShoppingListTagModel
+/**
+ * Model MealPlanItem
+ * 
+ */
+export type MealPlanItem = Prisma.MealPlanItemModel

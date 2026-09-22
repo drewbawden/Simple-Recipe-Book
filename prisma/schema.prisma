@@ -118,8 +118,9 @@ model Recipes {
   ingredients  RecipeIngredient[]
   instructions RecipeInstructionStep[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @default(now()) @updatedAt
+  mealPlanItems MealPlanItem[]
 }
 
 model RecipeIngredient {
@@ -212,6 +213,20 @@ model ShoppingListTag {
   shoppingListId Int
 
   shoppingListItems ShoppingListItem[]
+}
+
+model MealPlanItem {
+  id Int @id @default(autoincrement())
+
+  customText String?
+  recipe     Recipes? @relation(fields: [recipeId], references: [id])
+  recipeId   Int?
+
+  startDate DateTime
+  endDate   DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 enum Locations {
