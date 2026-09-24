@@ -1,8 +1,7 @@
 "use server";
 
-import { PrismaClient, Prisma } from "../app/generated/prisma/client";
+import { PrismaClient } from "../app/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { Product } from "@/types/inventory";
 import "dotenv/config";
 
 const adapter = new PrismaPg({
@@ -17,7 +16,7 @@ interface addMealProps {
   startDate: Date;
   endDate: Date;
   customText?: string;
-  recipeId: number;
+  recipeId?: number | null;
 }
 export const addMeal = async ({
   startDate,
@@ -25,14 +24,20 @@ export const addMeal = async ({
   customText,
   recipeId,
 }: addMealProps) => {
-  if (!customText && recipeId === null) return;
+  if (!customText?.trim() && recipeId == null) {
+    throw new Error("A meal name or recipe is required");
+  }
 
-  prisma.mealPlanItem.create({
+  return await prisma.mealPlanItem.create({
     data: {
       startDate,
       endDate,
-      ...(customText && { customText }),
+      ...(customText?.trim() && { customText: customText.trim() }),
       ...(recipeId && { recipeId }),
     },
   });
+};
+
+export const getMeals = async () => {
+  return await prisma.mealPlanItem.findMany();
 };

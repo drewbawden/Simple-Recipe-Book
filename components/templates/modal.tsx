@@ -24,7 +24,7 @@ interface ModalProps {
   hideCross?: boolean;
   showTick?: boolean;
   modalTitle: string;
-  handleTick?: () => void;
+  handleTick?: () => boolean | void;
   isChild?: boolean;
   confirmClose?: boolean;
 }
@@ -324,8 +324,9 @@ export const Modal = ({
                   }}
                   onClick={(event) => {
                     event.stopPropagation();
-                    handleTick?.();
-                    onClose();
+                    if (handleTick?.() !== false) {
+                      onClose();
+                    }
                   }}
                 >
                   <CheckIcon />

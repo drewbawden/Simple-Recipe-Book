@@ -6,12 +6,20 @@ import {
   ChevronRightIcon,
   PlusIcon,
 } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { getMeals } from "@/actions/meal-planner";
 import { Modal } from "../templates/modal";
 import { useModalQuery } from "@/hooks/useModalQuery";
 import { AddMealPopup } from "./popups/add-meal";
 
 const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+export interface MealEvent {
+  id: number;
+  customText: string | null;
+  startDate: Date;
+  endDate: Date;
+}
 
 const getDaysInMonth = (date: Date) => {
   const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
@@ -43,6 +51,7 @@ const parseDateParam = (value: string | null) => {
 };
 
 const formatDateParam = (date: Date) => {
+  if (!date) return;
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
@@ -63,6 +72,7 @@ const getDatesBetween = (startDate: Date, endDate: Date) => {
 
 export const MealPlannerCalendar = () => {
   const today = new Date();
+  const [meals, setMeals] = useState<MealEvent[]>([]);
   const { modal, openModal, closeModal, getModalParam } = useModalQuery();
   const queryStartDate =
     modal === "addMeal" ? parseDateParam(getModalParam("startDate")) : null;
@@ -77,6 +87,7 @@ export const MealPlannerCalendar = () => {
       : null,
   );
   const days = getDaysInMonth(displayedMonth);
+  const mealAddForm = useRef<HTMLFormElement>(null);
 
   const [selectingDates, setSelectingDates] = useState(false);
   const [mealStartDate, setMealStartDate] = useState<Date | null>(
@@ -84,6 +95,15 @@ export const MealPlannerCalendar = () => {
   );
   const [mealEndDate, setMealEndDate] = useState<Date | null>(queryEndDate);
   const addingMeal = modal === "addMeal";
+
+  const loadMeals = useCallback(async () => {
+    const savedMeals = await getMeals();
+    setMeals(savedMeals);
+  }, []);
+
+  useEffect(() => {
+    void loadMeals();
+  }, [loadMeals]);
 
   const changeMonth = (amount: number) => {
     setDisplayedMonth(
@@ -133,6 +153,20 @@ export const MealPlannerCalendar = () => {
     }
     setSelectedDates([date]);
   };
+
+  const mealsByDate = useMemo(() => {
+    const map = new Map<string, MealEvent[]>();
+
+    meals.forEach((meal) => {
+      getDatesBetween(meal.startDate, meal.endDate).forEach((date) => {
+        const key = formatDateParam(date);
+
+        map.set(key, [...(map.get(key) ?? []), meal]);
+      });
+    });
+
+    return map;
+  }, [meals]);
 
   return (
     <div className="mx-auto w-full max-w-4xl overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
@@ -196,6 +230,7 @@ export const MealPlannerCalendar = () => {
             date !== null &&
             mealStartDate !== null &&
             date < mealStartDate;
+          const dayMeals = mealsByDate.get(formatDateParam(date!)) ?? [];
 
           return (
             <button
@@ -232,6 +267,19 @@ export const MealPlannerCalendar = () => {
                   )}
                 </div>
               )}
+              {dayMeals.length > 0 && (
+                <div className="mt-1 flex w-full flex-col gap-1">
+                  {dayMeals.map((meal) => (
+                    <span
+                      key={meal.id}
+                      className="w-full truncate rounded bg-emerald-100 px-1 py-0.5 text-left text-xs font-medium text-emerald-900"
+                      title={meal.customText ?? "Recipe"}
+                    >
+                      {meal.customText ?? "Recipe"}
+                    </span>
+                  ))}
+                </div>
+              )}
             </button>
           );
         })}
@@ -250,9 +298,20 @@ export const MealPlannerCalendar = () => {
         }}
         modalTitle="Add Meal"
         showTick
+        handleTick={() => {
+          const form = mealAddForm.current;
+          if (!form?.reportValidity()) {
+            return false;
+          }
+
+          form.requestSubmit();
+          return true;
+        }}
         confirmClose
       >
         <AddMealPopup
+          formRef={mealAddForm}
+          onMealAdded={loadMeals}
           startDate={mealStartDate || null}
           setStartDate={setMealStartDate}
           endDate={mealEndDate || null}

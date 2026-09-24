@@ -1,13 +1,20 @@
 import { MealPlannerCalendar } from "@/components/meal-planner/calendar";
 import { MealPlannerHeader } from "@/components/meal-planner/header";
 import { Suspense } from "react";
-export default function ShoppingListPage() {
+
+function MealPlannerContent() {
+  return (
+    <main className="space-y-2 p-6">
+      <MealPlannerHeader />
+      <MealPlannerCalendar />
+    </main>
+  );
+}
+
+export default function MealPlannerPage() {
   return (
     <Suspense>
-      <main className="p-6 space-y-2">
-        <MealPlannerHeader />
-        <MealPlannerCalendar />
-      </main>
+      <MealPlannerContent />
     </Suspense>
   );
 }
