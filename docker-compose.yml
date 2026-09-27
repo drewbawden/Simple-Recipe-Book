@@ -1,9 +1,6 @@
 services:
   Simple-Recipe-Book:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: nextjs-standalone-image
+    image: drewbawden/homely:latest
     container_name: simple-recipe-book
     environment:
       NODE_ENV: production
@@ -20,9 +17,7 @@ services:
       - zsl
 
   zsl:
-    build:
-      context: ./python
-      dockerfile: Dockerfile
+    image: drewbawden/homely-zsl:latest
     container_name: home-utils-zsl
     restart: unless-stopped
 
