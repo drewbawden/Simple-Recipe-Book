@@ -5,9 +5,10 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   PlusIcon,
+  Trash2Icon,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { getMeals } from "@/actions/meal-planner";
+import { deleteMeal, getMeals } from "@/actions/meal-planner";
 import { Modal } from "../templates/modal";
 import { useModalQuery } from "@/hooks/useModalQuery";
 import { AddMealPopup } from "./popups/add-meal";
@@ -18,6 +19,7 @@ const MAX_VISIBLE_MEALS_PER_ROW = 2;
 export interface MealEvent {
   id: number;
   customText: string | null;
+  recipeId: number | null;
   startDate: Date;
   endDate: Date;
 }
@@ -111,6 +113,16 @@ export const MealPlannerCalendar = () => {
 
   useEffect(() => {
     void loadMeals();
+  }, [loadMeals]);
+
+  useEffect(() => {
+    const eventSource = new EventSource("/api/sse/events");
+
+    eventSource.addEventListener("meals-updated", () => {
+      void loadMeals();
+    });
+
+    return () => eventSource.close();
   }, [loadMeals]);
 
   const changeMonth = (amount: number) => {
@@ -391,9 +403,12 @@ export const MealPlannerCalendar = () => {
                   if (new Date(meal.endDate) > weekEnd) endCol = 8;
 
                   return (
-                    <div
+                    <button
                       key={meal.id}
-                      className="pointer-events-auto h-6 rounded bg-emerald-500 px-2 text-xs font-semibold text-white shadow-sm flex items-center overflow-hidden z-10"
+                      type="button"
+                      onClick={() => {}}
+                      className={`pointer-events-auto h-6 rounded bg-emerald-500 px-2 text-left text-xs font-semibold text-white flex items-center overflow-hidden z-10 
+                      ${meal.recipeId && "shadow-sm enabled:cursor-pointer enabled:hover:bg-emerald-600 enabled:focus-visible:outline enabled:focus-visible:outline-2 enabled:focus-visible:outline-offset-2 enabled:focus-visible:outline-emerald-700"} `}
                       style={{
                         gridColumn: `${startCol} / ${endCol}`,
                         gridRow: mealIdx + 1,
@@ -403,7 +418,7 @@ export const MealPlannerCalendar = () => {
                       <span className="truncate">
                         {meal.customText ?? "Recipe"}
                       </span>
-                    </div>
+                    </button>
                   );
                 })}
               </div>
@@ -426,20 +441,34 @@ export const MealPlannerCalendar = () => {
               selectedDayMeals.map((meal) => (
                 <div
                   key={meal.id}
-                  className="flex items-center justify-between rounded bg-emerald-50 border border-emerald-200 px-3 py-1.5 text-xs sm:text-sm font-medium text-emerald-900"
+                  className="flex flex-row w-full justify-between items-center gap-2"
                 >
-                  <span>{meal.customText ?? "Recipe"}</span>
-                  <span className="text-[10px] text-emerald-700 sm:text-xs">
-                    {new Date(meal.startDate).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                    })}{" "}
-                    -{" "}
-                    {new Date(meal.endDate).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                    })}
-                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {}}
+                    className={`h-full w-full flex items-center justify-between rounded bg-emerald-50 border border-emerald-200 px-3 py-1.5 text-left text-xs sm:text-sm font-medium text-emerald-900
+                  ${meal.recipeId && "shadow-sm enabled:cursor-pointer enabled:hover:bg-emerald-100 enabled:focus-visible:outline enabled:focus-visible:outline-2 enabled:focus-visible:outline-offset-2 enabled:focus-visible:outline-emerald-700"}`}
+                  >
+                    <span>{meal.customText ?? "Recipe"}</span>
+                    <span className="text-[10px] text-emerald-700 sm:text-xs">
+                      {new Date(meal.startDate).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                      })}{" "}
+                      -{" "}
+                      {new Date(meal.endDate).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </span>
+                  </button>
+                  <Trash2Icon
+                    className="text-red-400 bg-red-100 rounded p-1.5 border border-red-200 shadow-sm"
+                    size={32}
+                    onClick={() => {
+                      deleteMeal(meal.id);
+                    }}
+                  />
                 </div>
               ))
             ) : (

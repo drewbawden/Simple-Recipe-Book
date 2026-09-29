@@ -1,5 +1,6 @@
 "use server";
 
+import { broadcast } from "@/lib/event";
 import { PrismaClient, RecipeType } from "../app/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import "dotenv/config";
@@ -30,7 +31,7 @@ export const addMeal = async ({
     throw new Error("A meal name or recipe is required");
   }
 
-  return await prisma.mealPlanItem.create({
+  await prisma.mealPlanItem.create({
     data: {
       startDate,
       endDate,
@@ -39,8 +40,28 @@ export const addMeal = async ({
       ...(recipeId && { recipeId }),
     },
   });
+
+  broadcastUpdate();
 };
 
 export const getMeals = async () => {
   return await prisma.mealPlanItem.findMany();
+};
+
+export const deleteMeal = async (mealId: number) => {
+  try {
+    await prisma.mealPlanItem.delete({
+      where: {
+        id: mealId,
+      },
+    });
+    broadcastUpdate();
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to clear shopping list");
+  }
+};
+
+const broadcastUpdate = () => {
+  broadcast("meals-updated", {});
 };
