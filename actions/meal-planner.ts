@@ -17,8 +17,8 @@ interface addMealProps {
   startDate: Date;
   endDate: Date;
   customText?: string;
-  recipeId?: number | null;
-  mealType: RecipeType;
+  recipeId?: number;
+  mealType?: RecipeType;
 }
 export const addMeal = async ({
   startDate,
@@ -45,7 +45,15 @@ export const addMeal = async ({
 };
 
 export const getMeals = async () => {
-  return await prisma.mealPlanItem.findMany();
+  return await prisma.mealPlanItem.findMany({
+    include: {
+      recipe: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  });
 };
 
 export const deleteMeal = async (mealId: number) => {

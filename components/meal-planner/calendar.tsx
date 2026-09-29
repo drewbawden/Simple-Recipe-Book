@@ -11,15 +11,29 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { deleteMeal, getMeals } from "@/actions/meal-planner";
 import { Modal } from "../templates/modal";
 import { useModalQuery } from "@/hooks/useModalQuery";
-import { AddMealPopup } from "./popups/add-meal";
+import { AddMealPopup } from "./popups/add-meal/add-meal";
+import { Recipe } from "@/types/recipe";
+import { getRecipes } from "@/actions/recipes";
+import { normaliseRecipes } from "@/lib/recipes";
+import { RecipeOverview } from "@/components/recipes/popups/overview";
+import { RECIPE_COLORS } from "@/lib/meal-planner";
 
 const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const MAX_VISIBLE_MEALS_PER_ROW = 2;
+
+const getRecipeColor = (recipeId: number) => {
+  let hash = recipeId;
+  hash = Math.imul(hash ^ (hash >>> 16), 0x45d9f3b);
+  hash = Math.imul(hash ^ (hash >>> 16), 0x45d9f3b);
+  hash ^= hash >>> 16;
+  return RECIPE_COLORS[(hash >>> 0) % RECIPE_COLORS.length];
+};
 
 export interface MealEvent {
   id: number;
   customText: string | null;
   recipeId: number | null;
+  recipe: Pick<Recipe, "name"> | null;
   startDate: Date;
   endDate: Date;
 }
@@ -77,6 +91,7 @@ const getDatesBetween = (startDate: Date, endDate: Date) => {
 export const MealPlannerCalendar = () => {
   const today = new Date();
   const [meals, setMeals] = useState<MealEvent[]>([]);
+  const [recipeOverview, setRecipeOverview] = useState<Recipe | null>(null);
   const { modal, openModal, closeModal, getModalParam } = useModalQuery();
   const queryStartDate =
     modal === "addMeal" ? parseDateParam(getModalParam("startDate")) : null;
@@ -124,6 +139,19 @@ export const MealPlannerCalendar = () => {
 
     return () => eventSource.close();
   }, [loadMeals]);
+
+  const handleMealClick = async (meal: MealEvent) => {
+    if (meal.recipeId === null) return;
+
+    try {
+      const recipes = normaliseRecipes(await getRecipes());
+      setRecipeOverview(
+        recipes.find((recipe) => recipe.id === meal.recipeId) ?? null,
+      );
+    } catch (error) {
+      console.error("Failed to load recipe overview:", error);
+    }
+  };
 
   const changeMonth = (amount: number) => {
     setDisplayedMonth(
@@ -358,7 +386,7 @@ export const MealPlannerCalendar = () => {
                         {dayMeals.slice(0, 3).map((m) => (
                           <span
                             key={m.id}
-                            className="h-1.5 w-1.5 rounded-full bg-emerald-500"
+                            className={`h-1.5 w-1.5 rounded-full ${m.recipeId === null ? "bg-gray-500" : getRecipeColor(m.recipeId).dot}`}
                           />
                         ))}
                         {dayMeals.length > 3 && (
@@ -401,22 +429,27 @@ export const MealPlannerCalendar = () => {
 
                   if (new Date(meal.startDate) < weekStart) startCol = 1;
                   if (new Date(meal.endDate) > weekEnd) endCol = 8;
+                  const recipeColor =
+                    meal.recipeId === null
+                      ? null
+                      : getRecipeColor(meal.recipeId);
 
                   return (
                     <button
                       key={meal.id}
                       type="button"
-                      onClick={() => {}}
-                      className={`pointer-events-auto h-6 rounded bg-emerald-500 px-2 text-left text-xs font-semibold text-white flex items-center overflow-hidden z-10 
-                      ${meal.recipeId && "shadow-sm enabled:cursor-pointer enabled:hover:bg-emerald-600 enabled:focus-visible:outline enabled:focus-visible:outline-2 enabled:focus-visible:outline-offset-2 enabled:focus-visible:outline-emerald-700"} `}
+                      onClick={() => void handleMealClick(meal)}
+                      disabled={meal.recipeId === null}
+                      className={`pointer-events-auto h-6 rounded px-2 text-left text-xs font-semibold flex items-center overflow-hidden z-10
+                      ${recipeColor?.bar ?? "bg-gray-300 text-gray-900"} ${recipeColor ? "text-white" : ""}`}
                       style={{
                         gridColumn: `${startCol} / ${endCol}`,
                         gridRow: mealIdx + 1,
                       }}
-                      title={meal.customText ?? "Recipe"}
+                      title={meal.customText ?? meal.recipe?.name ?? "Recipe"}
                     >
                       <span className="truncate">
-                        {meal.customText ?? "Recipe"}
+                        {meal.customText ?? meal.recipe?.name ?? "Recipe"}
                       </span>
                     </button>
                   );
@@ -443,27 +476,44 @@ export const MealPlannerCalendar = () => {
                   key={meal.id}
                   className="flex flex-row w-full justify-between items-center gap-2"
                 >
-                  <button
-                    type="button"
-                    onClick={() => {}}
-                    className={`h-full w-full flex items-center justify-between rounded bg-emerald-50 border border-emerald-200 px-3 py-1.5 text-left text-xs sm:text-sm font-medium text-emerald-900
-                  ${meal.recipeId && "shadow-sm enabled:cursor-pointer enabled:hover:bg-emerald-100 enabled:focus-visible:outline enabled:focus-visible:outline-2 enabled:focus-visible:outline-offset-2 enabled:focus-visible:outline-emerald-700"}`}
-                  >
-                    <span>{meal.customText ?? "Recipe"}</span>
-                    <span className="text-[10px] text-emerald-700 sm:text-xs">
-                      {new Date(meal.startDate).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                      })}{" "}
-                      -{" "}
-                      {new Date(meal.endDate).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                      })}
-                    </span>
-                  </button>
+                  {(() => {
+                    const recipeColor =
+                      meal.recipeId === null
+                        ? null
+                        : getRecipeColor(meal.recipeId);
+
+                    return (
+                      <button
+                        type="button"
+                        onClick={() => void handleMealClick(meal)}
+                        disabled={meal.recipeId === null}
+                        className={`h-full w-full flex items-center justify-between rounded border px-3 py-1.5 text-left text-xs sm:text-sm font-medium
+                  ${recipeColor?.row ?? "bg-gray-50 border-gray-200 text-gray-900"}`}
+                      >
+                        <span>
+                          {meal.customText ?? meal.recipe?.name ?? "Recipe"}
+                        </span>
+                        <span
+                          className={`text-[10px] sm:text-xs ${recipeColor?.date ?? "text-gray-700"}`}
+                        >
+                          {new Date(meal.startDate).toLocaleDateString(
+                            "en-US",
+                            {
+                              month: "short",
+                              day: "numeric",
+                            },
+                          )}{" "}
+                          -{" "}
+                          {new Date(meal.endDate).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                          })}
+                        </span>
+                      </button>
+                    );
+                  })()}
                   <Trash2Icon
-                    className="text-red-400 bg-red-100 rounded p-1.5 border border-red-200 shadow-sm"
+                    className="text-red-400 bg-red-100 rounded p-1.5 border border-red-200 shadow-sm active:bg-red-500"
                     size={32}
                     onClick={() => {
                       deleteMeal(meal.id);
@@ -498,6 +548,7 @@ export const MealPlannerCalendar = () => {
           return true;
         }}
         confirmClose
+        size="xxl"
       >
         <AddMealPopup
           formRef={mealAddForm}
@@ -508,6 +559,14 @@ export const MealPlannerCalendar = () => {
           setEndDate={setMealEndDate}
           updateHighlights={selectDatesBetween}
         />
+      </Modal>
+      <Modal
+        isOpen={recipeOverview !== null}
+        onClose={() => setRecipeOverview(null)}
+        modalTitle="Recipe Overview"
+        size="pfull"
+      >
+        {recipeOverview && <RecipeOverview recipe={recipeOverview} />}
       </Modal>
     </div>
   );

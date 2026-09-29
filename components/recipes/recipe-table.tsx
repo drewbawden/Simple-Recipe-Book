@@ -32,18 +32,7 @@ import { useModalQuery } from "@/hooks/useModalQuery";
 import { RecipeOverview } from "./popups/overview";
 import Image from "next/image";
 import { rogueScript } from "@/app/ui/fonts";
-
-const normaliseRecipes = (recipesData: any[]): Recipe[] =>
-  recipesData.map((recipe) => ({
-    ...recipe,
-    ingredients: (recipe.ingredients ?? []).map((ingredient: any) => ({
-      ...ingredient,
-      item: {
-        ...ingredient.item,
-        type: ingredient.item?.type ?? "ingredient",
-      },
-    })),
-  })) as Recipe[];
+import { normaliseRecipes } from "@/lib/recipes";
 
 export const RecipeTable = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
