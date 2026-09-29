@@ -304,6 +304,7 @@ export const MealPlannerCalendar = () => {
           });
 
           const visibleMeals = weekMeals.slice(0, MAX_VISIBLE_MEALS_PER_ROW);
+          const visibleMealIds = new Set(visibleMeals.map((meal) => meal.id));
 
           return (
             <div
@@ -333,76 +334,89 @@ export const MealPlannerCalendar = () => {
                     })
                   : [];
 
-                const hiddenCount = Math.max(
-                  0,
-                  dayMeals.length - MAX_VISIBLE_MEALS_PER_ROW,
-                );
+                const hiddenCount = dayMeals.filter(
+                  (meal) => !visibleMealIds.has(meal.id),
+                ).length;
 
                 return (
-                  <button
+                  <div
                     key={date?.toISOString() ?? `empty-${weekIdx}-${dayIdx}`}
-                    type="button"
-                    disabled={date === null}
-                    onClick={() => {
-                      date && handleDateClick(date, isBeforeMealStartDate);
-                    }}
-                    className={`flex flex-col justify-between p-1 sm:p-2 text-left align-top transition h-full
-                      ${date === null ? "cursor-default opacity-45 bg-gray-50" : ""}
-                      ${
-                        isBeforeMealStartDate
-                          ? "bg-gray-300"
-                          : isSelected
-                            ? "bg-blue-50 ring-2 ring-inset ring-blue-500"
-                            : "bg-white"
-                      }
-                    `}
+                    className="relative h-full min-w-0"
                   >
-                    <div className="flex w-full items-center justify-between">
-                      {date ? (
-                        <span
-                          className={`flex h-5 w-5 sm:h-7 sm:w-7 items-center justify-center rounded-full text-xs sm:text-sm font-semibold ${
-                            isToday ? "bg-blue-500 text-white" : "text-gray-900"
-                          }`}
-                        >
-                          {date.getDate()}
-                        </span>
-                      ) : (
-                        <span />
-                      )}
+                    <button
+                      type="button"
+                      disabled={date === null}
+                      onClick={() => {
+                        date && handleDateClick(date, isBeforeMealStartDate);
+                      }}
+                      className={`flex h-full w-full flex-col justify-between p-1 text-left align-top transition sm:p-2
+                        ${date === null ? "cursor-default opacity-45 bg-gray-50" : ""}
+                        ${
+                          isBeforeMealStartDate
+                            ? "bg-gray-300"
+                            : isSelected
+                              ? "bg-blue-50 ring-2 ring-inset ring-blue-500"
+                              : "bg-white"
+                        }
+                      `}
+                    >
+                      <div className="flex w-full items-center justify-between">
+                        {date ? (
+                          <span
+                            className={`flex h-5 w-5 items-center justify-center rounded-full text-xs font-semibold sm:h-7 sm:w-7 sm:text-sm ${
+                              isToday
+                                ? "bg-blue-500 text-white"
+                                : "text-gray-900"
+                            }`}
+                          >
+                            {date.getDate()}
+                          </span>
+                        ) : (
+                          <span />
+                        )}
 
-                      {isSelected && (
-                        <div>
-                          {selectingDates ? (
-                            <ArrowRightIcon className="size-3 sm:size-4 text-gray-500" />
-                          ) : (
-                            <PlusIcon className="size-3 sm:size-4 text-gray-500" />
+                        {isSelected && (
+                          <div>
+                            {selectingDates ? (
+                              <ArrowRightIcon className="size-3 text-gray-500 sm:size-4" />
+                            ) : (
+                              <PlusIcon className="size-3 text-gray-500 sm:size-4" />
+                            )}
+                          </div>
+                        )}
+                      </div>
+
+                      {date && dayMeals.length > 0 && (
+                        <div className="mt-1 flex items-center justify-center gap-0.5 sm:hidden">
+                          {dayMeals.slice(0, 3).map((m) => (
+                            <span
+                              key={m.id}
+                              className={`h-1.5 w-1.5 rounded-full ${m.recipeId === null ? "bg-gray-500" : getRecipeColor(m.recipeId).dot}`}
+                            />
+                          ))}
+                          {dayMeals.length > 3 && (
+                            <span className="text-[9px] font-bold text-gray-400">
+                              +
+                            </span>
                           )}
                         </div>
                       )}
-                    </div>
+                    </button>
 
-                    {date && dayMeals.length > 0 && (
-                      <div className="flex items-center justify-center gap-0.5 mt-1 sm:hidden">
-                        {dayMeals.slice(0, 3).map((m) => (
-                          <span
-                            key={m.id}
-                            className={`h-1.5 w-1.5 rounded-full ${m.recipeId === null ? "bg-gray-500" : getRecipeColor(m.recipeId).dot}`}
-                          />
-                        ))}
-                        {dayMeals.length > 3 && (
-                          <span className="text-[9px] font-bold text-gray-400">
-                            +
-                          </span>
-                        )}
-                      </div>
-                    )}
-
-                    {hiddenCount > 0 && (
-                      <div className="hidden sm:block w-full text-right text-xs font-semibold text-gray-500">
+                    {date && hiddenCount > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectingDates(false);
+                          setSelectedDates([date]);
+                        }}
+                        aria-label={`Show ${hiddenCount} more meals on ${date.toLocaleDateString("en-US", { dateStyle: "long" })}`}
+                        className="absolute bottom-1 right-1 z-20 hidden rounded bg-white/90 px-1 text-right text-xs font-semibold text-gray-600 shadow-sm hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 sm:block"
+                      >
                         +{hiddenCount} more
-                      </div>
+                      </button>
                     )}
-                  </button>
+                  </div>
                 );
               })}
 
