@@ -4,9 +4,16 @@ import {
   ArrowRightIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  EllipsisVerticalIcon,
   PlusIcon,
   Trash2Icon,
 } from "lucide-react";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/templates/context-menu";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { deleteMeal, getMeals } from "@/actions/meal-planner";
 import { Modal } from "../templates/modal";
@@ -115,6 +122,13 @@ export const MealPlannerCalendar = () => {
   const [mealEndDate, setMealEndDate] = useState<Date | null>(queryEndDate);
   const addingMeal = modal === "addMeal";
 
+  const [calendarUrl, setCalendarUrl] = useState("");
+
+  useEffect(() => {
+    const url = new URL("/api/calendar/feed.ics", window.location.origin);
+    setCalendarUrl(url.href.replace(/^https?:/, "webcal:"));
+  }, []);
+
   const loadMeals = useCallback(async () => {
     const savedMeals = await getMeals();
     setMeals(
@@ -125,6 +139,37 @@ export const MealPlannerCalendar = () => {
       })),
     );
   }, []);
+
+  const recipeOverviewId =
+    modal === "recipeOverview" ? Number(getModalParam("recipeId")) : null;
+
+  useEffect(() => {
+    if (!recipeOverviewId || !Number.isInteger(recipeOverviewId)) {
+      setRecipeOverview(null);
+      return;
+    }
+
+    let cancelled = false;
+
+    const loadRecipeOverview = async () => {
+      try {
+        const recipes = normaliseRecipes(await getRecipes());
+        if (!cancelled) {
+          setRecipeOverview(
+            recipes.find((recipe) => recipe.id === recipeOverviewId) ?? null,
+          );
+        }
+      } catch (error) {
+        console.error("Failed to load recipe overview:", error);
+        if (!cancelled) setRecipeOverview(null);
+      }
+    };
+
+    void loadRecipeOverview();
+    return () => {
+      cancelled = true;
+    };
+  }, [modal, recipeOverviewId]);
 
   useEffect(() => {
     void loadMeals();
@@ -142,15 +187,7 @@ export const MealPlannerCalendar = () => {
 
   const handleMealClick = async (meal: MealEvent) => {
     if (meal.recipeId === null) return;
-
-    try {
-      const recipes = normaliseRecipes(await getRecipes());
-      setRecipeOverview(
-        recipes.find((recipe) => recipe.id === meal.recipeId) ?? null,
-      );
-    } catch (error) {
-      console.error("Failed to load recipe overview:", error);
-    }
+    openModal("recipeOverview", { recipeId: meal.recipeId });
   };
 
   const changeMonth = (amount: number) => {
@@ -274,6 +311,20 @@ export const MealPlannerCalendar = () => {
           >
             <ChevronRightIcon aria-hidden="true" className="size-4 sm:size-5" />
           </button>
+
+          <ContextMenu>
+            <ContextMenuTrigger className="text-left bg-gray-100 rounded p-1 block overflow-hidden border border-gray-200 shadow-sm">
+              <EllipsisVerticalIcon />
+            </ContextMenuTrigger>
+
+            <ContextMenuContent>
+              {calendarUrl && (
+                <a href={calendarUrl} className="p-3 w-full">
+                  Subscribe to ICS feed
+                </a>
+              )}
+            </ContextMenuContent>
+          </ContextMenu>
         </div>
       </div>
 
@@ -575,8 +626,8 @@ export const MealPlannerCalendar = () => {
         />
       </Modal>
       <Modal
-        isOpen={recipeOverview !== null}
-        onClose={() => setRecipeOverview(null)}
+        isOpen={modal === "recipeOverview" && recipeOverview !== null}
+        onClose={closeModal}
         modalTitle="Recipe Overview"
         size="pfull"
       >
