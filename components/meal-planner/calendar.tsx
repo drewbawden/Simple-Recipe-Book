@@ -8,14 +8,19 @@ import {
   PlusIcon,
   Trash2Icon,
 } from "lucide-react";
+import { DragDropProvider, type DragEndEvent } from "@dnd-kit/react";
+import {
+  DragDropManager,
+  PointerActivationConstraints,
+  PointerSensor,
+} from "@dnd-kit/dom";
 import {
   ContextMenu,
   ContextMenuContent,
-  ContextMenuItem,
   ContextMenuTrigger,
 } from "@/components/templates/context-menu";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { deleteMeal, getMeals } from "@/actions/meal-planner";
+import { deleteMeal, getMeals, moveMeal } from "@/actions/meal-planner";
 import { Modal } from "../templates/modal";
 import { useModalQuery } from "@/hooks/useModalQuery";
 import { AddMealPopup } from "./popups/add-meal/add-meal";
@@ -23,18 +28,14 @@ import { Recipe } from "@/types/recipe";
 import { getRecipes } from "@/actions/recipes";
 import { normaliseRecipes } from "@/lib/recipes";
 import { RecipeOverview } from "@/components/recipes/popups/overview";
-import { RECIPE_COLORS } from "@/lib/meal-planner";
+import {
+  CalendarDayDropZone,
+  DraggableMealBar,
+  DraggableMealSummary,
+} from "./calendar-children";
 
 const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const MAX_VISIBLE_MEALS_PER_ROW = 2;
-
-const getRecipeColor = (recipeId: number) => {
-  let hash = recipeId;
-  hash = Math.imul(hash ^ (hash >>> 16), 0x45d9f3b);
-  hash = Math.imul(hash ^ (hash >>> 16), 0x45d9f3b);
-  hash ^= hash >>> 16;
-  return RECIPE_COLORS[(hash >>> 0) % RECIPE_COLORS.length];
-};
 
 export interface MealEvent {
   id: number;
@@ -72,7 +73,7 @@ const parseDateParam = (value: string | null) => {
   return Number.isNaN(date.getTime()) ? null : date;
 };
 
-const formatDateParam = (date: Date) => {
+export const formatDateParam = (date: Date) => {
   if (!date) return "";
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -94,6 +95,16 @@ const getDatesBetween = (startDate: Date, endDate: Date) => {
 
   return dates;
 };
+
+const shiftCalendarDate = (date: string, amount: number) => {
+  const [year, month, day] = date.split("-").map(Number);
+  return new Date(Date.UTC(year, month - 1, day + amount))
+    .toISOString()
+    .slice(0, 10);
+};
+
+const getCalendarDayNumber = (date: string) =>
+  Date.parse(`${date}T00:00:00Z`) / 86_400_000;
 
 export const MealPlannerCalendar = () => {
   const today = new Date();
@@ -190,6 +201,36 @@ export const MealPlannerCalendar = () => {
     openModal("recipeOverview", { recipeId: meal.recipeId });
   };
 
+  const handleMealDragEnd = async (event: DragEndEvent) => {
+    if (event.canceled) return;
+
+    const { source, target } = event.operation;
+    const mealId = Number(source?.data.mealId);
+    const targetDate = target?.data.date;
+    if (!Number.isInteger(mealId) || typeof targetDate !== "string") return;
+
+    const meal = meals.find((item) => item.id === mealId);
+    if (!meal) return;
+
+    const startDate = formatDateParam(meal.startDate);
+    const endDate = formatDateParam(meal.endDate);
+    const durationDays =
+      getCalendarDayNumber(endDate) - getCalendarDayNumber(startDate);
+    if (targetDate === startDate) return;
+
+    try {
+      await moveMeal({
+        mealId,
+        startDate: targetDate,
+        endDate: shiftCalendarDate(targetDate, durationDays),
+      });
+      await loadMeals();
+    } catch (error) {
+      console.error("Failed to move meal:", error);
+      await loadMeals();
+    }
+  };
+
   const changeMonth = (amount: number) => {
     setDisplayedMonth(
       (currentMonth) =>
@@ -220,6 +261,23 @@ export const MealPlannerCalendar = () => {
       return d >= s && d <= e;
     });
   }, [meals, selectedDate]);
+
+  const dragDropManager = useMemo(
+    () =>
+      new DragDropManager({
+        sensors: [
+          PointerSensor.configure({
+            activationConstraints: [
+              new PointerActivationConstraints.Delay({
+                value: 1,
+                tolerance: 10,
+              }),
+            ],
+          }),
+        ],
+      }),
+    [],
+  );
 
   const selectDatesBetween = (startDate: Date, endDate: Date) => {
     setSelectedDates(getDatesBetween(startDate, endDate));
@@ -277,130 +335,143 @@ export const MealPlannerCalendar = () => {
   }, [rawDays, displayedMonth]);
 
   return (
-    <div className="mx-auto w-full max-w-4xl overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-gray-200 px-4 py-3 sm:px-6">
-        <h1 className="text-xl font-bold text-gray-900 sm:text-3xl">
-          {monthLabel}
-        </h1>
+    <DragDropProvider
+      manager={dragDropManager}
+      onDragEnd={(event) => void handleMealDragEnd(event)}
+    >
+      <div className="mx-auto w-full max-w-4xl overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-gray-200 px-4 py-3 sm:px-6">
+          <h1 className="text-xl font-bold text-gray-900 sm:text-3xl">
+            {monthLabel}
+          </h1>
 
-        <div className="flex items-center gap-1">
-          <button
-            type="button"
-            onClick={() =>
-              setDisplayedMonth(
-                new Date(today.getFullYear(), today.getMonth(), 1),
-              )
-            }
-            className="mr-1 rounded border border-blue-600 bg-blue-500 px-2.5 py-1.5 text-xs font-bold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:px-3 sm:py-2 sm:text-sm"
-          >
-            Today
-          </button>
-          <button
-            type="button"
-            onClick={() => changeMonth(-1)}
-            aria-label="Previous month"
-            className="rounded p-1.5 text-gray-700 transition hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:p-2"
-          >
-            <ChevronLeftIcon aria-hidden="true" className="size-4 sm:size-5" />
-          </button>
-          <button
-            type="button"
-            onClick={() => changeMonth(1)}
-            aria-label="Next month"
-            className="rounded p-1.5 text-gray-700 transition hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:p-2"
-          >
-            <ChevronRightIcon aria-hidden="true" className="size-4 sm:size-5" />
-          </button>
-
-          <ContextMenu>
-            <ContextMenuTrigger className="text-left bg-gray-100 rounded p-1 block overflow-hidden border border-gray-200 shadow-sm">
-              <EllipsisVerticalIcon />
-            </ContextMenuTrigger>
-
-            <ContextMenuContent>
-              {calendarUrl && (
-                <a href={calendarUrl} className="p-3 w-full">
-                  Subscribe to ICS feed
-                </a>
-              )}
-            </ContextMenuContent>
-          </ContextMenu>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-7 border-b border-gray-200 bg-gray-100 px-1 py-2 text-center text-[10px] font-bold uppercase tracking-wider text-gray-600 sm:px-4 sm:text-xs">
-        {WEEKDAYS.map((weekday) => (
-          <div key={weekday}>{weekday}</div>
-        ))}
-      </div>
-
-      <div className="flex flex-col gap-px bg-gray-200 p-px">
-        {weeks.map((week, weekIdx) => {
-          const validDays = week.filter((d): d is Date => d !== null);
-          if (validDays.length === 0) return null;
-
-          const weekStart = new Date(validDays[0]);
-          weekStart.setHours(0, 0, 0, 0);
-
-          const weekEnd = new Date(validDays[validDays.length - 1]);
-          weekEnd.setHours(23, 59, 59, 999);
-
-          const weekMeals = meals.filter((m) => {
-            const mStart = new Date(m.startDate);
-            mStart.setHours(0, 0, 0, 0);
-            const mEnd = new Date(m.endDate);
-            mEnd.setHours(23, 59, 59, 999);
-
-            return mStart <= weekEnd && mEnd >= weekStart;
-          });
-
-          const visibleMeals = weekMeals.slice(0, MAX_VISIBLE_MEALS_PER_ROW);
-          const visibleMealIds = new Set(visibleMeals.map((meal) => meal.id));
-
-          return (
-            <div
-              key={weekIdx}
-              className="relative grid grid-cols-7 gap-px min-h-[60px] sm:min-h-[120px]"
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() =>
+                setDisplayedMonth(
+                  new Date(today.getFullYear(), today.getMonth(), 1),
+                )
+              }
+              className="mr-1 rounded border border-blue-600 bg-blue-500 px-2.5 py-1.5 text-xs font-bold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:px-3 sm:py-2 sm:text-sm"
             >
-              {week.map((date, dayIdx) => {
-                const isSelected =
-                  date !== null &&
-                  selectedDates?.some((selected) => isSameDay(date, selected));
-                const isToday = date !== null && isSameDay(date, today);
-                const isBeforeMealStartDate =
-                  selectingDates &&
-                  date !== null &&
-                  mealStartDate !== null &&
-                  date < mealStartDate;
+              Today
+            </button>
+            <button
+              type="button"
+              onClick={() => changeMonth(-1)}
+              aria-label="Previous month"
+              className="rounded p-1.5 text-gray-700 transition hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:p-2"
+            >
+              <ChevronLeftIcon
+                aria-hidden="true"
+                className="size-4 sm:size-5"
+              />
+            </button>
+            <button
+              type="button"
+              onClick={() => changeMonth(1)}
+              aria-label="Next month"
+              className="rounded p-1.5 text-gray-700 transition hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:p-2"
+            >
+              <ChevronRightIcon
+                aria-hidden="true"
+                className="size-4 sm:size-5"
+              />
+            </button>
 
-                const dayMeals = date
-                  ? meals.filter((m) => {
-                      const s = new Date(m.startDate);
-                      s.setHours(0, 0, 0, 0);
-                      const e = new Date(m.endDate);
-                      e.setHours(23, 59, 59, 999);
-                      const d = new Date(date);
-                      d.setHours(12, 0, 0, 0);
-                      return d >= s && d <= e;
-                    })
-                  : [];
+            <ContextMenu>
+              <ContextMenuTrigger className="p-1">
+                <EllipsisVerticalIcon />
+              </ContextMenuTrigger>
 
-                const hiddenCount = dayMeals.filter(
-                  (meal) => !visibleMealIds.has(meal.id),
-                ).length;
+              <ContextMenuContent>
+                {calendarUrl && (
+                  <a href={calendarUrl} className="p-3 w-full">
+                    Subscribe to ICS feed
+                  </a>
+                )}
+              </ContextMenuContent>
+            </ContextMenu>
+          </div>
+        </div>
 
-                return (
-                  <div
-                    key={date?.toISOString() ?? `empty-${weekIdx}-${dayIdx}`}
-                    className="relative h-full min-w-0"
-                  >
-                    <button
-                      type="button"
-                      disabled={date === null}
-                      onClick={() => {
-                        date && handleDateClick(date, isBeforeMealStartDate);
-                      }}
-                      className={`flex h-full w-full flex-col justify-between p-1 text-left align-top transition sm:p-2
+        <div className="grid grid-cols-7 border-b border-gray-200 bg-gray-100 px-1 py-2 text-center text-[10px] font-bold uppercase tracking-wider text-gray-600 sm:px-4 sm:text-xs">
+          {WEEKDAYS.map((weekday) => (
+            <div key={weekday}>{weekday}</div>
+          ))}
+        </div>
+
+        <div className="flex flex-col gap-px bg-gray-200 p-px">
+          {weeks.map((week, weekIdx) => {
+            const validDays = week.filter((d): d is Date => d !== null);
+            if (validDays.length === 0) return null;
+
+            const weekStart = new Date(validDays[0]);
+            weekStart.setHours(0, 0, 0, 0);
+
+            const weekEnd = new Date(validDays[validDays.length - 1]);
+            weekEnd.setHours(23, 59, 59, 999);
+
+            const weekMeals = meals.filter((m) => {
+              const mStart = new Date(m.startDate);
+              mStart.setHours(0, 0, 0, 0);
+              const mEnd = new Date(m.endDate);
+              mEnd.setHours(23, 59, 59, 999);
+
+              return mStart <= weekEnd && mEnd >= weekStart;
+            });
+
+            const visibleMeals = weekMeals.slice(0, MAX_VISIBLE_MEALS_PER_ROW);
+            const visibleMealIds = new Set(visibleMeals.map((meal) => meal.id));
+
+            return (
+              <div
+                key={weekIdx}
+                className="relative grid grid-cols-7 gap-px min-h-[76px] sm:min-h-[120px]"
+              >
+                {week.map((date, dayIdx) => {
+                  const isSelected =
+                    date !== null &&
+                    selectedDates?.some((selected) =>
+                      isSameDay(date, selected),
+                    );
+                  const isToday = date !== null && isSameDay(date, today);
+                  const isBeforeMealStartDate =
+                    selectingDates &&
+                    date !== null &&
+                    mealStartDate !== null &&
+                    date < mealStartDate;
+
+                  const dayMeals = date
+                    ? meals.filter((m) => {
+                        const s = new Date(m.startDate);
+                        s.setHours(0, 0, 0, 0);
+                        const e = new Date(m.endDate);
+                        e.setHours(23, 59, 59, 999);
+                        const d = new Date(date);
+                        d.setHours(12, 0, 0, 0);
+                        return d >= s && d <= e;
+                      })
+                    : [];
+
+                  const hiddenCount = dayMeals.filter(
+                    (meal) => !visibleMealIds.has(meal.id),
+                  ).length;
+
+                  return (
+                    <CalendarDayDropZone
+                      key={date?.toISOString() ?? `empty-${weekIdx}-${dayIdx}`}
+                      id={`${weekIdx}-${dayIdx}-${date ? formatDateParam(date) : "empty"}`}
+                      date={date}
+                    >
+                      <button
+                        type="button"
+                        disabled={date === null}
+                        onClick={() => {
+                          date && handleDateClick(date, isBeforeMealStartDate);
+                        }}
+                        className={`flex h-full w-full flex-col justify-between p-1 text-left align-top transition sm:p-2
                         ${date === null ? "cursor-default opacity-45 bg-gray-50" : ""}
                         ${
                           isBeforeMealStartDate
@@ -410,229 +481,164 @@ export const MealPlannerCalendar = () => {
                               : "bg-white"
                         }
                       `}
-                    >
-                      <div className="flex w-full items-center justify-between">
-                        {date ? (
-                          <span
-                            className={`flex h-5 w-5 items-center justify-center rounded-full text-xs font-semibold sm:h-7 sm:w-7 sm:text-sm ${
-                              isToday
-                                ? "bg-blue-500 text-white"
-                                : "text-gray-900"
-                            }`}
-                          >
-                            {date.getDate()}
-                          </span>
-                        ) : (
-                          <span />
-                        )}
-
-                        {isSelected && (
-                          <div>
-                            {selectingDates ? (
-                              <ArrowRightIcon className="size-3 text-gray-500 sm:size-4" />
-                            ) : (
-                              <PlusIcon className="size-3 text-gray-500 sm:size-4" />
-                            )}
-                          </div>
-                        )}
-                      </div>
-
-                      {date && dayMeals.length > 0 && (
-                        <div className="mt-1 flex items-center justify-center gap-0.5 sm:hidden">
-                          {dayMeals.slice(0, 3).map((m) => (
+                      >
+                        <div className="flex w-full items-center justify-between">
+                          {date ? (
                             <span
-                              key={m.id}
-                              className={`h-1.5 w-1.5 rounded-full ${m.recipeId === null ? "bg-gray-500" : getRecipeColor(m.recipeId).dot}`}
-                            />
-                          ))}
-                          {dayMeals.length > 3 && (
-                            <span className="text-[9px] font-bold text-gray-400">
-                              +
+                              className={`flex h-5 w-5 items-center justify-center rounded-full text-xs font-semibold sm:h-7 sm:w-7 sm:text-sm ${
+                                isToday
+                                  ? "bg-blue-500 text-white"
+                                  : "text-gray-900"
+                              }`}
+                            >
+                              {date.getDate()}
                             </span>
+                          ) : (
+                            <span />
+                          )}
+
+                          {isSelected && (
+                            <div>
+                              {selectingDates ? (
+                                <ArrowRightIcon className="size-3 text-gray-500 sm:size-4" />
+                              ) : (
+                                <PlusIcon className="size-3 text-gray-500 sm:size-4" />
+                              )}
+                            </div>
                           )}
                         </div>
-                      )}
-                    </button>
-
-                    {date && hiddenCount > 0 && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setSelectingDates(false);
-                          setSelectedDates([date]);
-                        }}
-                        aria-label={`Show ${hiddenCount} more meals on ${date.toLocaleDateString("en-US", { dateStyle: "long" })}`}
-                        className="absolute bottom-1 right-1 z-20 hidden rounded bg-white/90 px-1 text-right text-xs font-semibold text-gray-600 shadow-sm hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 sm:block"
-                      >
-                        +{hiddenCount} more
                       </button>
-                    )}
-                  </div>
-                );
-              })}
 
-              <div
-                className="hidden sm:grid pointer-events-none absolute inset-x-0 top-10 bottom-2 grid-cols-7 gap-x-px px-0.5"
-                style={{
-                  gridTemplateRows: `repeat(${MAX_VISIBLE_MEALS_PER_ROW}, 24px)`,
-                  rowGap: "4px",
-                }}
-              >
-                {visibleMeals.map((meal, mealIdx) => {
-                  let startCol = 1;
-                  let endCol = 8;
-
-                  week.forEach((date, idx) => {
-                    if (!date) return;
-                    if (isSameDay(date, meal.startDate)) {
-                      startCol = idx + 1;
-                    }
-                    if (isSameDay(date, meal.endDate)) {
-                      endCol = idx + 2;
-                    }
-                  });
-
-                  if (new Date(meal.startDate) < weekStart) startCol = 1;
-                  if (new Date(meal.endDate) > weekEnd) endCol = 8;
-                  const recipeColor =
-                    meal.recipeId === null
-                      ? null
-                      : getRecipeColor(meal.recipeId);
-
-                  return (
-                    <button
-                      key={meal.id}
-                      type="button"
-                      onClick={() => void handleMealClick(meal)}
-                      disabled={meal.recipeId === null}
-                      className={`pointer-events-auto h-6 rounded px-2 text-left text-xs font-semibold flex items-center overflow-hidden z-10
-                      ${recipeColor?.bar ?? "bg-gray-300 text-gray-900"} ${recipeColor ? "text-white" : ""}`}
-                      style={{
-                        gridColumn: `${startCol} / ${endCol}`,
-                        gridRow: mealIdx + 1,
-                      }}
-                      title={meal.customText ?? meal.recipe?.name ?? "Recipe"}
-                    >
-                      <span className="truncate">
-                        {meal.customText ?? meal.recipe?.name ?? "Recipe"}
-                      </span>
-                    </button>
+                      {date && hiddenCount > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectingDates(false);
+                            setSelectedDates([date]);
+                          }}
+                          aria-label={`Show ${hiddenCount} more meals on ${date.toLocaleDateString("en-US", { dateStyle: "long" })}`}
+                          className="absolute right-0.5 top-6 z-20 max-w-[calc(100%-4px)] truncate rounded bg-white/90 px-0.5 text-right text-[8px] leading-3 font-semibold text-gray-600 shadow-sm hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 sm:top-auto sm:right-1 sm:bottom-1 sm:max-w-none sm:px-1 sm:text-xs sm:leading-normal"
+                        >
+                          +{hiddenCount} more
+                        </button>
+                      )}
+                    </CalendarDayDropZone>
                   );
                 })}
-              </div>
-            </div>
-          );
-        })}
-      </div>
 
-      <div className="border-t border-gray-200 px-4 py-3 sm:px-6">
-        <p className="text-sm font-semibold text-gray-700">
-          Selected:{" "}
-          {selectedDate
-            ? selectedDate.toLocaleDateString("en-US", { dateStyle: "long" })
-            : "None"}
-        </p>
+                <div className="pointer-events-none absolute inset-x-0 top-9 bottom-1 grid grid-cols-7 grid-rows-[repeat(2,16px)] gap-x-px gap-y-0.5 px-0.5 sm:top-10 sm:bottom-2 sm:grid-rows-[repeat(2,24px)] sm:gap-y-1">
+                  {visibleMeals.map((meal, mealIdx) => {
+                    let startCol = 1;
+                    let endCol = 8;
 
-        {selectedDate && (
-          <div className="mt-2 flex flex-col gap-1.5">
-            {selectedDayMeals.length > 0 ? (
-              selectedDayMeals.map((meal) => (
-                <div
-                  key={meal.id}
-                  className="flex flex-row w-full justify-between items-center gap-2"
-                >
-                  {(() => {
-                    const recipeColor =
-                      meal.recipeId === null
-                        ? null
-                        : getRecipeColor(meal.recipeId);
+                    week.forEach((date, idx) => {
+                      if (!date) return;
+                      if (isSameDay(date, meal.startDate)) {
+                        startCol = idx + 1;
+                      }
+                      if (isSameDay(date, meal.endDate)) {
+                        endCol = idx + 2;
+                      }
+                    });
+
+                    if (new Date(meal.startDate) < weekStart) startCol = 1;
+                    if (new Date(meal.endDate) > weekEnd) endCol = 8;
 
                     return (
-                      <button
-                        type="button"
-                        onClick={() => void handleMealClick(meal)}
-                        disabled={meal.recipeId === null}
-                        className={`h-full w-full flex items-center justify-between rounded border px-3 py-1.5 text-left text-xs sm:text-sm font-medium
-                  ${recipeColor?.row ?? "bg-gray-50 border-gray-200 text-gray-900"}`}
-                      >
-                        <span>
-                          {meal.customText ?? meal.recipe?.name ?? "Recipe"}
-                        </span>
-                        <span
-                          className={`text-[10px] sm:text-xs ${recipeColor?.date ?? "text-gray-700"}`}
-                        >
-                          {new Date(meal.startDate).toLocaleDateString(
-                            "en-US",
-                            {
-                              month: "short",
-                              day: "numeric",
-                            },
-                          )}{" "}
-                          -{" "}
-                          {new Date(meal.endDate).toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                          })}
-                        </span>
-                      </button>
+                      <DraggableMealBar
+                        key={meal.id}
+                        meal={meal}
+                        weekIdx={weekIdx}
+                        mealIdx={mealIdx}
+                        startCol={startCol}
+                        endCol={endCol}
+                        onClick={handleMealClick}
+                      />
                     );
-                  })()}
-                  <Trash2Icon
-                    className="text-red-400 bg-red-100 rounded p-1.5 border border-red-200 shadow-sm active:bg-red-500"
-                    size={32}
-                    onClick={() => {
-                      deleteMeal(meal.id);
-                    }}
-                  />
+                  })}
                 </div>
-              ))
-            ) : (
-              <p className="text-xs text-gray-400 italic">
-                No meals scheduled for this day.
-              </p>
-            )}
-          </div>
-        )}
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="border-t border-gray-200 px-4 py-3 sm:px-6">
+          <p className="text-sm font-semibold text-gray-700">
+            Selected:{" "}
+            {selectedDate
+              ? selectedDate.toLocaleDateString("en-US", { dateStyle: "long" })
+              : "None"}
+          </p>
+
+          {selectedDate && (
+            <div className="mt-2 flex flex-col gap-1.5">
+              {selectedDayMeals.length > 0 ? (
+                selectedDayMeals.map((meal) => (
+                  <div
+                    key={meal.id}
+                    className="flex flex-row w-full justify-between items-center gap-2"
+                  >
+                    <DraggableMealSummary
+                      meal={meal}
+                      onClick={handleMealClick}
+                    />
+                    <Trash2Icon
+                      className="text-red-400 bg-red-100 rounded p-1.5 border border-red-200 shadow-sm active:bg-red-500"
+                      size={32}
+                      onClick={() => {
+                        deleteMeal(meal.id);
+                      }}
+                    />
+                  </div>
+                ))
+              ) : (
+                <p className="text-xs text-gray-400 italic">
+                  No meals scheduled for this day.
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+
+        <Modal
+          isOpen={addingMeal}
+          onClose={() => {
+            setSelectedDates([]);
+            closeModal();
+          }}
+          modalTitle="Add Meal"
+          showTick
+          handleTick={() => {
+            const form = mealAddForm.current;
+            if (!form?.reportValidity()) {
+              return false;
+            }
+
+            form.requestSubmit();
+            return true;
+          }}
+          confirmClose
+          size="xxl"
+        >
+          <AddMealPopup
+            formRef={mealAddForm}
+            onMealAdded={loadMeals}
+            startDate={mealStartDate || null}
+            setStartDate={setMealStartDate}
+            endDate={mealEndDate || null}
+            setEndDate={setMealEndDate}
+            updateHighlights={selectDatesBetween}
+          />
+        </Modal>
+        <Modal
+          isOpen={modal === "recipeOverview" && recipeOverview !== null}
+          onClose={closeModal}
+          modalTitle="Recipe Overview"
+          size="pfull"
+        >
+          {recipeOverview && <RecipeOverview recipe={recipeOverview} />}
+        </Modal>
       </div>
-
-      <Modal
-        isOpen={addingMeal}
-        onClose={() => {
-          setSelectedDates([]);
-          closeModal();
-        }}
-        modalTitle="Add Meal"
-        showTick
-        handleTick={() => {
-          const form = mealAddForm.current;
-          if (!form?.reportValidity()) {
-            return false;
-          }
-
-          form.requestSubmit();
-          return true;
-        }}
-        confirmClose
-        size="xxl"
-      >
-        <AddMealPopup
-          formRef={mealAddForm}
-          onMealAdded={loadMeals}
-          startDate={mealStartDate || null}
-          setStartDate={setMealStartDate}
-          endDate={mealEndDate || null}
-          setEndDate={setMealEndDate}
-          updateHighlights={selectDatesBetween}
-        />
-      </Modal>
-      <Modal
-        isOpen={modal === "recipeOverview" && recipeOverview !== null}
-        onClose={closeModal}
-        modalTitle="Recipe Overview"
-        size="pfull"
-      >
-        {recipeOverview && <RecipeOverview recipe={recipeOverview} />}
-      </Modal>
-    </div>
+    </DragDropProvider>
   );
 };
