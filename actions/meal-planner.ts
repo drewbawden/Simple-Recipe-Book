@@ -14,12 +14,30 @@ const prisma = new PrismaClient({
 });
 
 interface addMealProps {
-  startDate: Date;
-  endDate: Date;
+  startDate: string;
+  endDate: string;
   customText?: string;
   recipeId?: number;
   mealType?: RecipeType;
 }
+
+const parseCalendarDate = (value: string) => {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) throw new Error("Invalid calendar date");
+
+  const [, year, month, day] = match.map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day, 12));
+  if (
+    date.getUTCFullYear() !== year ||
+    date.getUTCMonth() !== month - 1 ||
+    date.getUTCDate() !== day
+  ) {
+    throw new Error("Invalid calendar date");
+  }
+
+  return date;
+};
+
 export const addMeal = async ({
   startDate,
   endDate,
@@ -33,8 +51,8 @@ export const addMeal = async ({
 
   await prisma.mealPlanItem.create({
     data: {
-      startDate,
-      endDate,
+      startDate: parseCalendarDate(startDate),
+      endDate: parseCalendarDate(endDate),
       mealType,
       ...(customText?.trim() && { customText: customText.trim() }),
       ...(recipeId && { recipeId }),

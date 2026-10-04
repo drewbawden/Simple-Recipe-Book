@@ -94,8 +94,8 @@ export const AddMealPopup = ({
 
   const handleSubmit = async (formData: FormData) => {
     await addMeal({
-      startDate,
-      endDate,
+      startDate: formatDateInput(startDate),
+      endDate: formatDateInput(endDate),
       customText:
         inputType === "customText"
           ? String(formData.get("customText") ?? "")
