@@ -269,7 +269,7 @@ export const MealPlannerCalendar = () => {
           PointerSensor.configure({
             activationConstraints: [
               new PointerActivationConstraints.Delay({
-                value: 1,
+                value: 100,
                 tolerance: 10,
               }),
             ],
@@ -413,17 +413,54 @@ export const MealPlannerCalendar = () => {
             const weekEnd = new Date(validDays[validDays.length - 1]);
             weekEnd.setHours(23, 59, 59, 999);
 
-            const weekMeals = meals.filter((m) => {
-              const mStart = new Date(m.startDate);
-              mStart.setHours(0, 0, 0, 0);
-              const mEnd = new Date(m.endDate);
-              mEnd.setHours(23, 59, 59, 999);
+            const weekStartDay = getCalendarDayNumber(
+              formatDateParam(weekStart),
+            );
+            const weekEndDay = getCalendarDayNumber(formatDateParam(weekEnd));
+            const weekMeals = meals
+              .filter((meal) => {
+                const startDay = getCalendarDayNumber(
+                  formatDateParam(meal.startDate),
+                );
+                const endDay = getCalendarDayNumber(
+                  formatDateParam(meal.endDate),
+                );
+                return startDay <= weekEndDay && endDay >= weekStartDay;
+              })
+              .sort(
+                (first, second) =>
+                  getCalendarDayNumber(formatDateParam(first.startDate)) -
+                    getCalendarDayNumber(formatDateParam(second.startDate)) ||
+                  first.id - second.id,
+              );
 
-              return mStart <= weekEnd && mEnd >= weekStart;
-            });
+            const laneEndDays = Array<number>(MAX_VISIBLE_MEALS_PER_ROW).fill(
+              Number.NEGATIVE_INFINITY,
+            );
+            const visibleMeals: { meal: MealEvent; lane: number }[] = [];
+            const hiddenMealIds = new Set<number>();
 
-            const visibleMeals = weekMeals.slice(0, MAX_VISIBLE_MEALS_PER_ROW);
-            const visibleMealIds = new Set(visibleMeals.map((meal) => meal.id));
+            for (const meal of weekMeals) {
+              const startDay = Math.max(
+                weekStartDay,
+                getCalendarDayNumber(formatDateParam(meal.startDate)),
+              );
+              const endDay = Math.min(
+                weekEndDay,
+                getCalendarDayNumber(formatDateParam(meal.endDate)),
+              );
+              const lane = laneEndDays.findIndex(
+                (laneEndDay) => laneEndDay < startDay,
+              );
+
+              if (lane === -1) {
+                hiddenMealIds.add(meal.id);
+                continue;
+              }
+
+              laneEndDays[lane] = endDay;
+              visibleMeals.push({ meal, lane });
+            }
 
             return (
               <div
@@ -455,8 +492,8 @@ export const MealPlannerCalendar = () => {
                       })
                     : [];
 
-                  const hiddenCount = dayMeals.filter(
-                    (meal) => !visibleMealIds.has(meal.id),
+                  const hiddenCount = dayMeals.filter((meal) =>
+                    hiddenMealIds.has(meal.id),
                   ).length;
 
                   return (
@@ -527,7 +564,7 @@ export const MealPlannerCalendar = () => {
                 })}
 
                 <div className="pointer-events-none absolute inset-x-0 top-9 bottom-1 grid grid-cols-7 grid-rows-[repeat(2,16px)] gap-x-px gap-y-0.5 px-0.5 sm:top-10 sm:bottom-2 sm:grid-rows-[repeat(2,24px)] sm:gap-y-1">
-                  {visibleMeals.map((meal, mealIdx) => {
+                  {visibleMeals.map(({ meal, lane }) => {
                     let startCol = 1;
                     let endCol = 8;
 
@@ -549,7 +586,7 @@ export const MealPlannerCalendar = () => {
                         key={meal.id}
                         meal={meal}
                         weekIdx={weekIdx}
-                        mealIdx={mealIdx}
+                        mealIdx={lane}
                         startCol={startCol}
                         endCol={endCol}
                         onClick={handleMealClick}
