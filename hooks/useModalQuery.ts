@@ -15,11 +15,18 @@ export type ModalName =
   | "sortItems"
   | "editTags"
   | "recipeOverview"
-  | "addMeal";
+  | "addMeal"
+  | "editMeal";
 
 export type ModalParams = Record<string, string | number | null | undefined>;
 
-const contextParamNames = ["recipeId", "itemId"] as const;
+const contextParamNames = [
+  "recipeId",
+  "itemId",
+  "mealId",
+  "startDate",
+  "endDate",
+] as const;
 
 export function useModalQuery() {
   const router = useRouter();

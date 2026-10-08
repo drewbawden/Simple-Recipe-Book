@@ -5,6 +5,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   EllipsisVerticalIcon,
+  PencilIcon,
   PlusIcon,
   Trash2Icon,
 } from "lucide-react";
@@ -112,9 +113,15 @@ export const MealPlannerCalendar = () => {
   const [recipeOverview, setRecipeOverview] = useState<Recipe | null>(null);
   const { modal, openModal, closeModal, getModalParam } = useModalQuery();
   const queryStartDate =
-    modal === "addMeal" ? parseDateParam(getModalParam("startDate")) : null;
+    modal === "addMeal" || modal === "editMeal"
+      ? parseDateParam(getModalParam("startDate"))
+      : null;
   const queryEndDate =
-    modal === "addMeal" ? parseDateParam(getModalParam("endDate")) : null;
+    modal === "addMeal" || modal === "editMeal"
+      ? parseDateParam(getModalParam("endDate"))
+      : null;
+  const editingMealId =
+    modal === "editMeal" ? Number(getModalParam("mealId")) : null;
   const [displayedMonth, setDisplayedMonth] = useState(
     new Date(today.getFullYear(), today.getMonth(), 1),
   );
@@ -132,6 +139,7 @@ export const MealPlannerCalendar = () => {
   );
   const [mealEndDate, setMealEndDate] = useState<Date | null>(queryEndDate);
   const addingMeal = modal === "addMeal";
+  const editingMeal = meals.find((meal) => meal.id === editingMealId) ?? null;
 
   const [calendarUrl, setCalendarUrl] = useState("");
 
@@ -619,6 +627,20 @@ export const MealPlannerCalendar = () => {
                       meal={meal}
                       onClick={handleMealClick}
                     />
+                    <button
+                      type="button"
+                      aria-label={`Edit ${meal.customText ?? meal.recipe?.name ?? "meal"}`}
+                      className="rounded border border-gray-200 bg-white p-1.5 text-gray-600 shadow-sm hover:bg-gray-100"
+                      onClick={() =>
+                        openModal("editMeal", {
+                          mealId: meal.id,
+                          startDate: formatDateParam(meal.startDate),
+                          endDate: formatDateParam(meal.endDate),
+                        })
+                      }
+                    >
+                      <PencilIcon size={20} />
+                    </button>
                     <Trash2Icon
                       className="text-red-400 bg-red-100 rounded p-1.5 border border-red-200 shadow-sm active:bg-red-500"
                       size={32}
@@ -638,12 +660,12 @@ export const MealPlannerCalendar = () => {
         </div>
 
         <Modal
-          isOpen={addingMeal}
+          isOpen={addingMeal || (modal === "editMeal" && editingMeal !== null)}
           onClose={() => {
             setSelectedDates([]);
             closeModal();
           }}
-          modalTitle="Add Meal"
+          modalTitle={editingMeal ? "Edit Meal" : "Add Meal"}
           showTick
           handleTick={() => {
             const form = mealAddForm.current;
@@ -657,15 +679,60 @@ export const MealPlannerCalendar = () => {
           confirmClose
           size="xxl"
         >
-          <AddMealPopup
-            formRef={mealAddForm}
-            onMealAdded={loadMeals}
-            startDate={mealStartDate || null}
-            setStartDate={setMealStartDate}
-            endDate={mealEndDate || null}
-            setEndDate={setMealEndDate}
-            updateHighlights={selectDatesBetween}
-          />
+          {(addingMeal || editingMeal) && (
+            <AddMealPopup
+              key={editingMeal?.id ?? "add-meal"}
+              formRef={mealAddForm}
+              onMealAdded={loadMeals}
+              startDate={
+                editingMeal
+                  ? (queryStartDate ?? editingMeal.startDate)
+                  : mealStartDate
+              }
+              setStartDate={(date) => {
+                if (editingMeal && date) {
+                  openModal("editMeal", {
+                    mealId: editingMeal.id,
+                    startDate: formatDateParam(date),
+                    endDate: formatDateParam(
+                      queryEndDate ?? editingMeal.endDate,
+                    ),
+                  });
+                  setSelectedDates(
+                    getDatesBetween(date, queryEndDate ?? editingMeal.endDate),
+                  );
+                } else {
+                  setMealStartDate(date);
+                }
+              }}
+              endDate={
+                editingMeal
+                  ? (queryEndDate ?? editingMeal.endDate)
+                  : mealEndDate
+              }
+              setEndDate={(date) => {
+                if (editingMeal && date) {
+                  openModal("editMeal", {
+                    mealId: editingMeal.id,
+                    startDate: formatDateParam(
+                      queryStartDate ?? editingMeal.startDate,
+                    ),
+                    endDate: formatDateParam(date),
+                  });
+                  setSelectedDates(
+                    getDatesBetween(
+                      queryStartDate ?? editingMeal.startDate,
+                      date,
+                    ),
+                  );
+                } else {
+                  setMealEndDate(date);
+                }
+              }}
+              updateHighlights={selectDatesBetween}
+              initialMeal={editingMeal}
+            />
+          )}
         </Modal>
         <Modal
           isOpen={modal === "recipeOverview" && recipeOverview !== null}

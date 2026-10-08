@@ -6,7 +6,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { addMeal } from "@/actions/meal-planner";
+import { addMeal, updateMeal } from "@/actions/meal-planner";
 import { Recipe } from "@/types/recipe";
 import { getRecipes } from "@/actions/recipes";
 import { normaliseRecipes } from "@/lib/recipes";
@@ -19,9 +19,14 @@ interface AddMealPopupProps {
   onMealAdded: () => Promise<void>;
   startDate: Date | null;
   endDate: Date | null;
-  setStartDate: Dispatch<SetStateAction<Date | null>>;
-  setEndDate: Dispatch<SetStateAction<Date | null>>;
+  setStartDate: (date: Date | null) => void;
+  setEndDate: (date: Date | null) => void;
   updateHighlights: (startDate: Date, endDate: Date) => void;
+  initialMeal?: {
+    id: number;
+    customText: string | null;
+    recipeId: number | null;
+  } | null;
 }
 
 const parseDateInput = (value: string) => {
@@ -44,13 +49,18 @@ export const AddMealPopup = ({
   setStartDate,
   setEndDate,
   updateHighlights,
+  initialMeal = null,
 }: AddMealPopupProps) => {
-  const [customName, setCustomName] = useState("");
-  const [inputType, setInputType] = useState<"customText" | "recipe">("recipe");
+  const [customName, setCustomName] = useState(initialMeal?.customText ?? "");
+  const [inputType, setInputType] = useState<"customText" | "recipe">(
+    initialMeal?.customText ? "customText" : "recipe",
+  );
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [recipeSearch, setRecipeSearch] = useState("");
   const [recipeOverview, setRecipeOverview] = useState<Recipe | null>(null);
-  const [selectedRecipeId, setSelectedRecipeId] = useState<number | null>(null);
+  const [selectedRecipeId, setSelectedRecipeId] = useState<number | null>(
+    initialMeal?.recipeId ?? null,
+  );
   const recipeSearchRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -93,7 +103,7 @@ export const AddMealPopup = ({
   };
 
   const handleSubmit = async (formData: FormData) => {
-    await addMeal({
+    const mealData = {
       startDate: formatDateInput(startDate),
       endDate: formatDateInput(endDate),
       customText:
@@ -102,7 +112,12 @@ export const AddMealPopup = ({
           : undefined,
       recipeId:
         inputType === "recipe" ? (selectedRecipeId ?? undefined) : undefined,
-    });
+    };
+    if (initialMeal) {
+      await updateMeal({ ...mealData, mealId: initialMeal.id });
+    } else {
+      await addMeal(mealData);
+    }
     await onMealAdded();
   };
 

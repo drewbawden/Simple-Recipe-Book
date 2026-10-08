@@ -62,6 +62,36 @@ export const addMeal = async ({
   broadcastUpdate();
 };
 
+export const updateMeal = async ({
+  mealId,
+  startDate,
+  endDate,
+  customText,
+  recipeId,
+}: addMealProps & { mealId: number }) => {
+  if (!Number.isInteger(mealId)) throw new Error("Invalid meal ID");
+  if (!customText?.trim() && recipeId == null) {
+    throw new Error("A meal name or recipe is required");
+  }
+
+  const start = parseCalendarDate(startDate);
+  const end = parseCalendarDate(endDate);
+  if (start > end) throw new Error("End date must not be before start date");
+
+  await prisma.mealPlanItem.update({
+    where: { id: mealId },
+    data: {
+      startDate: start,
+      endDate: end,
+      ...(customText?.trim()
+        ? { customText: customText.trim(), recipeId: null }
+        : { customText: null, recipeId }),
+    },
+  });
+
+  broadcastUpdate();
+};
+
 export const moveMeal = async ({
   mealId,
   startDate,
