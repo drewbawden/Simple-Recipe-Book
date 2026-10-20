@@ -674,6 +674,13 @@ export const MealPlannerCalendar = () => {
             }
 
             form.requestSubmit();
+            if (
+              form.querySelector<HTMLInputElement>(
+                'input[name="addToShoppingList"]',
+              )?.checked
+            ) {
+              return false;
+            }
             return true;
           }}
           confirmClose
@@ -683,7 +690,10 @@ export const MealPlannerCalendar = () => {
             <AddMealPopup
               key={editingMeal?.id ?? "add-meal"}
               formRef={mealAddForm}
-              onMealAdded={loadMeals}
+              onMealAdded={async () => {
+                await loadMeals();
+                closeModal();
+              }}
               startDate={
                 editingMeal
                   ? (queryStartDate ?? editingMeal.startDate)

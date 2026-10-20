@@ -9,11 +9,13 @@ import { MultiplierPicker } from "../ingredient-multiplier";
 interface AddToShoppingListPopupProps {
   closePopup: () => void;
   recipe: Recipe;
+  onAdded?: () => void | Promise<void>;
 }
 
 export const AddToShoppingListPopup = ({
   closePopup,
   recipe,
+  onAdded,
 }: AddToShoppingListPopupProps) => {
   const ingredients = recipe.ingredients;
 
@@ -64,6 +66,7 @@ export const AddToShoppingListPopup = ({
   async function handleAdd(formData: FormData) {
     const continueToList = formData.get("continueToList");
     await addRecipeToShoppingList(formData);
+    await onAdded?.();
     if (continueToList) {
       redirect("/list", RedirectType.push);
     }

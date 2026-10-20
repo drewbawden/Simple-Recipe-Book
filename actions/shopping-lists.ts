@@ -129,9 +129,14 @@ export const getShoppingListGroupedByCategory = async (tagId?: number) => {
 
 export const getShoppingList = async () => {
   try {
-    const shoppingList = await prisma.shoppingList.findUnique({
+    const shoppingList = await prisma.shoppingList.upsert({
       where: {
         id: 1,
+      },
+      update: {},
+      create: {
+        id: 1,
+        name: "Shopping List",
       },
       include: {
         items: {

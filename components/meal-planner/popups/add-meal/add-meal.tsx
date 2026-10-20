@@ -1,11 +1,4 @@
-import {
-  Dispatch,
-  RefObject,
-  SetStateAction,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 import { addMeal, updateMeal } from "@/actions/meal-planner";
 import { Recipe } from "@/types/recipe";
 import { getRecipes } from "@/actions/recipes";
@@ -13,6 +6,7 @@ import { normaliseRecipes } from "@/lib/recipes";
 import { MealRecipeTile } from "./recipe-tiles";
 import { RecipeOverview } from "@/components/recipes/popups/overview";
 import { Modal } from "@/components/templates/modal";
+import { AddToShoppingListPopup } from "@/components/recipes/popups/add-to-list";
 
 interface AddMealPopupProps {
   formRef: RefObject<HTMLFormElement | null>;
@@ -61,7 +55,17 @@ export const AddMealPopup = ({
   const [selectedRecipeId, setSelectedRecipeId] = useState<number | null>(
     initialMeal?.recipeId ?? null,
   );
+  const [addToShoppingList, setAddToShoppingList] = useState(false);
+  const [isShoppingListOpen, setIsShoppingListOpen] = useState(false);
+  const [pendingMealData, setPendingMealData] = useState<{
+    startDate: string;
+    endDate: string;
+    customText?: string;
+    recipeId?: number;
+  } | null>(null);
   const recipeSearchRef = useRef<HTMLInputElement>(null);
+  const selectedRecipe =
+    recipes.find((recipe) => recipe.id === selectedRecipeId) ?? null;
 
   useEffect(() => {
     if (inputType !== "recipe") return;
@@ -94,12 +98,35 @@ export const AddMealPopup = ({
 
   if (!startDate || !endDate) return null;
 
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const selectedEndDate = new Date(
+    endDate.getFullYear(),
+    endDate.getMonth(),
+    endDate.getDate(),
+  );
+  const endDateIsAfterToday = selectedEndDate > today;
+
   const isDateValid = (date: Date, dateType: "start" | "end") => {
     if (dateType === "start" && date <= endDate) return true;
     if (dateType === "end" && date >= startDate) return true;
 
     alert("Invalid date!");
     return false;
+  };
+
+  const saveMeal = async (mealData: {
+    startDate: string;
+    endDate: string;
+    customText?: string;
+    recipeId?: number;
+  }) => {
+    if (initialMeal) {
+      await updateMeal({ ...mealData, mealId: initialMeal.id });
+    } else {
+      await addMeal(mealData);
+    }
+    await onMealAdded();
   };
 
   const handleSubmit = async (formData: FormData) => {
@@ -113,12 +140,19 @@ export const AddMealPopup = ({
       recipeId:
         inputType === "recipe" ? (selectedRecipeId ?? undefined) : undefined,
     };
-    if (initialMeal) {
-      await updateMeal({ ...mealData, mealId: initialMeal.id });
-    } else {
-      await addMeal(mealData);
+
+    if (
+      inputType === "recipe" &&
+      endDateIsAfterToday &&
+      addToShoppingList &&
+      selectedRecipe
+    ) {
+      setPendingMealData(mealData);
+      setIsShoppingListOpen(true);
+      return;
     }
-    await onMealAdded();
+
+    await saveMeal(mealData);
   };
 
   return (
@@ -188,6 +222,7 @@ export const AddMealPopup = ({
           onClick={() => {
             setInputType("customText");
             setCustomName("");
+            setAddToShoppingList(false);
           }}
           className="relative z-10 flex-1 px-3 py-1"
         >
@@ -230,6 +265,7 @@ export const AddMealPopup = ({
                 selectedRecipe={selectedRecipeId}
                 onSelect={(recipeId) => {
                   setSelectedRecipeId(recipeId);
+                  if (recipeId === null) setAddToShoppingList(false);
                 }}
               />
             ))}
@@ -238,9 +274,44 @@ export const AddMealPopup = ({
               name="recipeId"
               value={selectedRecipeId ?? ""}
             />
+            {selectedRecipeId !== null &&
+              selectedRecipe &&
+              endDateIsAfterToday && (
+                <label className="flex items-center gap-2 rounded bg-gray-100 p-2">
+                  <input
+                    type="checkbox"
+                    name="addToShoppingList"
+                    checked={addToShoppingList}
+                    onChange={(event) =>
+                      setAddToShoppingList(event.target.checked)
+                    }
+                  />
+                  <span>Add to shopping list?</span>
+                </label>
+              )}
           </div>
         )}
       </form>
+      <Modal
+        isOpen={isShoppingListOpen && selectedRecipe !== null}
+        onClose={() => setIsShoppingListOpen(false)}
+        modalTitle="Add to shopping list"
+        size="xxl"
+        isChild
+      >
+        {selectedRecipe && (
+          <AddToShoppingListPopup
+            recipe={selectedRecipe}
+            closePopup={() => setIsShoppingListOpen(false)}
+            onAdded={async () => {
+              if (pendingMealData) {
+                await saveMeal(pendingMealData);
+                setPendingMealData(null);
+              }
+            }}
+          />
+        )}
+      </Modal>
       <Modal
         isOpen={recipeOverview !== null}
         onClose={() => setRecipeOverview(null)}
