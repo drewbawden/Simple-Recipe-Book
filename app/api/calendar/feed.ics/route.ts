@@ -1,7 +1,6 @@
 import { createEvents } from "ics";
 import { PrismaClient } from "@/app/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { headers } from "next/headers";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +18,7 @@ const toUtcDateArray = (date: Date): [number, number, number] => [
   date.getUTCDate(),
 ];
 
-export async function GET() {
+export async function GET(request: Request) {
   const meals = await prisma.mealPlanItem.findMany({
     include: {
       recipe: {
@@ -34,7 +33,7 @@ export async function GET() {
       const inclusiveEndDate = new Date(meal.endDate);
       inclusiveEndDate.setUTCDate(inclusiveEndDate.getUTCDate() + 1);
 
-      const recipeUrl = new URL("/planner", process.env.APP_URL);
+      const recipeUrl = new URL("/planner", request.url);
       recipeUrl.searchParams.set("modal", "recipeOverview");
       recipeUrl.searchParams.set("recipeId", String(meal.recipeId));
 
